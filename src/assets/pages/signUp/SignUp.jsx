@@ -1,0 +1,80 @@
+import { Button, Form, Input, Typography, Divider } from "antd";
+import styles from "./signUp.module.css";
+
+function SignUp() {
+  return (
+    <div className={styles.container}>
+      <div className={styles.formWrapper}>
+        <Typography strong className={styles.back}>
+          Quay về trang chủ
+        </Typography>
+        <Typography className={styles.brand}>UniTic</Typography>
+        <Form layout="vertical">
+          <div className={styles.row}>
+            <Input
+              placeholder="Họ"
+              name="lastName"
+              className={styles.mainInput}
+            />
+            <Input
+              placeholder="Tên"
+              name="firstName"
+              className={styles.mainInput}
+            />
+            <Input
+              placeholder="MSSV"
+              name="studentId"
+              className={styles.mainInput}
+            />
+          </div>
+          <div className={styles.row}>
+            <Input
+              placeholder="Email"
+              name="email"
+              className={styles.mainInput}
+            />
+            <Input
+              placeholder="Số điện thoại"
+              name="phone"
+              className={styles.mainInput}
+            />
+          </div>
+          <div className={styles.row}>
+            <Input.Password
+              placeholder="Mật khẩu"
+              name="password"
+              className={styles.mainInput}
+            />
+            <Input
+              placeholder="Đại học"
+              name="university"
+              className={styles.mainInput}
+            />
+          </div>
+          <Button
+            type="primary"
+            htmlType="submit"
+            block
+            className={styles.registerBtn}
+          >
+            Đăng ký
+          </Button>
+          <Divider plain>
+            <span className={styles.divider}>HOẶC</span>
+          </Divider>
+          <Button type="default" block className={styles.ssoBtn}>
+            Sign in as example@fpt.edu.vn
+          </Button>
+          <div className={styles.loginRow}>
+            <span>Bạn đã có tài khoản?</span>
+            <a href="#" className={styles.loginLink}>
+              Đăng nhập
+            </a>
+          </div>
+        </Form>
+      </div>
+    </div>
+  );
+}
+
+export default SignUp;

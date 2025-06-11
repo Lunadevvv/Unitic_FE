@@ -1,0 +1,92 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
+
+html {
+  font-size: 16px;
+}
+
+.container {
+  font-family: "Inter", sans-serif;
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background: #fcd97b;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 1.5rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.formWrapper {
+  background: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.125rem 1rem rgba(0, 0, 0, 0.08);
+  padding: 3.75rem 3.75rem 1rem 3.75rem;
+  max-width: 56.25rem; /* 900px */
+  width: 100%;
+  min-width: 21.875rem; /* 350px */
+}
+
+.back {
+  margin-bottom: 1.875rem;
+  font-size: 1rem;
+}
+
+.brand {
+  font-size: 7.5rem; /* 120px */
+  font-weight: bold;
+  color: #222;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.mainInput {
+  font-size: 1.25rem;
+  height: 3.125rem;
+  flex: 1;
+}
+
+.registerBtn {
+  background: #fbc02d !important;
+  border: none;
+  font-size: 1.5rem;
+  margin-bottom: 2.5rem;
+  height: 3.125rem;
+}
+
+.divider {
+  font-size: 1.25rem;
+}
+
+.ssoBtn {
+  background: #1890ff !important;
+  color: #fff !important;
+  border: none;
+  margin-top: 2.5rem;
+  margin-bottom: 1.4375rem;
+  font-size: 1.25rem;
+  height: 3.125rem;
+}
+
+.loginRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+  font-size: 1.25rem;
+}
+
+.loginLink {
+  color: #1890ff;
+  font-weight: 500;
+  text-decoration: underline;
+  cursor: pointer;
+}
