@@ -1,5 +1,6 @@
 import { Button, Form, Input, Typography, Divider } from "antd";
 import styles from "./signUp.module.css";
+import GoogleIcon from "../../components/ui/GoogleIcon";
 
 function SignUp() {
   return (
@@ -63,8 +64,17 @@ function SignUp() {
             <span className={styles.divider}>HOẶC</span>
           </Divider>
           <Button type="default" block className={styles.ssoBtn}>
-            Sign in as example@fpt.edu.vn
-          </Button>
+              <span
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <GoogleIcon style={{ marginRight: 8 }} />
+                Sign in as @fpt.edu.vn
+              </span>
+            </Button>
           <div className={styles.loginRow}>
             <span>Bạn đã có tài khoản?</span>
             <a href="#" className={styles.loginLink}>

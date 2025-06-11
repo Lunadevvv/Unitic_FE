@@ -1,5 +1,6 @@
 import { Button, Checkbox, Form, Input, Typography, Divider } from "antd";
 import styles from "./signin.module.css";
+import GoogleIcon from "../../components/ui/GoogleIcon";
 
 function SignIn() {
   return (
@@ -50,7 +51,16 @@ function SignIn() {
               <span className={styles.divider}>HOẶC</span>
             </Divider>
             <Button type="default" block className={styles.ssoBtn}>
-              Sign in as example@fpt.edu.vn
+              <span
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <GoogleIcon style={{ marginRight: 8 }} />
+                Sign in as @fpt.edu.vn
+              </span>
             </Button>
             <div className={styles.signupRow}>
               <span>Bạn chưa có tài khoản?</span>
