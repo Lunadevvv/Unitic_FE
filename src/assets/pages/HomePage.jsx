@@ -2,9 +2,11 @@ import React from 'react';
 import { Layout, Carousel, Row, Col, Card, Avatar, Divider, Flex } from 'antd';
 import { UserOutlined, FacebookOutlined, YoutubeOutlined } from '@ant-design/icons'; 
 import '../scss/HomePage.scss';   
+import { useNavigate } from 'react-router-dom';
 const { Header, Content, Footer } = Layout;
 
 const HomePage = () => {
+  const navigate = useNavigate();
   return (
     <Layout className="homepage_container">
       <Header className="homepage_header">
@@ -15,7 +17,7 @@ const HomePage = () => {
           <span>Trang chủ</span>
           <span>Sự kiện</span>
           <span>Về chúng tôi</span>
-          <button className="login-button">Đăng nhập</button>
+          <button className="login-button" onClick={()=>navigate('/signin')}>Đăng nhập</button>
         </div>
       </Header>
 

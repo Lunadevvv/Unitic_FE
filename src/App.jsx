@@ -1,14 +1,8 @@
-import { useState } from 'react'
-
-import HomePage from './assets/pages/HomePage'
+import { RouterProvider } from "react-router-dom";
+import { router } from "./assets/routes/routes";
 
 function App() {
-
-  return (
-    <>
-    <HomePage/>
-    </>
-  )
+  return <RouterProvider router={router} />;
 }
 
-export default App
+export default App;
