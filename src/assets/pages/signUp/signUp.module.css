@@ -2,6 +2,11 @@
 
 html {
   font-size: 16px;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
 }
 
 .container {
@@ -23,12 +28,12 @@ html {
   box-shadow: 0 0.125rem 1rem rgba(0, 0, 0, 0.08);
   padding: 3.75rem 3.75rem 1rem 3.75rem;
   max-width: 56.25rem; /* 900px */
-  width: 100%;
+  width: 70%;
   min-width: 21.875rem; /* 350px */
 }
 
 .back {
-  margin-bottom: 1.875rem;
+  margin-bottom: 0.5rem;
   font-size: 1rem;
 }
 
@@ -43,7 +48,7 @@ html {
   color: #222;
   text-align: center;
   width: 100%;
-  margin-bottom: 2rem;
+  /* margin-bottom: 2rem; */
 }
 
 .row {
