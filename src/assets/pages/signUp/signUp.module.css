@@ -53,7 +53,7 @@ html {
 }
 
 .mainInput {
-  font-size: 1.25rem;
+  font-size: 1rem;
   height: 3.125rem;
   flex: 1;
 }
@@ -61,13 +61,14 @@ html {
 .registerBtn {
   background: #fbc02d !important;
   border: none;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   margin-bottom: 0.5rem;
   height: 3.125rem;
+  font-weight: 500;
 }
 
 .divider {
-  font-size: 1.25rem;
+  font-size: 1rem;
 }
 
 .ssoBtn {
@@ -76,7 +77,7 @@ html {
   border: none;
   margin-top: 0.5rem;
   margin-bottom: 1.4375rem;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   height: 3.125rem;
 }
 
@@ -92,7 +93,7 @@ html {
   align-items: center;
   gap: 0.25rem;
   margin-top: 0.5rem;
-  font-size: 1.25rem;
+  font-size: 1rem;
 }
 
 .loginLink {

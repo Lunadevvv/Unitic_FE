@@ -1,7 +1,13 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
 
-html {
+html,
+body {
   font-size: 16px;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
 }
 
 .container {
@@ -67,7 +73,7 @@ html {
 }
 
 .mainInput {
-  font-size: 1.25rem;
+  font-size: 1rem;
   height: 3.125rem;
   margin-bottom: 1.4375rem;
 }
@@ -93,13 +99,14 @@ html {
 .loginBtn {
   background: #fbc02d !important;
   border: none;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   margin-bottom: 0.5rem;
   height: 3.125rem;
+  font-weight: 500;
 }
 
 .divider {
-  font-size: 1.25rem;
+  font-size: 1rem;
 }
 
 .ssoBtn {
@@ -108,11 +115,12 @@ html {
   border: none;
   margin-top: 0.5rem;
   margin-bottom: 1.4375rem;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   height: 3.125rem;
 }
 
-.loginBtn:hover, .ssoBtn:hover {
+.loginBtn:hover,
+.ssoBtn:hover {
   cursor: pointer;
   opacity: 0.7;
 }
@@ -123,7 +131,7 @@ html {
   align-items: center;
   gap: 0.25rem;
   margin-top: 0.5rem;
-  font-size: 1.25rem;
+  font-size: 1rem;
 }
 
 .signupLink {
