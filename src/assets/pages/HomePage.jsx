@@ -61,7 +61,7 @@ const HomePage = () => {
             <Card className="event-card">
               <div className="event-thumbnail event-bg-3"></div>
               <div className="event-details">
-                <h4>FPT AI-Cons 2025: Sân chơi sáng tạo nội dung bằng AI cho học sinh sinh viên FPT</h4>
+                <h4>FPT AI-Cons 2025: Sân ch  ơi sáng tạo nội dung bằng AI cho học sinh sinh viên FPT</h4>
                 <p>Ngày 25/05/2025, tại Phòng hội thảo trường Đại học FPT TP.HCM</p>
               </div>
             </Card>
@@ -75,7 +75,7 @@ const HomePage = () => {
           </div>
         </div>
 
-        <h3 style={{ textAlign: 'center', margin: '40px 0 20px' }}>Đa dạng lĩnh vực</h3>
+        {/* <h3 style={{ textAlign: 'center', margin: '40px 0 20px' }}>Đa dạng lĩnh vực</h3>
         <div className="major_display">
           <Row gutter={[16, 16]} justify="center">
             <Col xs={12} sm={8} md={6} lg={3} className="major_display_item">
@@ -103,7 +103,7 @@ const HomePage = () => {
               <Card hoverable className="major-card">Công nghệ thông tin</Card>
             </Col>
           </Row>
-        </div>
+        </div> */}
 
         <h3 style={{ textAlign: 'center', margin: '40px 0 20px' }}>Có sự góp mặt của các chuyên gia hàng đầu lĩnh vực</h3>
 

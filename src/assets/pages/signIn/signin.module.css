@@ -61,6 +61,11 @@ html {
   font-size: 1rem;
 }
 
+.back:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .mainInput {
   font-size: 1.25rem;
   height: 3.125rem;
@@ -89,7 +94,7 @@ html {
   background: #fbc02d !important;
   border: none;
   font-size: 1.5rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 0.5rem;
   height: 3.125rem;
 }
 
@@ -101,10 +106,15 @@ html {
   background: #1890ff !important;
   color: #fff !important;
   border: none;
-  margin-top: 2.5rem;
+  margin-top: 0.5rem;
   margin-bottom: 1.4375rem;
   font-size: 1.25rem;
   height: 3.125rem;
+}
+
+.loginBtn:hover, .ssoBtn:hover {
+  cursor: pointer;
+  opacity: 0.7;
 }
 
 .signupRow {

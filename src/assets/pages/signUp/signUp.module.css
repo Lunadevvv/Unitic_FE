@@ -32,6 +32,11 @@ html {
   font-size: 1rem;
 }
 
+.back:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .brand {
   font-size: 7.5rem; /* 120px */
   font-weight: bold;
@@ -57,7 +62,7 @@ html {
   background: #fbc02d !important;
   border: none;
   font-size: 1.5rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 0.5rem;
   height: 3.125rem;
 }
 
@@ -67,13 +72,19 @@ html {
 
 .ssoBtn {
   background: #1890ff !important;
-  color: #fff !important;
+  color: #fff !important; 
   border: none;
-  margin-top: 2.5rem;
+  margin-top: 0.5rem;
   margin-bottom: 1.4375rem;
   font-size: 1.25rem;
   height: 3.125rem;
 }
+
+.registerBtn:hover, .ssoBtn:hover {
+  cursor: pointer;
+  opacity: 0.7;
+}
+
 
 .loginRow {
   display: flex;

@@ -19,7 +19,7 @@ function SignIn() {
             <Typography strong className={styles.back} 
             onClick={() => navigate("/")}
             >
-              Quay về trang chủ
+              {'< '}Quay về trang chủ
             </Typography>
             <Input
               placeholder="Email"

@@ -10,7 +10,7 @@ function SignUp() {
       <div className={styles.formWrapper}>
         <Typography strong className={styles.back}
           onClick={() => navigate("/")}>
-          Quay về trang chủ
+          {'< '}Quay về trang chủ
         </Typography>
         <Typography className={styles.brand}>UniTic</Typography>
         <Form layout="vertical">
@@ -49,11 +49,18 @@ function SignUp() {
               name="password"
               className={styles.mainInput}
             />
-            <Input
-              placeholder="Đại học"
+            <select
               name="university"
               className={styles.mainInput}
-            />
+              defaultValue=""
+            >
+              <option value="" disabled>Chọn đại học</option>
+              <option value="fpt">FPT University</option>
+              <option value="hust">Đại học Bách Khoa Hà Nội</option>
+              <option value="vnu">Đại học Quốc gia Hà Nội</option>
+              <option value="hcmus">Đại học Khoa học Tự nhiên TP.HCM</option>
+              <option value="other">Khác</option>
+            </select>
           </div>
           <Button
             type="primary"
