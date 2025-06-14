@@ -1,0 +1,112 @@
+@import url('https://fonts.googleapis.com/css2?family=Alumni+Sans+Pinstripe:ital@0;1&family=Lexend+Deca:wght@100..900&family=Open+Sans:ital,wdth,wght@0,75..100,300..800;1,75..100,300..800&family=Sigmar&display=swap');
+
+$primary-color: #6a11cb;
+$secondary-color: #2575fc;
+$accent-color-1: #b65bd2;
+$accent-color-2: #FF6B6B;
+$text-color: #333;
+$dark-bg: #282c34;
+$neon-blue: #00f;
+$gradient-text-neon: linear-gradient(45deg, #6a11cb, #2575fc);
+$gradient-primary-neon: linear-gradient(67deg, #6a11cb, #2575fc);
+$neon-text: #00f;
+$light-text-color: #f0f0f0;
+$white-1: #ffffff;
+$white-blur: #ffffff6a;
+$dark-blue-gradient: linear-gradient(45deg, #1a1a2e, #16213e);  
+$dark-background: #3d3d8f;
+$card-background: #ffffff;
+$border-radius: 10px;
+$transition-speed: 0.3s;
+$fast-transition: 0.2s;
+$neon-gradient-cyberpunk: linear-gradient(45deg, #6a11cb, #2575fc);
+$neon-shadow-blue: 0 0 10px rgba(0, 122, 255, 0.7), 0 0 20px rgba(0, 122, 255, 0.5), 0 0 30px rgba(0, 122, 255, 0.3);
+$neon-shadow-purple: 0 0 10px rgba(106, 17, 203, 0.7), 0 0 20px rgba(106, 17, 203, 0.5), 0 0 30px rgba(106, 17, 203, 0.3);
+$neon-gradient-rainbow: linear-gradient(45deg, #773587, #8c48d4, #9c41aa, #5747a7, #0080ff, #8000ff);
+$darker-bg: #121212;
+
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin gradient-bg($start-color, $end-color) {
+  background: linear-gradient(to right, $start-color, $end-color);
+}
+
+@mixin card-shadow {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+@mixin hover-scale($scale: 1.05) {
+  transition: transform $transition-speed ease-in-out;
+  &:hover {
+    transform: scale($scale);
+  }
+}
+@mixin neon-text($color) {
+  color: $color;
+  text-shadow: 0 0 5px $color, 
+               0 0 10px $color, 
+               0 0 15px $color, 
+               0 0 20px $color;
+    transition: color $fast-transition ease, text-shadow $fast-transition ease;
+}
+
+@mixin text-truncate($lines: 1) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+body {
+  font-family: "Sigmar", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  color: $text-color;
+  background-color: #f8f8f8;
+  line-height: 1.6;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  color: $dark-background;
+}
+
+p {
+  margin-bottom: 1em;
+}
+
+.ant-carousel .slick-dots li button {
+  background-color: rgba($light-text-color, 0.5) !important;
+  opacity: 1 !important;
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 50% !important;
+  transition: all $fast-transition ease !important;
+}
+
+.ant-carousel .slick-dots li.slick-active button {
+  background-color: $light-text-color !important;
+  width: 25px !important;
+  border-radius: 5px !important;
+}
