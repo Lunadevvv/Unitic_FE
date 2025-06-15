@@ -9,8 +9,8 @@ function SignUp() {
     <div className={styles.container}>
       <div className={styles.formWrapper}>
         <Typography strong className={styles.back}
-          onClick={() => navigate("/")}>
-          {'< '}Quay về trang chủ
+          onClick={() => navigate("/signin")}>
+          {'< '}Quay về đăng nhập
         </Typography>
         <Typography className={styles.brand}>UniTic</Typography>
         <Form layout="vertical">

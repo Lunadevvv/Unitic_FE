@@ -14,7 +14,7 @@ html {
   display: flex;
   width: 100vw;
   height: 100vh;
-  background: #fcd97b;
+  background: linear-gradient(45deg, #9c88ff, #74b9ff);
   box-sizing: border-box;
   margin: 0 auto;
   padding: 1.5rem;
