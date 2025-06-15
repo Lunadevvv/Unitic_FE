@@ -1,29 +1,56 @@
-@import url('https://fonts.googleapis.com/css2?family=Alumni+Sans+Pinstripe:ital@0;1&family=Lexend+Deca:wght@100..900&family=Open+Sans:ital,wdth,wght@0,75..100,300..800;1,75..100,300..800&family=Sigmar&display=swap');
+@forward 'fonts';
+@use "sass:color";
+// tont xanh dịu pastel
+// $primary-color: #9c88ff;
+// $secondary-color: #74b9ff;
+// $accent-color-1: #c5a3db;
+// $accent-color-2: #fab1a0;
+// $text-color: #4a4a4a;
+// $dark-bg: #2d3436;
+// $neon-blue: #48dbfb;
+// $gradient-text-neon: linear-gradient(45deg, #9c88ff, #74b9ff);
+// $gradient-primary-neon: linear-gradient(67deg, #9c88ff, #74b9ff);
+// $neon-text: #48dbfb;
+// $light-text-color: #f5f5f5;
+// $white-1: #ffffff;
+// $white-blur: rgba(255, 255, 255, 0.7);
+// $dark-blue-gradient: linear-gradient(45deg, #2d3436, #34495e);
+// $dark-background: #5f5da6;
+// $card-background: #ffffff;
+// $border-radius: 10px;
+// $transition-speed: 0.3s;
+// $fast-transition: 0.2s;
+// $neon-gradient-cyberpunk: linear-gradient(45deg, #9c88ff, #74b9ff);
+// $neon-shadow-blue: 0 0 10px rgba(72, 219, 251, 0.5), 0 0 20px rgba(72, 219, 251, 0.3), 0 0 30px rgba(72, 219, 251, 0.2);
+// $neon-shadow-purple: 0 0 10px rgba(156, 136, 255, 0.5), 0 0 20px rgba(156, 136, 255, 0.3), 0 0 30px rgba(156, 136, 255, 0.2);
+// $neon-gradient-rainbow: linear-gradient(45deg, #a29bfe, #9c88ff, #c5a3db, #74b9ff, #48dbfb, #81ecec);
 
-$primary-color: #6a11cb;
-$secondary-color: #2575fc;
-$accent-color-1: #b65bd2;
-$accent-color-2: #FF6B6B;
-$text-color: #333;
-$dark-bg: #282c34;
-$neon-blue: #00f;
-$gradient-text-neon: linear-gradient(45deg, #6a11cb, #2575fc);
-$gradient-primary-neon: linear-gradient(67deg, #6a11cb, #2575fc);
-$neon-text: #00f;
-$light-text-color: #f0f0f0;
+// tont nâu vàng nhẹ pastel
+$darker-bg: #2d3436;
+$primary-color: #d4b483;      
+$secondary-color: #c7b198;   
+$accent-color-1: #f2d0a9;   
+$accent-color-2: #e8c8a9;   
+$text-color: #5c4d3c;        
+$dark-bg: #3a3238;           
+$neon-blue: #8ecae6;          
+$gradient-text-neon: linear-gradient(45deg, #d4b483, #c7b198);
+$gradient-primary-neon: linear-gradient(67deg, #d4b483, #c7b198);
+$neon-text: #8ecae6;        
+$light-text-color: #f8f5f1;  
 $white-1: #ffffff;
-$white-blur: #ffffff6a;
-$dark-blue-gradient: linear-gradient(45deg, #1a1a2e, #16213e);  
-$dark-background: #3d3d8f;
+$white-blur: rgba(255, 255, 255, 0.7);
+$dark-blue-gradient: linear-gradient(45deg, #3a3238, #564d4a);
+$dark-background: #786452;   
 $card-background: #ffffff;
 $border-radius: 10px;
 $transition-speed: 0.3s;
 $fast-transition: 0.2s;
-$neon-gradient-cyberpunk: linear-gradient(45deg, #6a11cb, #2575fc);
-$neon-shadow-blue: 0 0 10px rgba(0, 122, 255, 0.7), 0 0 20px rgba(0, 122, 255, 0.5), 0 0 30px rgba(0, 122, 255, 0.3);
-$neon-shadow-purple: 0 0 10px rgba(106, 17, 203, 0.7), 0 0 20px rgba(106, 17, 203, 0.5), 0 0 30px rgba(106, 17, 203, 0.3);
-$neon-gradient-rainbow: linear-gradient(45deg, #773587, #8c48d4, #9c41aa, #5747a7, #0080ff, #8000ff);
-$darker-bg: #121212;
+$neon-gradient-cyberpunk: linear-gradient(45deg, #d4b483, #c7b198);
+$neon-shadow-blue: 0 0 10px rgba(142, 202, 230, 0.5), 0 0 20px rgba(142, 202, 230, 0.3), 0 0 30px rgba(142, 202, 230, 0.2);
+$neon-shadow-purple: 0 0 10px rgba(212, 180, 131, 0.5), 0 0 20px rgba(212, 180, 131, 0.3), 0 0 30px rgba(212, 180, 131, 0.2);
+$neon-gradient-rainbow: linear-gradient(45deg, #f2d0a9, #d4b483, #c7b198, #8ecae6, #a9c5ba, #e8c8a9);
+$darker-bg: #33302e;
 
 @mixin flex-center {
   display: flex;
@@ -36,7 +63,7 @@ $darker-bg: #121212;
 }
 
 @mixin card-shadow {
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
 @mixin hover-scale($scale: 1.05) {
@@ -45,13 +72,14 @@ $darker-bg: #121212;
     transform: scale($scale);
   }
 }
+
 @mixin neon-text($color) {
   color: $color;
   text-shadow: 0 0 5px $color, 
-               0 0 10px $color, 
-               0 0 15px $color, 
-               0 0 20px $color;
-    transition: color $fast-transition ease, text-shadow $fast-transition ease;
+               0 0 10px rgba(color.mix($color, white, 70%), 0.7), 
+               0 0 15px rgba(color.mix($color, white, 50%), 0.5), 
+               0 0 20px rgba(color.mix($color, white, 30%), 0.3);
+  transition: color $fast-transition ease, text-shadow $fast-transition ease;
 }
 
 @mixin text-truncate($lines: 1) {
@@ -63,7 +91,7 @@ $darker-bg: #121212;
 }
 
 body {
-  font-family: "Sigmar", sans-serif;
+  font-family: "Work Sans", "Roboto", sans-serif;
   font-weight: 400;
   font-style: normal;
   margin: 0;
@@ -86,10 +114,11 @@ ul {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  
+  font-family: "Montserrat", sans-serif;
   margin-top: 0;
   margin-bottom: 0.5em;
   color: $dark-background;
+  font-weight: 600;
 }
 
 p {

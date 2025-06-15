@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Layout, Carousel, Row, Col, Card, Flex, Button } from 'antd';
 import { FacebookOutlined, YoutubeOutlined, ArrowRightOutlined } from '@ant-design/icons';
-import { motion, useScroll, useTransform, useInView, useAnimation, AnimatePresence } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import '../scss/HomePage.scss';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,17 +10,13 @@ const { Header, Content, Footer } = Layout;
 const HomePage = () => {
   const navigate = useNavigate();
   const [scrollPosition, setScrollPosition] = useState(0);
-  const parallaxRef = useRef(null);
-  const controls = useAnimation();
   
-  // Handle scroll for parallax effects
   const handleScroll = () => {
     const position = window.pageYOffset;
     setScrollPosition(position);
   };
   
   useEffect(() => {
-    // Add scroll event listener for parallax effects
     window.addEventListener('scroll', handleScroll);
     
     return () => {
@@ -28,12 +24,10 @@ const HomePage = () => {
     };
   }, []);
 
-  // Parallax style based on scroll position
   const parallaxStyle = {
     transform: `translateY(${scrollPosition * 0.3}px)`,
   };
 
-  // Section refs for animations
   const headerRef = useRef(null);
   const carouselRef = useRef(null);
   const eventSectionRef = useRef(null);
@@ -41,7 +35,7 @@ const HomePage = () => {
   const sponsorSectionRef = useRef(null);
   const introSectionRef = useRef(null);
   
-  // InView states
+
   const headerInView = useInView(headerRef, { once: false, amount: 0.3 });
   const carouselInView = useInView(carouselRef, { once: false, amount: 0.3 });
   const eventSectionInView = useInView(eventSectionRef, { once: false, amount: 0.3 });
@@ -198,7 +192,7 @@ const HomePage = () => {
       <Content className="homepage_body">
         {renderFloatingElements()}
         
-        <motion.div 
+         <motion.div 
           className="homepage_carousel parallax-container" 
           ref={carouselRef}
           variants={fadeInVariant}
@@ -210,24 +204,41 @@ const HomePage = () => {
             effect="fade"
             dots={{ className: "custom-carousel-dots" }}
           >
-           <div>
+            <div>
               <div className="carousel-item gradient-primary">
-                <div className="parallax-bg" style={parallaxStyle}></div>
+                <div className="parallax-bg carousel-bg-1" style={parallaxStyle}></div>
                 <div className="carousel-content">
-                  <h2 className="carousel-title glitch-effect ">Gặp Gỡ Chuyên Gia Tại Đại Học FPT 2025</h2>
-                  <p className="carousel-description fade-in-animation">Nơi chia sẻ kiến thức, kinh nghiệm và nhận các phần quà hấp dẫn khi tham gia</p>
                   <motion.div
-                    whileHover={{ scale: 1.05, y: -5 }}
-                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                  >
+                    <h2 className="carousel-title highlight-text">
+                      Gặp Gỡ Chuyên Gia Tại Đại Học FPT 2025
+                    </h2>
+                  </motion.div>
+                  <motion.p 
+                    className="carousel-description"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.5 }}
+                  >
+                    Nơi chia sẻ kiến thức, kinh nghiệm và nhận các phần quà hấp dẫn khi tham gia
+                  </motion.p>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.7 }}
+                    whileHover={{ scale: 1.03, y: -3 }}
+                    whileTap={{ scale: 0.98 }}
                   >
                     <Button 
-                      className="call-to-action-button"
+                      className="call-to-action-button modern-button"
                       type="primary"
                       size="large"
-                      icon={<ArrowRightOutlined />}
                     >
                       <span className="button-text">Xem chi tiết</span>
-                      <span className="hover-slide"></span>
+                      <ArrowRightOutlined className="button-icon" />
                     </Button>
                   </motion.div>
                 </div>
@@ -235,16 +246,30 @@ const HomePage = () => {
             </div>
             <div>
               <div className="carousel-item gradient-secondary">
-                <div className="parallax-bg" style={parallaxStyle}></div>
+                <div className="parallax-bg carousel-bg-2" style={parallaxStyle}></div>
                 <div className="carousel-content">
-                  <h2 className="carousel-title glitch-effect">CONGRATULATIONS ON GRADUATION!</h2>
-                  <p className="carousel-description fade-in-animation">Chúc mừng các bạn tân cử nhân!</p>
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                  >
+                    <h2 className="carousel-title highlight-text">
+                      CONGRATULATIONS ON GRADUATION!
+                    </h2>
+                  </motion.div>
+                  <motion.p 
+                    className="carousel-description"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.5 }}
+                  >
+                    Chúc mừng các bạn tân cử nhân!
+                  </motion.p>
                 </div>
               </div>
             </div>
           </Carousel>
         </motion.div>
-
         <div ref={eventSectionRef}>
           <motion.h3 
             className="section-title reveal-title"

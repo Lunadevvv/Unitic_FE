@@ -1,7 +1,7 @@
-@import 'base';
+@use'base';
 
 .section-title {
-   font-family: "Sigmar", sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 2.5em;
   font-weight: bold;
   text-align: center;
@@ -12,11 +12,11 @@
   letter-spacing: 1px;
 
   .title-text {
-    background: $gradient-text-neon;
+    background: base.$gradient-text-neon;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    color: $primary-color;
+    color: base.$primary-color;
     position: relative;
     z-index: 2;
     display: inline-block;
@@ -26,10 +26,10 @@
     display: block;
     width: 80px;
     height: 6px;
-    background: linear-gradient(to right, $primary-color, $secondary-color);
+    background: linear-gradient(to right, base.$primary-color, base.$secondary-color);
     margin: 10px auto 0;
     border-radius: 3px;
-    transition: width $fast-transition ease-in-out;
+    transition: width base.$fast-transition ease-in-out;
   }
   &:hover .title-decoration {
     width: 120px;
@@ -113,16 +113,16 @@
   .sponsor-logo {
     width: 180px;
     height: 100px;
-    @include flex-center;
-    background-color: $card-background;
-    border-radius: $border-radius;
-    @include card-shadow;
+    @include base.flex-center;
+    background-color: base.$card-background;
+    border-radius: base.$border-radius;
+    @include base.card-shadow;
     position: relative;
     overflow: hidden;
     font-size: 1.8em;
     font-weight: bold;
-    color: $dark-background;
-    transition: all $transition-speed ease;
+    color: base.$dark-background;
+    transition: all base.$transition-speed ease;
     cursor: pointer;
     border: 1px solid rgba(0,0,0,0.05);
 
@@ -139,7 +139,7 @@
       left: -50%;
       width: 200%;
       height: 200%;
-      background: radial-gradient(circle at center, rgba($secondary-color, 0.2), transparent 70%);
+      background: radial-gradient(circle at center, rgba(base.$secondary-color, 0.2), transparent 70%);
       opacity: 0;
       transition: opacity 0.5s ease;
       z-index: 1;
@@ -147,7 +147,7 @@
 
     &:hover {
       box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
-      border-color: $secondary-color;
+      border-color: base.$secondary-color;
     }
 
     &:hover .logo-glow {
@@ -168,10 +168,10 @@
 .introduction {
   position: relative;
   height: 500px;
-  @include flex-center;
+  @include base.flex-center;
   overflow: hidden;
   margin-bottom: 80px;
-  border-radius: $border-radius;
+  border-radius: base.$border-radius;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
 
   .parallax-bg-intro {
@@ -192,7 +192,7 @@
     position: relative;
     z-index: 2;
     text-align: center;
-    color: $light-text-color;
+    color: base.$light-text-color;
     padding: 0 30px;
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
 
@@ -216,7 +216,7 @@
     }
 
     .join-button {
-      background: linear-gradient(45deg, $accent-color-2, #FFCD6B);
+      background: linear-gradient(45deg, base.$accent-color-2, #FFCD6B);
       border: none;
       color: white;
       padding: 15px 40px;
@@ -226,7 +226,7 @@
       cursor: pointer;
       position: relative;
       overflow: hidden;
-      transition: all $transition-speed ease;
+      transition: all base.$transition-speed ease;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 
       span {

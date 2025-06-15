@@ -1,4 +1,4 @@
-@import 'base';
+@use 'base';
 
 @keyframes pulse {
   0% { transform: scale(1); opacity: 1; }
@@ -38,13 +38,13 @@
 }
 
 @keyframes glitchEffect {
-  0% { text-shadow: 0.05em 0 0 $accent-color-2, -0.05em -0.025em 0 $secondary-color, -0.025em 0.05em 0 $accent-color-1; }
-  15% { text-shadow: -0.05em -0.025em 0 $accent-color-2, 0.025em 0.025em 0 $secondary-color, -0.05em -0.05em 0 $accent-color-1; }
-  30% { text-shadow: 0.025em 0.05em 0 $accent-color-2, -0.05em 0 0 $secondary-color, 0.05em -0.025em 0 $accent-color-1; }
-  45% { text-shadow: -0.025em -0.05em 0 $accent-color-2, 0.05em -0.025em 0 $secondary-color, -0.05em 0.025em 0 $accent-color-1; }
-  60% { text-shadow: 0.05em 0.025em 0 $accent-color-2, -0.025em 0.05em 0 $secondary-color, 0.025em -0.05em 0 $accent-color-1; }
-  75% { text-shadow: -0.05em 0 0 $accent-color-2, 0.05em 0.05em 0 $secondary-color, -0.025em -0.025em 0 $accent-color-1; }
-  90% { text-shadow: 0.025em -0.025em 0 $accent-color-2, -0.05em -0.05em 0 $secondary-color, 0.05em 0 0 $accent-color-1; }
+  0% { text-shadow: 0.05em 0 0 base.$accent-color-2, -0.05em -0.025em 0 base.$secondary-color, -0.025em 0.05em 0 base.$accent-color-1; }
+  15% { text-shadow: -0.05em -0.025em 0 base.$accent-color-2, 0.025em 0.025em 0 base.$secondary-color, -0.05em -0.05em 0 base.$accent-color-1; }
+  30% { text-shadow: 0.025em 0.05em 0 base.$accent-color-2, -0.05em 0 0 base.$secondary-color, 0.05em -0.025em 0 base.$accent-color-1; }
+  45% { text-shadow: -0.025em -0.05em 0 base.$accent-color-2, 0.05em -0.025em 0 base.$secondary-color, -0.05em 0.025em 0 base.$accent-color-1; }
+  60% { text-shadow: 0.05em 0.025em 0 base.$accent-color-2, -0.025em 0.05em 0 base.$secondary-color, 0.025em -0.05em 0 base.$accent-color-1; }
+  75% { text-shadow: -0.05em 0 0 base.$accent-color-2, 0.05em 0.05em 0 base.$secondary-color, -0.025em -0.025em 0 base.$accent-color-1; }
+  90% { text-shadow: 0.025em -0.025em 0 base.$accent-color-2, -0.05em -0.05em 0 base.$secondary-color, 0.05em 0 0 base.$accent-color-1; }
   100% { text-shadow: none; }
 }
 
@@ -84,7 +84,7 @@
   display: inline-block;
   width: 8px;
   height: 8px;
-  background-color: $secondary-color;
+  background-color: base.$secondary-color;
   border-radius: 50%;
   margin-right: 5px;
   animation: pulse 1.5s infinite cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -130,7 +130,7 @@
 
   .floating-circle, .floating-square {
     position: absolute;
-    background-color: rgba($secondary-color, 0.1);
+    background-color: rgba(base.$secondary-color, 0.1);
     border-radius: 50%;
     filter: blur(8px);
     opacity: 0.6;
@@ -143,7 +143,7 @@
       height: 80px;
       top: 10%;
       left: 5%;
-      background-color: rgba($primary-color, 0.15);
+      background-color: rgba(base.$primary-color, 0.15);
     }
     &:nth-child(2) {
       width: 120px;
@@ -157,14 +157,14 @@
       height: 60px;
       top: 50%;
       left: 30%;
-      background-color: rgba($primary-color, 0.1);
+      background-color: rgba(base.$primary-color, 0.1);
     }
     &:nth-child(4) {
       width: 100px;
       height: 100px;
       top: 30%;
       right: 5%;
-      background-color: rgba($accent-color-1, 0.12);
+      background-color: rgba(base.$accent-color-1, 0.12);
       animation:
         y_float 19s infinite ease-in-out,
         x_float 21s infinite ease-in-out,
@@ -180,21 +180,21 @@
       height: 70px;
       top: 25%;
       right: 10%;
-      background-color: rgba($accent-color-1, 0.1);
+      background-color: rgba(base.$accent-color-1, 0.1);
     }
     &:nth-child(6) {
       width: 90px;
       height: 90px;
       bottom: 10%;
       left: 10%;
-      background-color: rgba($secondary-color, 0.15);
+      background-color: rgba(base.$secondary-color, 0.15);
     }
     &:nth-child(7) {
       width: 50px;
       height: 50px;
       bottom: 5%;
       right: 25%;
-      background-color: rgba($accent-color-2, 0.1);
+      background-color: rgba(base.$accent-color-2, 0.1);
       animation:
         y_float 23s infinite ease-in-out reverse,
         x_float 25s infinite ease-in-out reverse,

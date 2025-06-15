@@ -1,12 +1,10 @@
-// scss/HomePage.scss
-
-@import 'base';
-@import 'layout';
-@import 'header';
-@import 'carousel';
-@import 'sections';
-@import 'cards';
-@import 'animations';
+@use 'base';
+@use 'layout';
+@use 'header';
+@use 'carousel';
+@use 'sections';
+@use 'cards';
+@use 'animations';
 
 
 .header-animation-container {

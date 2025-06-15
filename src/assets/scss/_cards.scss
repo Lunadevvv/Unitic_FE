@@ -1,25 +1,25 @@
-@import 'base';
+@use 'base';
 
 .event-card {
-    border-radius: $border-radius;
+    border-radius: base.$border-radius;
     overflow: hidden;
-    background-color: $darker-bg;
-    border: 1px solid rgba($neon-blue, 0.2);
+    background-color: base.$darker-bg;
+    border: 1px solid rgba(base.$neon-blue, 0.2);
     position: relative;
-    transition: transform $transition-speed ease, box-shadow $transition-speed ease, border-color $transition-speed ease;
+    transition: transform base.$transition-speed ease, box-shadow base.$transition-speed ease, border-color base.$transition-speed ease;
     cursor: pointer;
-    box-shadow: $neon-shadow-blue;
+    box-shadow: base.$neon-shadow-blue;
 
     .ant-card-body {
         padding: 15px;
-        background-color: $darker-bg;
+        background-color: base.$darker-bg;
     }
 
     .event-thumbnail {
         height: 180px;
         background-size: cover;
         background-position: center;
-        border-radius: $border-radius - 2px;
+        border-radius: base.$border-radius - 2px;
         margin-bottom: 15px;
         position: relative;
         overflow: hidden;
@@ -39,8 +39,8 @@
             position: absolute;
             top: 15px;
             right: 15px;
-            background-color: $dark-bg;
-            @include neon-text($neon-text);
+            background-color: base.$dark-bg;
+            @include base.neon-text(base.$neon-text);
             padding: 8px 12px;
             border-radius: 8px;
             font-weight: bold;
@@ -49,14 +49,14 @@
             flex-direction: column;
             align-items: center;
             line-height: 1;
-            box-shadow: $neon-shadow-purple;
+            box-shadow: base.$neon-shadow-purple;
             z-index: 10;
 
             span {
                 font-size: 0.7em;
                 margin-top: 3px;
                 font-weight: normal;
-                color: rgba($light-text-color, 0.8);
+                color: rgba(base.$light-text-color, 0.8);
             }
         }
 
@@ -66,9 +66,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba($neon-blue, 0.2);
+            background: rgba(base.$neon-blue, 0.2);
             opacity: 0;
-            transition: opacity $transition-speed ease;
+            transition: opacity base.$transition-speed ease;
         }
         &:hover .hover-overlay {
             opacity: 1;
@@ -81,31 +81,31 @@
             font-weight: 600;
             margin-bottom: 8px;
             line-height: 1.4;
-            color: $light-text-color;
-            @include text-truncate(2);
-            transition: color $fast-transition ease, text-shadow $fast-transition ease;
+            color: base.$light-text-color;
+            @include base.text-truncate(2);
+            transition: color base.$fast-transition ease, text-shadow base.$fast-transition ease;
         }
 
         p {
             font-size: 0.9em;
-            color: rgba($light-text-color, 0.7);
+            color: rgba(base.$light-text-color, 0.7);
             display: flex;
             align-items: center;
 
             .location-icon {
                 margin-right: 5px;
-                color: $neon-blue;
-                filter: drop-shadow($neon-shadow-blue);
+                color: base.$neon-blue;
+                filter: drop-shadow(base.$neon-shadow-blue);
             }
         }
     }
 
     &:hover {
         transform: translateY(-8px) scale(1.02);
-        box-shadow: $neon-shadow-purple;
-        border-color: $neon-blue;
+        box-shadow: base.$neon-shadow-purple;
+        border-color: base.$neon-blue;
         .event-details .event-title {
-            @include neon-text($neon-blue);
+            @include base.neon-text(base.$neon-blue);
         }
     }
 }
@@ -117,7 +117,7 @@
         height: 430px;
         background-size: cover;
         background-position: center;
-        border-radius: $border-radius - 2px;
+        border-radius: base.$border-radius - 2px;
         margin-bottom: 20px;
         position: relative;
         overflow: hidden;
@@ -131,14 +131,14 @@
             position: absolute;
             top: 15px;
             left: 0;
-            background: $neon-gradient-rainbow;
-            color: $dark-bg;
+            background: base.$neon-gradient-rainbow;
+            color: base.$dark-bg;
             padding: 8px 15px;
             border-radius: 0 5px 5px 0;
             font-weight: bold;
             font-size: 0.9em;
             text-transform: uppercase;
-            box-shadow: $neon-shadow-purple;
+            box-shadow: base.$neon-shadow-purple;
             z-index: 10;
             animation: gradientAnimation 5s ease infinite;
             background-size: 200% 200%;
@@ -149,24 +149,24 @@
         font-size: 1.5em;
         font-weight: 700;
         margin-bottom: 15px;
-        color: $light-text-color;
+        color: base.$light-text-color;
         line-height: 1.3;
-        @include text-truncate(2);
-        transition: color $fast-transition ease, text-shadow $fast-transition ease;
+        @include base.text-truncate(2);
+        transition: color base.$fast-transition ease, text-shadow base.$fast-transition ease;
     }
 
     .main-event-description {
         font-size: 1em;
-        color: rgba($light-text-color, 0.7);
+        color: rgba(base.$light-text-color, 0.7);
         margin-bottom: 25px;
         line-height: 1.6;
-        @include text-truncate(3);
+        @include base.text-truncate(3);
     }
 
     .view-details-btn {
-        background: $neon-gradient-cyberpunk;
+        background: base.$neon-gradient-cyberpunk;
         border: none;
-        color: $white-1;
+        color: base.$white-1;
         padding: 12px 30px;
         border-radius: 50px;
         font-weight: bold;
@@ -174,8 +174,8 @@
         cursor: pointer;
         position: relative;
         overflow: hidden;
-        box-shadow: $neon-shadow-blue;
-        transition: all $transition-speed ease;
+        box-shadow: base.$neon-shadow-blue;
+        transition: all base.$transition-speed ease;
         text-transform: uppercase;
         letter-spacing: 0.5px;
 
@@ -197,9 +197,9 @@
         }
 
         &:hover {
-            box-shadow: $neon-shadow-purple;
+            box-shadow: base.$neon-shadow-purple;
             transform: translateY(-3px) scale(1.02);
-            background: linear-gradient(45deg, $secondary-color, $primary-color);
+            background: linear-gradient(45deg, base.$secondary-color, base.$primary-color);
         }
         &:hover .btn-hover-effect {
             opacity: 1;
@@ -208,20 +208,20 @@
     }
     &:hover {
         .main-event-title {
-            @include neon-text($neon-blue);
+            @include base.neon-text(base.$neon-blue);
         }
     }
 }
 
 .expert-card {
-    border-radius: $border-radius;
+    border-radius: base.$border-radius;
     overflow: hidden;
-    background-color: $darker-bg;
-    border: 1px solid rgba($neon-blue, 0.2);
+    background-color: base.$darker-bg;
+    border: 1px solid rgba(base.$neon-blue, 0.2);
     perspective: 1000px;
-    transition: all $transition-speed ease, box-shadow $transition-speed ease, border-color $transition-speed ease;
+    transition: all base.$transition-speed ease, box-shadow base.$transition-speed ease, border-color base.$transition-speed ease;
     cursor: pointer;
-    box-shadow: $neon-shadow-blue;
+    box-shadow: base.$neon-shadow-blue;
 
     .ant-card-cover {
         height: 250px;
@@ -252,7 +252,7 @@
                 height: 100%;
                 background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
                 opacity: 0;
-                transition: opacity $transition-speed ease;
+                transition: opacity base.$transition-speed ease;
             }
 
             .expert-social {
@@ -263,7 +263,7 @@
                 display: flex;
                 gap: 10px;
                 opacity: 0;
-                transition: opacity $transition-speed ease;
+                transition: opacity base.$transition-speed ease;
                 z-index: 3;
 
                 .social-hover {
@@ -272,7 +272,7 @@
                     transition: transform 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;
                     &:hover {
                         transform: scale(1.2) translateY(-3px);
-                        @include neon-text($neon-blue);
+                        @include base.neon-text(base.$neon-blue);
                     }
                 }
             }
@@ -290,25 +290,25 @@
     .ant-card-meta {
         padding: 15px;
         text-align: center;
-        background-color: $darker-bg;
+        background-color: base.$darker-bg;
         .expert-name {
             font-size: 1.2em;
             font-weight: 600;
-            color: $light-text-color;
+            color: base.$light-text-color;
             margin-bottom: 5px;
-            transition: color $fast-transition ease, text-shadow $fast-transition ease;
+            transition: color base.$fast-transition ease, text-shadow base.$fast-transition ease;
         }
         .expert-role {
             font-size: 0.9em;
-            color: rgba($light-text-color, 0.7);
+            color: rgba(base.$light-text-color, 0.7);
         }
     }
 
     &:hover {
-        box-shadow: $neon-shadow-purple;
-        border-color: $neon-blue;
+        box-shadow: base.$neon-shadow-purple;
+        border-color: base.$neon-blue;
         .ant-card-meta .expert-name {
-            @include neon-text($neon-blue);
+            @include base.neon-text(base.$neon-blue);
         }
     }
 }
