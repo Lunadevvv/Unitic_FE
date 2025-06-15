@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Layout, Carousel, Row, Col, Card, Flex, Button } from 'antd';
 import { FacebookOutlined, YoutubeOutlined, ArrowRightOutlined } from '@ant-design/icons';
+// eslint-disable-next-line no-unused-vars
 import { motion, useInView } from 'framer-motion';
 import '../scss/HomePage.scss';
 import { useNavigate } from 'react-router-dom';
