@@ -1,0 +1,7 @@
+.adminContent {
+  background: #ffe3ea;
+  min-height: calc(100vh - 64px);
+  border-radius: 8px;
+  margin: 24px;
+  padding: 32px 24px;
+}

@@ -1,0 +1,27 @@
+.sidebar {
+  background: #faf9fb !important;
+  min-height: 100vh;
+  border-right: 1px solid #eee;
+}
+.menu {
+  background: transparent !important;
+  border: none;
+  padding-top: 24px;
+}
+.ant-menu-item {
+  color: #b0b0b0 !important;
+  font-size: 1.1rem;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  margin: 0 12px 8px 12px;
+}
+.ant-menu-item-selected {
+  background: #ffe6e6 !important;
+  color: #ff4d4f !important;
+}
+.ant-menu-item .anticon {
+  font-size: 1.3rem;
+  margin-right: 16px;
+}
