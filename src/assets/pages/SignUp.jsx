@@ -1,16 +1,19 @@
 import { Button, Form, Input, Typography, Divider } from "antd";
-import styles from "./signUp.module.css";
-import GoogleIcon from "../../components/ui/GoogleIcon";
+import styles from "../module-css/signup.module.css";
+import GoogleIcon from "../components/ui/GoogleIcon";
 import { useNavigate } from "react-router-dom";
 
 function SignUp() {
-   const navigate = useNavigate();
+  const navigate = useNavigate();
   return (
     <div className={styles.container}>
       <div className={styles.formWrapper}>
-        <Typography strong className={styles.back}
-          onClick={() => navigate("/signin")}>
-          {'< '}Quay về đăng nhập
+        <Typography
+          strong
+          className={styles.back}
+          onClick={() => navigate("/signin")}
+        >
+          {"< "}Quay về đăng nhập
         </Typography>
         <Typography className={styles.brand}>UniTic</Typography>
         <Form layout="vertical">
@@ -54,7 +57,9 @@ function SignUp() {
               className={styles.mainInput}
               defaultValue=""
             >
-              <option value="" disabled>Chọn đại học</option>
+              <option value="" disabled>
+                Chọn đại học
+              </option>
               <option value="fpt">FPT University</option>
               <option value="hust">Đại học Bách Khoa Hà Nội</option>
               <option value="vnu">Đại học Quốc gia Hà Nội</option>
@@ -74,17 +79,17 @@ function SignUp() {
             <span className={styles.divider}>HOẶC</span>
           </Divider>
           <Button type="default" block className={styles.ssoBtn}>
-              <span
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <GoogleIcon style={{ marginRight: 8 }} />
-                Sign in as @fpt.edu.vn
-              </span>
-            </Button>
+            <span
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <GoogleIcon style={{ marginRight: 8 }} />
+              Sign in as @fpt.edu.vn
+            </span>
+          </Button>
           <div className={styles.loginRow}>
             <span>Bạn đã có tài khoản?</span>
             <a href="#" className={styles.loginLink}>

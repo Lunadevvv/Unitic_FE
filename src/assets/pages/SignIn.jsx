@@ -1,6 +1,6 @@
 import { Button, Checkbox, Form, Input, Typography, Divider } from "antd";
-import styles from "./signin.module.css";
-import GoogleIcon from "../../components/ui/GoogleIcon";
+import styles from "../module-css/signin.module.css";
+import GoogleIcon from "../components/ui/GoogleIcon";
 import { useNavigate } from "react-router-dom";
 
 function SignIn() {
@@ -16,10 +16,12 @@ function SignIn() {
       <div className={styles.rightSection}>
         <div className={styles.formWrapper}>
           <Form layout="vertical">
-            <Typography strong className={styles.back} 
-            onClick={() => navigate("/")}
+            <Typography
+              strong
+              className={styles.back}
+              onClick={() => navigate("/")}
             >
-              {'< '}Quay về trang chủ
+              {"< "}Quay về trang chủ
             </Typography>
             <Input
               placeholder="Email"
@@ -68,7 +70,10 @@ function SignIn() {
             </Button>
             <div className={styles.signupRow}>
               <span>Bạn chưa có tài khoản?</span>
-              <a onClick={()=>navigate('/signup')} className={styles.signupLink}>
+              <a
+                onClick={() => navigate("/signup")}
+                className={styles.signupLink}
+              >
                 Đăng ký
               </a>
             </div>
