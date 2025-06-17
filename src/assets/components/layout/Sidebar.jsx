@@ -5,11 +5,11 @@ import {
   CalendarOutlined,
   UserOutlined,
   FileTextOutlined,
-  BarChartOutlined,
   DollarOutlined,
   AppstoreOutlined,
   SwapOutlined,
   SettingOutlined,
+  TagsOutlined,
 } from "@ant-design/icons";
 import styles from "../../module-css/sidebar.module.css";
 
@@ -20,7 +20,7 @@ const menuItems = [
   { key: "events", icon: <CalendarOutlined />, label: "Events" },
   { key: "accounts", icon: <UserOutlined />, label: "Accounts" },
   { key: "tickets", icon: <FileTextOutlined />, label: "Tickets" },
-  { key: "statistics", icon: <BarChartOutlined />, label: "Statistics" },
+  { key: "categories", icon: <TagsOutlined />, label: "Categories" },
   { key: "revenue", icon: <DollarOutlined />, label: "Revenue & Payment" },
   { key: "services", icon: <AppstoreOutlined />, label: "Services" },
   { key: "transactions", icon: <SwapOutlined />, label: "Transactions" },
