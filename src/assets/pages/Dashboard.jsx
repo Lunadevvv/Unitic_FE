@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { Layout } from "antd";
 import Navbar from "../components/layout/Navbar";
 import Sidebar from "../components/layout/Sidebar";
-import styles from "../module-css/admin.module.css";
+import styles from "../module-css/dashboard.module.css";
 
 const { Content } = Layout;
 
-const Admin = () => {
+const Dashboard = () => {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
@@ -19,10 +19,11 @@ const Admin = () => {
         />
         <Content className={styles.adminContent}>
           {/* Body content here */}
+          <h1>dashboard</h1>
         </Content>
       </Layout>
     </Layout>
   );
 };
 
-export default Admin;
+export default Dashboard;
