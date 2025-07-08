@@ -1,81 +1,72 @@
 // User API Actions
-import { createAsyncThunk } from '@reduxjs/toolkit';
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import BASE_URL from "../../services/api";
 
 // Fetch user profile
 export const fetchUserProfile = createAsyncThunk(
-  'user/fetchUserProfile',
-  async (_, { rejectWithValue, getState }) => {
+  "user/fetchUserProfile",
+  async (_, { rejectWithValue }) => {
     try {
-      const { auth } = getState();
-      const response = await fetch('/api/user/profile', {
-        headers: {
-          'Authorization': `Bearer ${auth.token}`,
-        },
-      });
-      
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to fetch profile');
-      }
-      
-      const data = await response.json();
+      const response = await BASE_URL.get("api/profile");
+      const data = response.data;
       return data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      let message =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to fetch profile";
+      return rejectWithValue(message);
     }
   }
 );
 
 // Update user profile
 export const updateUserProfile = createAsyncThunk(
-  'user/updateUserProfile',
-  async (profileData, { rejectWithValue, getState }) => {
+  "user/updateUserProfile",
+  async (profileData, { rejectWithValue }) => {
     try {
-      const { auth } = getState();
-      const response = await fetch('/api/user/profile', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${auth.token}`,
-        },
-        body: JSON.stringify(profileData),
+      const response = await BASE_URL.put("api/profile/", {
+        id: profileData.id,
+        firstName: profileData.firstName,
+        lastName: profileData.lastName,
+        mssv: profileData.mssv,
+        wallet: profileData.wallet,
+        universityid: profileData.universityid,
       });
-      
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to update profile');
-      }
-      
-      const data = await response.json();
+      const data = response.data;
       return data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      let message =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to update profile";
+      return rejectWithValue(message);
     }
   }
 );
 
-// Upload avatar
+// Upload avatar (not used)
 export const uploadAvatar = createAsyncThunk(
-  'user/uploadAvatar',
+  "user/uploadAvatar",
   async (file, { rejectWithValue, getState }) => {
     try {
       const { auth } = getState();
       const formData = new FormData();
-      formData.append('avatar', file);
-      
-      const response = await fetch('/api/user/avatar', {
-        method: 'POST',
+      formData.append("avatar", file);
+
+      const response = await fetch("/api/user/avatar", {
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${auth.token}`,
+          Authorization: `Bearer ${auth.token}`,
         },
         body: formData,
       });
-      
+
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to upload avatar');
+        throw new Error(error.message || "Failed to upload avatar");
       }
-      
+
       const data = await response.json();
       return data;
     } catch (error) {
@@ -84,24 +75,24 @@ export const uploadAvatar = createAsyncThunk(
   }
 );
 
-// Fetch user tickets
+// Fetch user tickets (not used)
 export const fetchUserTickets = createAsyncThunk(
-  'user/fetchUserTickets',
+  "user/fetchUserTickets",
   async (params = {}, { rejectWithValue, getState }) => {
     try {
       const { auth } = getState();
       const queryParams = new URLSearchParams(params).toString();
       const response = await fetch(`/api/user/tickets?${queryParams}`, {
         headers: {
-          'Authorization': `Bearer ${auth.token}`,
+          Authorization: `Bearer ${auth.token}`,
         },
       });
-      
+
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to fetch tickets');
+        throw new Error(error.message || "Failed to fetch tickets");
       }
-      
+
       const data = await response.json();
       return data;
     } catch (error) {
@@ -110,24 +101,24 @@ export const fetchUserTickets = createAsyncThunk(
   }
 );
 
-// Fetch user events
+// Fetch user events (not used)
 export const fetchUserEvents = createAsyncThunk(
-  'user/fetchUserEvents',
+  "user/fetchUserEvents",
   async (params = {}, { rejectWithValue, getState }) => {
     try {
       const { auth } = getState();
       const queryParams = new URLSearchParams(params).toString();
       const response = await fetch(`/api/user/events?${queryParams}`, {
         headers: {
-          'Authorization': `Bearer ${auth.token}`,
+          Authorization: `Bearer ${auth.token}`,
         },
       });
-      
+
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to fetch user events');
+        throw new Error(error.message || "Failed to fetch user events");
       }
-      
+
       const data = await response.json();
       return data;
     } catch (error) {
@@ -136,23 +127,23 @@ export const fetchUserEvents = createAsyncThunk(
   }
 );
 
-// Fetch wallet data
+// Fetch wallet data (not used)
 export const fetchWalletData = createAsyncThunk(
-  'user/fetchWalletData',
+  "user/fetchWalletData",
   async (_, { rejectWithValue, getState }) => {
     try {
       const { auth } = getState();
-      const response = await fetch('/api/user/wallet', {
+      const response = await fetch("/api/user/wallet", {
         headers: {
-          'Authorization': `Bearer ${auth.token}`,
+          Authorization: `Bearer ${auth.token}`,
         },
       });
-      
+
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to fetch wallet data');
+        throw new Error(error.message || "Failed to fetch wallet data");
       }
-      
+
       const data = await response.json();
       return data;
     } catch (error) {
@@ -161,26 +152,26 @@ export const fetchWalletData = createAsyncThunk(
   }
 );
 
-// Top up wallet
+// Top up wallet (not used)
 export const topUpWallet = createAsyncThunk(
-  'user/topUpWallet',
+  "user/topUpWallet",
   async (topUpData, { rejectWithValue, getState }) => {
     try {
       const { auth } = getState();
-      const response = await fetch('/api/user/wallet/topup', {
-        method: 'POST',
+      const response = await fetch("/api/user/wallet/topup", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${auth.token}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${auth.token}`,
         },
         body: JSON.stringify(topUpData),
       });
-      
+
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Top-up failed');
+        throw new Error(error.message || "Top-up failed");
       }
-      
+
       const data = await response.json();
       return data;
     } catch (error) {
@@ -189,26 +180,26 @@ export const topUpWallet = createAsyncThunk(
   }
 );
 
-// Withdraw from wallet
+// Withdraw from wallet (not used)
 export const withdrawFromWallet = createAsyncThunk(
-  'user/withdrawFromWallet',
+  "user/withdrawFromWallet",
   async (withdrawData, { rejectWithValue, getState }) => {
     try {
       const { auth } = getState();
-      const response = await fetch('/api/user/wallet/withdraw', {
-        method: 'POST',
+      const response = await fetch("/api/user/wallet/withdraw", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${auth.token}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${auth.token}`,
         },
         body: JSON.stringify(withdrawData),
       });
-      
+
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Withdrawal failed');
+        throw new Error(error.message || "Withdrawal failed");
       }
-      
+
       const data = await response.json();
       return data;
     } catch (error) {
@@ -217,24 +208,27 @@ export const withdrawFromWallet = createAsyncThunk(
   }
 );
 
-// Fetch wallet transactions
+// Fetch wallet transactions (not used)
 export const fetchWalletTransactions = createAsyncThunk(
-  'user/fetchWalletTransactions',
+  "user/fetchWalletTransactions",
   async (params = {}, { rejectWithValue, getState }) => {
     try {
       const { auth } = getState();
       const queryParams = new URLSearchParams(params).toString();
-      const response = await fetch(`/api/user/wallet/transactions?${queryParams}`, {
-        headers: {
-          'Authorization': `Bearer ${auth.token}`,
-        },
-      });
-      
+      const response = await fetch(
+        `/api/user/wallet/transactions?${queryParams}`,
+        {
+          headers: {
+            Authorization: `Bearer ${auth.token}`,
+          },
+        }
+      );
+
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to fetch transactions');
+        throw new Error(error.message || "Failed to fetch transactions");
       }
-      
+
       const data = await response.json();
       return data;
     } catch (error) {
@@ -243,24 +237,24 @@ export const fetchWalletTransactions = createAsyncThunk(
   }
 );
 
-// Fetch notifications
+// Fetch notifications (not used)
 export const fetchNotifications = createAsyncThunk(
-  'user/fetchNotifications',
+  "user/fetchNotifications",
   async (params = {}, { rejectWithValue, getState }) => {
     try {
       const { auth } = getState();
       const queryParams = new URLSearchParams(params).toString();
       const response = await fetch(`/api/user/notifications?${queryParams}`, {
         headers: {
-          'Authorization': `Bearer ${auth.token}`,
+          Authorization: `Bearer ${auth.token}`,
         },
       });
-      
+
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to fetch notifications');
+        throw new Error(error.message || "Failed to fetch notifications");
       }
-      
+
       const data = await response.json();
       return data;
     } catch (error) {
@@ -269,24 +263,27 @@ export const fetchNotifications = createAsyncThunk(
   }
 );
 
-// Mark notification as read
+// Mark notification as read (not used)
 export const markNotificationAsRead = createAsyncThunk(
-  'user/markNotificationAsRead',
+  "user/markNotificationAsRead",
   async (notificationId, { rejectWithValue, getState }) => {
     try {
       const { auth } = getState();
-      const response = await fetch(`/api/user/notifications/${notificationId}/read`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${auth.token}`,
-        },
-      });
-      
+      const response = await fetch(
+        `/api/user/notifications/${notificationId}/read`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${auth.token}`,
+          },
+        }
+      );
+
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to mark notification as read');
+        throw new Error(error.message || "Failed to mark notification as read");
       }
-      
+
       return notificationId;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -294,24 +291,26 @@ export const markNotificationAsRead = createAsyncThunk(
   }
 );
 
-// Mark all notifications as read
+// Mark all notifications as read (not used)
 export const markAllNotificationsAsRead = createAsyncThunk(
-  'user/markAllNotificationsAsRead',
+  "user/markAllNotificationsAsRead",
   async (_, { rejectWithValue, getState }) => {
     try {
       const { auth } = getState();
-      const response = await fetch('/api/user/notifications/read-all', {
-        method: 'PUT',
+      const response = await fetch("/api/user/notifications/read-all", {
+        method: "PUT",
         headers: {
-          'Authorization': `Bearer ${auth.token}`,
+          Authorization: `Bearer ${auth.token}`,
         },
       });
-      
+
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to mark all notifications as read');
+        throw new Error(
+          error.message || "Failed to mark all notifications as read"
+        );
       }
-      
+
       return true;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -319,24 +318,27 @@ export const markAllNotificationsAsRead = createAsyncThunk(
   }
 );
 
-// Delete notification
+// Delete notification (not used)
 export const deleteNotification = createAsyncThunk(
-  'user/deleteNotification',
+  "user/deleteNotification",
   async (notificationId, { rejectWithValue, getState }) => {
     try {
       const { auth } = getState();
-      const response = await fetch(`/api/user/notifications/${notificationId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${auth.token}`,
-        },
-      });
-      
+      const response = await fetch(
+        `/api/user/notifications/${notificationId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${auth.token}`,
+          },
+        }
+      );
+
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to delete notification');
+        throw new Error(error.message || "Failed to delete notification");
       }
-      
+
       return notificationId;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -344,26 +346,26 @@ export const deleteNotification = createAsyncThunk(
   }
 );
 
-// Update user preferences
+// Update user preferences (not used)
 export const updateUserPreferences = createAsyncThunk(
-  'user/updateUserPreferences',
+  "user/updateUserPreferences",
   async (preferences, { rejectWithValue, getState }) => {
     try {
       const { auth } = getState();
-      const response = await fetch('/api/user/preferences', {
-        method: 'PUT',
+      const response = await fetch("/api/user/preferences", {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${auth.token}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${auth.token}`,
         },
         body: JSON.stringify(preferences),
       });
-      
+
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to update preferences');
+        throw new Error(error.message || "Failed to update preferences");
       }
-      
+
       const data = await response.json();
       return data;
     } catch (error) {
