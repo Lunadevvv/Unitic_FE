@@ -1,0 +1,307 @@
+@use 'base';
+
+.event-preview {
+  .preview-card {
+    background: base.$card-background;
+    border-radius: base.$border-radius;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: none;
+    overflow: hidden;
+
+    .preview-header {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 24px;
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .event-image {
+        flex-shrink: 0;
+        width: 300px;
+        height: 200px;
+        border-radius: base.$border-radius;
+        overflow: hidden;
+
+        @media (max-width: 768px) {
+          width: 100%;
+          height: 250px;
+        }
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .placeholder-image {
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(135deg, base.$accent-color-1, base.$accent-color-2);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          color: base.$text-color;
+          opacity: 0.7;
+
+          .anticon {
+            font-size: 3rem;
+            margin-bottom: 8px;
+          }
+
+          span {
+            font-size: 1rem;
+            font-weight: 500;
+          }
+        }
+      }
+
+      .event-info {
+        flex: 1;
+        min-width: 0;
+
+        .event-meta {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin-bottom: 16px;
+
+          .ant-tag {
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: none;
+          }
+        }
+
+        .ant-typography-title {
+          color: base.$text-color;
+          margin-bottom: 16px !important;
+          line-height: 1.3;
+        }
+
+        .organizer-info {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 16px;
+          padding: 12px;
+          background: rgba(base.$accent-color-1, 0.2);
+          border-radius: 8px;
+
+          .ant-avatar {
+            background: base.$primary-color;
+          }
+
+          span {
+            color: base.$text-color;
+            font-weight: 600;
+          }
+        }
+
+        .description {
+          color: base.$text-color;
+          opacity: 0.8;
+          font-size: 1rem;
+          line-height: 1.6;
+          margin-bottom: 0 !important;
+        }
+      }
+    }
+
+    .ant-card {
+      border: 1px solid rgba(base.$accent-color-1, 0.3);
+      border-radius: 8px;
+      
+      .ant-card-head {
+        background: rgba(base.$accent-color-1, 0.1);
+        border-bottom: 1px solid rgba(base.$accent-color-1, 0.2);
+
+        .ant-card-head-title {
+          color: base.$text-color;
+          font-weight: 600;
+        }
+      }
+
+      .ant-card-body {
+        padding: 20px;
+      }
+    }
+
+    .ant-timeline {
+      .ant-timeline-item {
+        .ant-timeline-item-content {
+          color: base.$text-color;
+          
+          .ant-typography {
+            color: base.$text-color;
+            margin-bottom: 4px !important;
+          }
+        }
+      }
+    }
+
+    .duration-info {
+      margin-top: 12px;
+      padding: 8px 12px;
+      background: rgba(base.$neon-blue, 0.1);
+      border-radius: 6px;
+      border-left: 3px solid base.$neon-blue;
+    }
+
+    .location-info {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 12px;
+
+      .ant-typography {
+        color: base.$text-color;
+        margin: 0 !important;
+        line-height: 1.5;
+      }
+    }
+
+    .capacity-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .ant-typography {
+        color: base.$text-color;
+        margin: 0 !important;
+      }
+    }
+
+    .ticket-type-card {
+      border: 1px solid rgba(base.$primary-color, 0.2);
+      transition: all base.$transition-speed;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(base.$primary-color, 0.15);
+      }
+
+      .ticket-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+
+        .ant-typography {
+          margin: 0 !important;
+        }
+
+        .ticket-price {
+          color: base.$primary-color;
+          font-weight: 700;
+          font-size: 1.1rem;
+        }
+      }
+
+      .ticket-desc {
+        display: block;
+        margin-bottom: 8px !important;
+        line-height: 1.4;
+      }
+
+      .ticket-quantity {
+        .ant-typography {
+          font-size: 0.9rem;
+          margin: 0 !important;
+        }
+      }
+    }
+
+    .ant-descriptions {
+      .ant-descriptions-title {
+        color: base.$text-color;
+        font-weight: 600;
+      }
+
+      .ant-descriptions-item-label {
+        color: base.$text-color;
+        font-weight: 500;
+      }
+
+      .ant-descriptions-item-content {
+        .ant-tag {
+          border-radius: 12px;
+          font-weight: 500;
+          border: none;
+        }
+      }
+    }
+
+    .preview-actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 32px;
+
+      .ant-btn {
+        height: 48px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 0 32px;
+        
+        &.ant-btn-primary {
+          background: base.$gradient-primary-neon;
+          border: none;
+          
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(base.$primary-color, 0.3);
+          }
+
+          &.ant-btn-loading {
+            transform: none;
+            box-shadow: none;
+          }
+        }
+        
+        &:not(.ant-btn-primary) {
+          border: 2px solid base.$accent-color-1;
+          color: base.$text-color;
+          
+          &:hover {
+            border-color: base.$primary-color;
+            color: base.$primary-color;
+            transform: translateY(-2px);
+          }
+        }
+      }
+
+      @media (max-width: 576px) {
+        .ant-space {
+          width: 100%;
+          
+          .ant-btn {
+            flex: 1;
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .preview-card {
+      margin: 16px;
+      
+      .ant-card-body {
+        padding: 20px;
+      }
+
+      .preview-header {
+        .event-info {
+          .ant-typography-title {
+            font-size: 1.5rem !important;
+          }
+        }
+      }
+    }
+  }
+}

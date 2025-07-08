@@ -1,0 +1,313 @@
+@use 'base';
+
+// AdminLayout Styles
+.admin-layout {
+  min-height: 100vh;
+
+  .admin-sider {
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 2px 0 8px rgba(base.$admin-dark-bg, 0.15);
+    background: base.$admin-dark-bg !important;
+
+    .admin-logo {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: base.$admin-dark-light;
+      border-bottom: 1px solid rgba(base.$primary-color, 0.1);
+
+      .logo-container {
+        .logo-text {
+          color: base.$light-text-color;
+          font-size: 18px;
+          font-weight: 700;
+          letter-spacing: 1px;
+          background: base.$gradient-primary-neon;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+
+        .logo-mini {
+          color: base.$white-1;
+          font-size: 16px;
+          font-weight: 700;
+          background: base.$primary-color;
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+    }
+
+    .admin-menu {
+      border: none;
+      background: transparent;
+
+      .ant-menu-item {
+        margin: 4px 8px;
+        border-radius: base.$border-radius;
+        height: 45px;
+        line-height: 45px;
+        color: rgba(base.$light-text-color, 0.85);
+        transition: all base.$transition-speed ease;
+
+        &:hover {
+          background: base.$admin-hover;
+          color: base.$primary-color;
+        }
+
+        &.ant-menu-item-selected {
+          background: base.$admin-selected;
+          color: base.$primary-color;
+
+          &::after {
+            display: none;
+          }
+        }
+
+        .anticon {
+          font-size: 16px;
+          color: inherit;
+        }
+
+        .ant-menu-title-content {
+          font-weight: 500;
+          color: inherit;
+        }
+      }
+    }
+
+    .admin-user-info {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: base.$admin-dark-light;
+      margin: 0 8px;
+      border-radius: base.$border-radius;
+      padding: 12px;
+      border: 1px solid base.$admin-border;
+
+      .user-details {
+        flex: 1;
+        overflow: hidden;
+
+        .user-name {
+          display: block;
+          color: base.$light-text-color;
+          font-size: 14px;
+          font-weight: 600;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .user-role {
+          display: block;
+          color: base.$secondary-color;
+          font-size: 12px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+  }
+
+  .admin-main {
+    margin-left: 250px;
+    transition: margin-left 0.2s;
+
+    &.collapsed {
+      margin-left: 80px;
+    }
+
+    .admin-header {
+      background: base.$card-background;
+      padding: 0 24px;
+      box-shadow: 0 2px 8px rgba(base.$text-color, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      border-bottom: 1px solid base.$admin-border;
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        .collapse-btn {
+          width: 40px;
+          height: 40px;
+          border-radius: base.$border-radius;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: base.$text-color;
+          transition: all base.$transition-speed ease;
+
+          &:hover {
+            background: base.$admin-hover;
+            color: base.$primary-color;
+          }
+        }
+
+        .breadcrumb-section {
+          .current-time {
+            color: base.$text-color;
+            opacity: 0.7;
+            font-size: 14px;
+            font-weight: 500;
+          }
+        }
+      }
+
+      .header-right {
+        .header-btn {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: base.$text-color;
+          transition: all base.$transition-speed ease;
+
+          &:hover {
+            background: base.$admin-hover;
+            color: base.$primary-color;
+          }
+        }
+
+        .user-dropdown {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 12px;
+          border-radius: 20px;
+          cursor: pointer;
+          transition: all base.$transition-speed ease;
+
+          &:hover {
+            background: base.$admin-hover;
+          }
+
+          .user-name-header {
+            font-weight: 500;
+            color: base.$text-color;
+          }
+
+          .dropdown-icon {
+            font-size: 12px;
+            color: base.$secondary-color;
+          }
+        }
+      }
+    }
+
+    .admin-content {
+      padding: 24px;
+      min-height: calc(100vh - 64px);
+      background: base.$admin-card-bg;
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .admin-layout {
+    .admin-sider {
+      transform: translateX(-100%);
+      transition: transform base.$transition-speed;
+
+      &.mobile-open {
+        transform: translateX(0);
+      }
+    }
+
+    .admin-main {
+      margin-left: 0;
+
+      .admin-header {
+        padding: 0 16px;
+
+        .header-left {
+          gap: 12px;
+        }
+
+        .breadcrumb-section {
+          display: none;
+        }
+
+        .header-right {
+          .user-name-header {
+            display: none;
+          }
+        }
+      }
+
+      .admin-content {
+        padding: 16px;
+      }
+    }
+  }
+}
+
+// Animation for sidebar collapse
+.admin-layout.ant-layout {
+  .admin-sider.ant-layout-sider-collapsed {
+    .admin-user-info {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity base.$transition-speed ease;
+    }
+
+    .admin-menu {
+      .ant-menu-item {
+        padding: 0;
+        justify-content: center;
+
+        .ant-menu-title-content {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+// Dark theme adjustments
+.admin-layout .admin-sider.ant-layout-sider-dark {
+  background: base.$admin-dark-bg !important;
+
+  .admin-menu.ant-menu-dark {
+    .ant-menu-item {
+      color: rgba(base.$light-text-color, 0.85);
+
+      &:hover {
+        color: base.$primary-color;
+        background: base.$admin-hover;
+      }
+
+      &.ant-menu-item-selected {
+        background: base.$admin-selected;
+        color: base.$primary-color;
+      }
+    }
+  }
+}

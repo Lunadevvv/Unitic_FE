@@ -1,0 +1,559 @@
+@use 'base';
+
+// ReportsPage Styles
+.reports-page {
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    padding: 20px;
+    background: base.$card-background;
+    border-radius: base.$border-radius;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    h2 {
+      margin-bottom: 8px;
+      color: base.$text-color;
+    }
+
+    .ant-typography {
+      color: base.$text-color;
+      opacity: 0.7;
+      margin: 0;
+    }
+
+    .ant-space {
+      .ant-select,
+      .ant-picker {
+        .ant-select-selector,
+        .ant-picker-input {
+          border-radius: 8px;
+          
+          &:hover {
+            border-color: base.$primary-color;
+          }
+        }
+
+        &.ant-select-focused,
+        &.ant-picker-focused {
+          .ant-select-selector,
+          .ant-picker-input {
+            border-color: base.$primary-color;
+            box-shadow: 0 0 0 2px rgba(base.$primary-color, 0.2);
+          }
+        }
+      }
+
+      .ant-btn {
+        border-radius: 8px;
+        font-weight: 500;
+
+        &.ant-btn-primary {
+          &:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+          }
+        }
+      }
+    }
+  }
+
+  .metrics-row {
+    margin-bottom: 24px;
+
+    .metric-card {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      overflow: hidden;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      }
+
+      .ant-card-body {
+        padding: 24px;
+      }
+
+      .ant-statistic {
+        .ant-statistic-title {
+          color: #666;
+          font-weight: 500;
+          margin-bottom: 8px;
+          font-size: 14px;
+        }
+
+        .ant-statistic-content {
+          color: #262626;
+
+          .ant-statistic-content-value {
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.2;
+          }
+
+          .ant-statistic-content-prefix {
+            font-size: 20px;
+            margin-right: 8px;
+          }
+
+          .ant-statistic-content-suffix {
+            font-size: 14px;
+            margin-left: 8px;
+          }
+        }
+      }
+    }
+  }
+
+  .reports-tabs {
+    .ant-tabs-nav {
+      background: white;
+      border-radius: 12px 12px 0 0;
+      padding: 0 24px;
+      margin-bottom: 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+      .ant-tabs-tab {
+        padding: 16px 24px;
+        font-weight: 500;
+        border-radius: 8px 8px 0 0;
+
+        &.ant-tabs-tab-active {
+          background: #f0f7ff;
+          
+          .ant-tabs-tab-btn {
+            color: #1890ff;
+            font-weight: 600;
+          }
+        }
+
+        &:hover {
+          .ant-tabs-tab-btn {
+            color: #1890ff;
+          }
+        }
+      }
+
+      .ant-tabs-ink-bar {
+        background: #1890ff;
+        height: 3px;
+        border-radius: 2px;
+      }
+    }
+
+    .ant-tabs-content-holder {
+      background: white;
+      border-radius: 0 0 12px 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .ant-tabs-tabpane {
+      padding: 24px;
+    }
+  }
+
+  .chart-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    height: 100%;
+
+    .ant-card-head {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-bottom: none;
+      border-radius: 12px 12px 0 0;
+
+      .ant-card-head-title {
+        color: white;
+        font-weight: 600;
+        font-size: 16px;
+      }
+    }
+
+    .ant-card-body {
+      padding: 24px;
+    }
+
+    // Chart-specific styles
+    .recharts-wrapper {
+      .recharts-cartesian-grid {
+        line {
+          stroke: #f0f0f0;
+        }
+      }
+
+      .recharts-tooltip-wrapper {
+        .recharts-default-tooltip {
+          background: white;
+          border: 1px solid #d9d9d9;
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+      }
+
+      .recharts-legend-wrapper {
+        .recharts-legend-item {
+          margin-right: 16px;
+          
+          .recharts-legend-item-text {
+            color: #666;
+            font-weight: 500;
+          }
+        }
+      }
+    }
+  }
+
+  .table-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    .ant-card-head {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      border-bottom: none;
+      border-radius: 12px 12px 0 0;
+
+      .ant-card-head-title {
+        color: white;
+        font-weight: 600;
+        font-size: 16px;
+      }
+    }
+
+    .ant-card-body {
+      padding: 0;
+    }
+
+    .ant-table {
+      .ant-table-thead > tr > th {
+        background: #fafafa;
+        font-weight: 600;
+        color: #262626;
+        border-bottom: 2px solid #f0f0f0;
+        padding: 16px;
+
+        &:first-child {
+          border-top-left-radius: 0;
+        }
+
+        &:last-child {
+          border-top-right-radius: 0;
+        }
+      }
+
+      .ant-table-tbody > tr > td {
+        border-bottom: 1px solid #f0f0f0;
+        padding: 16px;
+        vertical-align: middle;
+      }
+
+      .ant-table-tbody > tr:hover > td {
+        background: #f0f7ff;
+      }
+
+      .ant-table-tbody > tr:last-child > td {
+        &:first-child {
+          border-bottom-left-radius: 12px;
+        }
+
+        &:last-child {
+          border-bottom-right-radius: 12px;
+        }
+      }
+    }
+  }
+
+  // Progress bars styling
+  .ant-progress {
+    .ant-progress-bg {
+      border-radius: 4px;
+    }
+
+    .ant-progress-text {
+      font-weight: 600;
+      color: #262626;
+    }
+
+    &.ant-progress-status-active {
+      .ant-progress-bg {
+        background-image: linear-gradient(
+          45deg,
+          rgba(255, 255, 255, 0.15) 25%,
+          transparent 25%,
+          transparent 50%,
+          rgba(255, 255, 255, 0.15) 50%,
+          rgba(255, 255, 255, 0.15) 75%,
+          transparent 75%,
+          transparent
+        );
+        background-size: 16px 16px;
+        animation: ant-progress-active 1s linear infinite;
+      }
+    }
+  }
+
+  // Metric cards with gradient backgrounds
+  .metric-card {
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #1890ff, #722ed1);
+      border-radius: 12px 12px 0 0;
+    }
+
+    &:nth-child(1)::before {
+      background: linear-gradient(90deg, #52c41a, #87d068);
+    }
+
+    &:nth-child(2)::before {
+      background: linear-gradient(90deg, #1890ff, #40a9ff);
+    }
+
+    &:nth-child(3)::before {
+      background: linear-gradient(90deg, #faad14, #ffc53d);
+    }
+
+    &:nth-child(4)::before {
+      background: linear-gradient(90deg, #722ed1, #9254de);
+    }
+  }
+
+  // Statistic suffix styling for growth indicators
+  .ant-statistic-content-suffix {
+    font-size: 14px !important;
+    font-weight: 600;
+    
+    &[style*="color: rgb(82, 196, 26)"] {
+      background: #f6ffed;
+      border: 1px solid #b7eb8f;
+      padding: 2px 6px;
+      border-radius: 12px;
+      margin-left: 8px;
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 1200px) {
+  .reports-page {
+    .chart-card {
+      .recharts-wrapper {
+        font-size: 12px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .reports-page {
+    .page-header {
+      flex-direction: column;
+      gap: 16px;
+      align-items: stretch;
+
+      .ant-space {
+        flex-wrap: wrap;
+        width: 100%;
+
+        .ant-space-item {
+          flex: 1;
+        }
+
+        .ant-select,
+        .ant-picker {
+          width: 100%;
+        }
+      }
+    }
+
+    .metrics-row {
+      .ant-col {
+        margin-bottom: 16px;
+      }
+    }
+
+    .reports-tabs {
+      .ant-tabs-nav {
+        padding: 0 16px;
+      }
+
+      .ant-tabs-tabpane {
+        padding: 16px;
+      }
+    }
+
+    .chart-card {
+      .ant-card-body {
+        padding: 16px;
+      }
+
+      .recharts-wrapper {
+        font-size: 11px;
+
+        .recharts-legend-wrapper {
+          .recharts-legend-item {
+            margin-right: 8px;
+            margin-bottom: 8px;
+          }
+        }
+      }
+    }
+
+    .table-card {
+      .ant-table {
+        .ant-table-thead > tr > th,
+        .ant-table-tbody > tr > td {
+          padding: 12px 8px;
+          font-size: 13px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .reports-page {
+    .page-header {
+      padding: 16px;
+      margin-bottom: 16px;
+
+      h2 {
+        font-size: 20px;
+      }
+    }
+
+    .metrics-row {
+      .metric-card {
+        .ant-card-body {
+          padding: 16px;
+        }
+
+        .ant-statistic-content-value {
+          font-size: 24px !important;
+        }
+
+        .ant-statistic-content-prefix {
+          font-size: 16px !important;
+        }
+      }
+    }
+
+    .reports-tabs {
+      .ant-tabs-nav {
+        padding: 0 12px;
+
+        .ant-tabs-tab {
+          padding: 12px 16px;
+          font-size: 14px;
+        }
+      }
+
+      .ant-tabs-tabpane {
+        padding: 12px;
+      }
+    }
+
+    .chart-card {
+      .ant-card-head {
+        .ant-card-head-title {
+          font-size: 14px;
+        }
+      }
+
+      .ant-card-body {
+        padding: 12px;
+      }
+    }
+
+    .table-card {
+      .ant-table {
+        font-size: 12px;
+
+        .ant-table-thead > tr > th,
+        .ant-table-tbody > tr > td {
+          padding: 8px 6px;
+        }
+      }
+    }
+  }
+}
+
+// Animation for active progress bars
+@keyframes ant-progress-active {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 16px 0;
+  }
+}
+
+// Custom chart colors
+.recharts-wrapper {
+  .recharts-pie-sector {
+    stroke: white;
+    stroke-width: 2;
+  }
+
+  .recharts-area {
+    .recharts-area-area {
+      fill-opacity: 0.3;
+    }
+
+    .recharts-area-curve {
+      stroke-width: 2;
+    }
+  }
+
+  .recharts-bar {
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  .recharts-line {
+    .recharts-line-curve {
+      stroke-width: 3;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    }
+
+    .recharts-line-dots {
+      .recharts-line-dot {
+        stroke-width: 2;
+        r: 4;
+      }
+    }
+  }
+}
+
+// Tooltip enhancements
+.recharts-tooltip-wrapper {
+  .recharts-default-tooltip {
+    .recharts-tooltip-label {
+      font-weight: 600;
+      color: #262626;
+      margin-bottom: 4px;
+    }
+
+    .recharts-tooltip-item {
+      .recharts-tooltip-item-value {
+        font-weight: 600;
+        margin-left: 8px;
+      }
+    }
+  }
+}

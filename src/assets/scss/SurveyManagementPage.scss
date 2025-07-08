@@ -1,0 +1,53 @@
+@use 'base';
+
+.survey-management-page {
+  .ant-card {
+    border-radius: base.$border-radius;
+    box-shadow: 0 4px 20px rgba(base.$text-color, 0.08);
+    border: 1px solid base.$admin-border;
+
+    .ant-card-head {
+      background: base.$admin-card-bg;
+      border-bottom: 1px solid base.$admin-border;
+
+      .ant-card-head-title {
+        color: base.$text-color;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .ant-table {
+    .ant-table-thead > tr > th {
+      background: base.$admin-card-bg;
+      color: base.$text-color;
+      font-weight: 600;
+      border-bottom: 2px solid base.$admin-border;
+    }
+
+    .ant-table-tbody > tr:hover > td {
+      background: base.$admin-hover;
+    }
+  }
+
+  .ant-btn-primary {
+    background: base.$primary-color;
+    border-color: base.$primary-color;
+
+    &:hover {
+      background: base.$secondary-color;
+      border-color: base.$secondary-color;
+    }
+  }
+
+  .ant-modal {
+    .ant-modal-header {
+      background: base.$admin-card-bg;
+      border-bottom: 1px solid base.$admin-border;
+    }
+
+    .ant-modal-content {
+      border-radius: base.$border-radius;
+    }
+  }
+}

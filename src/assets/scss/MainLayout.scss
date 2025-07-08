@@ -1,0 +1,342 @@
+// MainLayout Styles
+.main-layout {
+  min-height: 100vh;
+
+  .main-header {
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 0;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+    }
+
+    .logo-section {
+      .logo {
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .logo-text {
+          font-size: 24px;
+          font-weight: 700;
+          background: linear-gradient(135deg, #1890ff, #722ed1);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+      }
+    }
+
+    .desktop-nav {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+
+      .nav-menu {
+        border: none;
+        background: transparent;
+
+        .ant-menu-item {
+          font-weight: 500;
+          font-size: 15px;
+          margin: 0 8px;
+          border-radius: 6px;
+          
+          &:hover {
+            background: #f0f7ff;
+          }
+
+          &.ant-menu-item-selected {
+            background: #e6f7ff;
+            color: #1890ff;
+
+            &::after {
+              border-bottom-color: #1890ff;
+            }
+          }
+
+          a {
+            color: inherit;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+          }
+        }
+      }
+    }
+
+    .user-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .action-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        color: #666;
+
+        &:hover {
+          background: #f0f7ff;
+          color: #1890ff;
+        }
+      }
+
+      .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background: #f0f7ff;
+        }
+
+        .user-name {
+          font-weight: 500;
+          color: #262626;
+        }
+
+        .premium-icon {
+          color: #faad14;
+          font-size: 16px;
+        }
+      }
+
+      .mobile-menu-btn {
+        display: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 6px;
+        font-size: 18px;
+
+        &:hover {
+          background: #f0f7ff;
+          color: #1890ff;
+        }
+      }
+    }
+
+    .mobile-nav {
+      display: none;
+      background: white;
+      border-top: 1px solid #f0f0f0;
+      padding: 10px 20px;
+
+      .mobile-menu {
+        border: none;
+
+        .ant-menu-item {
+          padding: 12px 16px;
+          margin: 2px 0;
+          border-radius: 6px;
+          
+          &:hover {
+            background: #f0f7ff;
+          }
+
+          &.ant-menu-item-selected {
+            background: #e6f7ff;
+            color: #1890ff;
+          }
+        }
+      }
+    }
+  }
+
+  .main-content {
+    min-height: calc(100vh - 64px - 200px);
+    padding: 0;
+  }
+
+  .main-footer {
+    background: #001529;
+    color: white;
+    padding: 40px 0 20px;
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+
+      .footer-section {
+        h4 {
+          color: white;
+          font-size: 16px;
+          font-weight: 600;
+          margin-bottom: 16px;
+        }
+
+        p {
+          color: rgba(255, 255, 255, 0.8);
+          line-height: 1.6;
+          margin: 0;
+        }
+
+        ul {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+
+          li {
+            margin-bottom: 8px;
+
+            a {
+              color: rgba(255, 255, 255, 0.8);
+              text-decoration: none;
+              transition: color 0.3s;
+
+              &:hover {
+                color: #1890ff;
+              }
+            }
+          }
+        }
+
+        .social-links {
+          display: flex;
+          gap: 12px;
+
+          a {
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+
+            &:hover {
+              background: #1890ff;
+              transform: translateY(-2px);
+            }
+          }
+        }
+      }
+    }
+
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 20px auto 0;
+      padding: 20px 20px 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+
+      p {
+        color: rgba(255, 255, 255, 0.6);
+        margin: 0;
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .main-layout {
+    .main-header {
+      .desktop-nav {
+        display: none;
+      }
+
+      .user-actions {
+        .desktop-only {
+          display: none;
+        }
+
+        .mobile-menu-btn {
+          display: flex;
+        }
+      }
+
+      .mobile-nav {
+        display: block;
+      }
+    }
+
+    .main-footer {
+      .footer-content {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        text-align: center;
+
+        .footer-section {
+          .social-links {
+            justify-content: center;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .main-layout {
+    .main-header {
+      .header-content {
+        padding: 0 15px;
+      }
+
+      .logo-section .logo .logo-text {
+        font-size: 20px;
+      }
+
+      .user-actions {
+        gap: 4px;
+
+        .action-btn {
+          width: 36px;
+          height: 36px;
+          font-size: 16px;
+        }
+
+        .user-profile {
+          padding: 4px 8px;
+        }
+      }
+    }
+  }
+}
+
+// Animation for mobile menu
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mobile-nav {
+  animation: slideDown 0.3s ease;
+}

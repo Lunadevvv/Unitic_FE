@@ -1,0 +1,383 @@
+// ContactPage Styles
+.contact-page {
+  .contact-hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 80px 0;
+    text-align: center;
+    color: white;
+
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 20px;
+
+      h1 {
+        color: white !important;
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .hero-description {
+        font-size: 1.2rem;
+        line-height: 1.8;
+        color: rgba(255, 255, 255, 0.9) !important;
+      }
+    }
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .contact-info-section {
+    padding: 80px 0;
+    background: white;
+
+    .contact-info-card {
+      text-align: center;
+      padding: 30px 20px;
+      border-radius: 16px;
+      border: none;
+      height: 100%;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+
+      &:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .info-icon {
+        font-size: 3rem;
+        color: #1890ff;
+        margin-bottom: 20px;
+        display: block;
+      }
+
+      h4 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: #262626;
+      }
+
+      .info-content {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1890ff !important;
+        margin-bottom: 8px;
+      }
+
+      .info-description {
+        color: #666 !important;
+        font-size: 14px;
+        margin: 0;
+      }
+    }
+  }
+
+  .contact-form-section {
+    padding: 80px 0;
+    background: #f8f9fa;
+
+    .contact-form-card {
+      border-radius: 16px;
+      border: none;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+
+      .ant-card-head {
+        border-bottom: 2px solid #f0f0f0;
+        border-radius: 16px 16px 0 0;
+
+        .ant-card-head-title {
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: #262626;
+        }
+      }
+
+      .contact-form {
+        .ant-form-item-label > label {
+          font-weight: 600;
+          color: #262626;
+        }
+
+        .ant-input,
+        .ant-input-affix-wrapper {
+          border-radius: 8px;
+          border: 2px solid #f0f0f0;
+          padding: 12px 15px;
+          font-size: 15px;
+
+          &:hover {
+            border-color: #1890ff;
+          }
+
+          &:focus,
+          &.ant-input-affix-wrapper-focused {
+            border-color: #1890ff;
+            box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.1);
+          }
+        }
+
+        .ant-input {
+          height: 45px;
+        }
+
+        .ant-btn {
+          height: 50px;
+          font-size: 16px;
+          font-weight: 600;
+          border-radius: 8px;
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(24, 144, 255, 0.3);
+          }
+        }
+      }
+    }
+
+    .map-card {
+      border-radius: 16px;
+      border: none;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+
+      .ant-card-head {
+        border-bottom: 2px solid #f0f0f0;
+        border-radius: 16px 16px 0 0;
+
+        .ant-card-head-title {
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: #262626;
+        }
+      }
+
+      .map-container {
+        margin-bottom: 20px;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .map-info {
+        h5 {
+          font-size: 1.2rem;
+          font-weight: 600;
+          margin-bottom: 12px;
+          color: #262626;
+        }
+
+        .ant-typography {
+          color: #666;
+          margin-bottom: 8px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          .anticon {
+            color: #1890ff;
+          }
+        }
+      }
+    }
+  }
+
+  .faq-section {
+    padding: 80px 0;
+    background: white;
+
+    .section-title {
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 50px;
+      color: #262626;
+    }
+
+    .faq-card {
+      border-radius: 12px;
+      border: none;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      }
+
+      .faq-question {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #262626;
+        margin-bottom: 12px;
+      }
+
+      .faq-answer {
+        color: #666;
+        line-height: 1.6;
+        margin: 0;
+      }
+    }
+  }
+
+  .cta-section {
+    padding: 60px 0;
+    background: #f8f9fa;
+
+    .cta-card {
+      text-align: center;
+      padding: 50px 30px;
+      border-radius: 20px;
+      border: none;
+      background: linear-gradient(135deg, #1890ff 0%, #722ed1 100%);
+      color: white;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+
+      h3 {
+        color: white !important;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+      }
+
+      .ant-typography {
+        color: rgba(255, 255, 255, 0.9) !important;
+        font-size: 1.1rem;
+        margin-bottom: 30px;
+      }
+
+      .ant-btn {
+        height: 50px;
+        padding: 0 30px;
+        font-size: 16px;
+        font-weight: 600;
+        border-radius: 25px;
+        border: 2px solid white;
+
+        &.ant-btn-primary {
+          background: white;
+          color: #1890ff;
+
+          &:hover {
+            background: transparent;
+            color: white;
+            transform: translateY(-2px);
+          }
+        }
+
+        &:not(.ant-btn-primary) {
+          background: transparent;
+          color: white;
+
+          &:hover {
+            background: white;
+            color: #1890ff;
+            transform: translateY(-2px);
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .contact-page {
+    .contact-hero {
+      padding: 60px 0;
+
+      .hero-content {
+        h1 {
+          font-size: 2.5rem;
+        }
+
+        .hero-description {
+          font-size: 1.1rem;
+        }
+      }
+    }
+
+    .contact-info-section,
+    .contact-form-section,
+    .faq-section {
+      padding: 60px 0;
+    }
+
+    .section-title {
+      font-size: 2rem !important;
+    }
+
+    .contact-info-card {
+      margin-bottom: 20px;
+    }
+
+    .cta-section {
+      padding: 40px 0;
+
+      .cta-card {
+        padding: 40px 20px;
+
+        h3 {
+          font-size: 1.5rem !important;
+        }
+
+        .ant-space {
+          flex-direction: column;
+          width: 100%;
+
+          .ant-btn {
+            width: 100%;
+            margin-bottom: 15px;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-page {
+    .contact-hero {
+      padding: 40px 0;
+
+      .hero-content {
+        h1 {
+          font-size: 2rem;
+        }
+
+        .hero-description {
+          font-size: 1rem;
+        }
+      }
+    }
+
+    .container {
+      padding: 0 15px;
+    }
+
+    .contact-info-section,
+    .contact-form-section,
+    .faq-section {
+      padding: 40px 0;
+    }
+
+    .section-title {
+      font-size: 1.8rem !important;
+    }
+
+    .contact-form-card .contact-form {
+      .ant-row .ant-col {
+        margin-bottom: 0;
+      }
+    }
+
+    .faq-card {
+      margin-bottom: 15px;
+    }
+  }
+}

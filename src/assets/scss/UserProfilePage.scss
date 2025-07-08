@@ -1,0 +1,324 @@
+@use 'base';
+
+// UserProfilePage Styles
+.user-profile-page {
+  padding: 20px;
+  min-height: 100vh;
+  background: base.$gradient-purple-blue;
+
+  .profile-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .profile-header-card {
+    margin-bottom: 24px;
+    border-radius: 16px;
+    @include base.card-shadow;
+    border: none;
+
+    .avatar-section {
+      text-align: center;
+      position: relative;
+
+      .ant-badge {
+        .ant-badge-count {
+          right: 10px;
+          top: 10px;
+        }
+      }
+
+      .avatar-upload {
+        margin-top: 10px;
+
+        .avatar-upload-btn {
+          color: #1890ff;
+          font-size: 12px;
+          
+          &:hover {
+            background: #f0f7ff;
+          }
+        }
+      }
+    }
+
+    .profile-info {
+      .profile-name {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+
+        h2 {
+          margin: 0;
+          color: #262626;
+        }
+
+        .membership-tag {
+          font-weight: 600;
+          border-radius: 12px;
+        }
+      }
+
+      .profile-details {
+        margin-bottom: 20px;
+
+        .ant-typography {
+          font-size: 14px;
+          color: #666;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+      }
+
+      .profile-stats {
+        .ant-statistic {
+          text-align: center;
+
+          .ant-statistic-title {
+            font-size: 12px;
+            color: #999;
+          }
+
+          .ant-statistic-content {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1890ff;
+          }
+        }
+      }
+    }
+  }
+
+  .profile-tabs {
+    .ant-tabs-nav {
+      background: white;
+      border-radius: 12px 12px 0 0;
+      margin: 0;
+      padding: 0 20px;
+
+      .ant-tabs-tab {
+        font-weight: 600;
+        padding: 16px 20px;
+
+        &.ant-tabs-tab-active {
+          .ant-tabs-tab-btn {
+            color: #1890ff;
+          }
+        }
+      }
+    }
+
+    .ant-tabs-content-holder {
+      background: white;
+      border-radius: 0 0 12px 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+      .ant-tabs-content {
+        padding: 24px;
+
+        .ant-card {
+          border: none;
+          box-shadow: none;
+
+          .ant-card-head {
+            border-bottom: 2px solid #f0f0f0;
+
+            .ant-card-head-title {
+              font-size: 18px;
+              font-weight: 600;
+              color: #262626;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .security-card {
+    .ant-list-item {
+      padding: 16px 0;
+      border-bottom: 1px solid #f0f0f0;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .ant-list-item-meta {
+        .ant-list-item-meta-avatar {
+          .anticon {
+            font-size: 20px;
+            color: #1890ff;
+          }
+        }
+
+        .ant-list-item-meta-title {
+          font-weight: 600;
+          margin-bottom: 4px;
+        }
+
+        .ant-list-item-meta-description {
+          color: #666;
+          font-size: 14px;
+        }
+      }
+    }
+
+    .ant-alert {
+      border-radius: 8px;
+      border: 1px solid #ff7875;
+
+      .ant-alert-message {
+        font-weight: 600;
+        color: #ff4d4f;
+      }
+    }
+  }
+
+  .achievement-card {
+    text-align: center;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+
+    &.earned {
+      border: 2px solid #52c41a;
+      background: linear-gradient(135deg, #f6ffed 0%, #d9f7be 100%);
+
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(82, 196, 26, 0.3);
+      }
+    }
+
+    &.locked {
+      border: 2px solid #d9d9d9;
+      background: #fafafa;
+      opacity: 0.6;
+    }
+
+    .achievement-content {
+      padding: 20px 10px;
+
+      .achievement-icon {
+        font-size: 32px;
+        margin-bottom: 12px;
+        color: #d9d9d9;
+
+        &.earned {
+          color: #faad14;
+        }
+      }
+
+      h5 {
+        margin: 8px 0 4px;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .ant-typography {
+        font-size: 12px;
+        margin-bottom: 8px;
+      }
+
+      .earned-tag {
+        border-radius: 12px;
+        font-size: 10px;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .user-profile-page {
+    padding: 15px;
+
+    .profile-header-card {
+      .ant-row {
+        text-align: center;
+      }
+
+      .profile-info {
+        .profile-name {
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .profile-stats {
+          .ant-col {
+            margin-bottom: 16px;
+          }
+        }
+      }
+    }
+
+    .profile-tabs {
+      .ant-tabs-nav {
+        padding: 0 10px;
+
+        .ant-tabs-tab {
+          padding: 12px 15px;
+          font-size: 14px;
+        }
+      }
+
+      .ant-tabs-content-holder {
+        .ant-tabs-content {
+          padding: 16px;
+        }
+      }
+    }
+
+    .achievement-card {
+      margin-bottom: 16px;
+
+      .achievement-content {
+        padding: 15px 8px;
+
+        .achievement-icon {
+          font-size: 24px;
+        }
+
+        h5 {
+          font-size: 13px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .user-profile-page {
+    .profile-header-card {
+      .profile-stats {
+        .ant-statistic {
+          .ant-statistic-content {
+            font-size: 16px;
+          }
+
+          .ant-statistic-title {
+            font-size: 11px;
+          }
+        }
+      }
+    }
+
+    .achievement-card .achievement-content {
+      padding: 12px 6px;
+
+      .achievement-icon {
+        font-size: 20px;
+      }
+
+      h5 {
+        font-size: 12px;
+      }
+
+      .ant-typography {
+        font-size: 11px;
+      }
+    }
+  }
+}

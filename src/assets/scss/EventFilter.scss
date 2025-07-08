@@ -1,0 +1,235 @@
+@use 'base';
+@use 'animations';
+
+.event-filter {
+  margin-bottom: 40px;
+  
+  .active-filters {
+    margin-bottom: 20px;
+    padding: 15px 20px;
+    background-color: rgba(base.$darker-bg, 0.6);
+    border-radius: base.$border-radius;
+    border: 1px solid rgba(base.$neon-blue, 0.15);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    
+    .chips-label {
+      font-weight: 500;
+      color: base.$light-text-color;
+      margin-bottom: 5px;
+    }
+    
+    .filter-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      
+      .filter-chip {
+        background: base.$neon-gradient-cyberpunk;
+        color: base.$white-1;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.9em;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s ease;
+        animation: fadeIn 0.3s ease;
+        
+        .anticon-close {
+          color: rgba(base.$white-1, 0.8);
+          margin-left: 5px;
+          
+          &:hover {
+            color: base.$white-1;
+          }
+        }
+        
+        &:hover {
+          box-shadow: base.$neon-shadow-blue;
+          transform: translateY(-2px);
+        }
+      }
+      
+      .clear-filters-btn {
+        color: base.$primary-color;
+        font-size: 0.9em;
+        margin-left: auto;
+        
+        &:hover {
+          color: base.$white-1;
+        }
+      }
+    }
+  }
+  
+  .filter-card {
+    background-color: rgba(base.$darker-bg, 0.7);
+    border-radius: base.$border-radius;
+    border: 1px solid rgba(base.$neon-blue, 0.15);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    
+    .ant-card-body {
+      padding: 24px;
+    }
+    
+    .filter-section {
+      margin-bottom: 15px;
+      
+      .filter-title {
+        color: base.$light-text-color;
+        font-size: 1.1em;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        
+        .filter-icon {
+          color: base.$primary-color;
+        }
+      }
+      
+      .date-picker {
+        width: 100%;
+        
+        .ant-picker-input > input {
+          color: base.$light-text-color;
+        }
+        
+        .ant-picker-suffix {
+          color: base.$primary-color;
+        }
+      }
+      
+      .price-slider {
+        .ant-slider-rail {
+          background-color: rgba(base.$light-text-color, 0.1);
+        }
+        
+        .ant-slider-track {
+          background-color: base.$primary-color;
+        }
+        
+        .ant-slider-handle {
+          border-color: base.$primary-color;
+          
+          &:focus {
+            box-shadow: 0 0 0 5px rgba(base.$primary-color, 0.2);
+          }
+        }
+      }
+      
+      .price-range-display {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+        color: rgba(base.$light-text-color, 0.8);
+        font-size: 0.9em;
+      }
+      
+      .location-select, .category-select {
+        .ant-select-selector {
+          background-color: rgba(base.$dark-bg, 0.3) !important;
+          border-color: rgba(base.$primary-color, 0.3) !important;
+        }
+        
+        .ant-select-selection-item {
+          color: base.$light-text-color;
+        }
+        
+        .ant-select-selection-placeholder {
+          color: rgba(base.$light-text-color, 0.5);
+        }
+      }
+    }
+    
+    .filter-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      
+      .filter-checkbox {
+        color: base.$light-text-color;
+        
+        .ant-checkbox-inner {
+          background-color: rgba(base.$dark-bg, 0.5);
+          border-color: rgba(base.$primary-color, 0.5);
+        }
+        
+        .ant-checkbox-checked .ant-checkbox-inner {
+          background-color: base.$primary-color;
+          border-color: base.$primary-color;
+        }
+      }
+    }
+    
+    .filter-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+      margin-top: 20px;
+      
+      button {
+        border-radius: 8px;
+        font-weight: 500;
+        background: base.$gradient-primary-neon !important; 
+        &[type="primary"] {
+          background: base.$gradient-primary-neon ; 
+          border: none;
+          transition: all base.$fast-transition ease;
+          
+          &:hover {
+            box-shadow: base.$neon-shadow-purple;
+            background-color: base.$gradient-primary-neon-dark;
+            transform: translateY(-2px);
+          }
+          
+          &:active {
+            background-color: base.$gradient-primary-neon-dark;
+            transform: translateY(0);
+          }
+        }
+      }
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .active-filters {
+      padding: 12px 15px;
+    }
+    
+    .filter-card .ant-card-body {
+      padding: 15px;
+    }
+    
+    .filter-section .filter-title {
+      font-size: 1em;
+    }
+    
+    .filter-options {
+      gap: 15px;
+    }
+    
+    .filter-actions {
+      flex-direction: column;
+      
+      button {
+        width: 100%;
+      }
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .active-filters .filter-chips {
+      .clear-filters-btn {
+        margin-left: 0;
+        margin-top: 10px;
+        width: 100%;
+      }
+    }
+  }
+}
