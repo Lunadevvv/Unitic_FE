@@ -8,7 +8,14 @@ import {
   CreditCardOutlined, BankOutlined, MobileOutlined,
   ArrowUpOutlined, ArrowDownOutlined 
 } from '@ant-design/icons';
-import MainLayout from '../../components/layout/MainLayout';
+import { motion } from 'framer-motion';
+import PageAnimationWrapper from '../../components/common/PageAnimationWrapper';
+import { 
+  useSectionAnimation, 
+  animationVariants, 
+  hoverAnimations 
+} from '../../hooks/useAnimations';
+import '../../assets/scss/UserWalletPage.scss';
 
 const { Option } = Select;
 
@@ -19,245 +26,332 @@ const UserWalletPage = () => {
   const [topUpModalVisible, setTopUpModalVisible] = useState(false);
   const [form] = Form.useForm();
 
-  // Mock data
-  const mockTransactions = [
-    {
-      id: 1,
-      type: 'topup',
-      amount: 500000,
-      description: 'Nạp tiền qua MoMo',
-      status: 'completed',
-      createdAt: '2024-01-15 10:30:00',
-      method: 'momo'
-    },
-    {
-      id: 2,
-      type: 'payment',
-      amount: -150000,
-      description: 'Mua vé Workshop UX/UI Design',
-      status: 'completed',
-      createdAt: '2024-01-15 14:20:00',
-      eventName: 'Workshop UX/UI Design 2024'
-    },
-    {
-      id: 3,
-      type: 'topup',
-      amount: 200000,
-      description: 'Nạp tiền qua ngân hàng',
-      status: 'pending',
-      createdAt: '2024-01-16 09:15:00',
-      method: 'bank'
-    }
-  ];
+  // Section animations
+  const balanceSection = useSectionAnimation();
+  const actionsSection = useSectionAnimation();
+  const transactionsSection = useSectionAnimation();
 
   useEffect(() => {
-    loadWalletData();
+    // Simulate API call
+    const mockTransactions = [
+      {
+        id: 1,
+        type: 'topup',
+        amount: 500000,
+        description: 'Nạp tiền qua MoMo',
+        status: 'completed',
+        createdAt: '2024-01-15 10:30:00',
+        method: 'momo'
+      },
+      {
+        id: 2,
+        type: 'payment',
+        amount: -150000,
+        description: 'Mua vé Workshop UX/UI Design',
+        status: 'completed',
+        createdAt: '2024-01-15 14:20:00',
+        eventName: 'Workshop UX/UI Design 2024'
+      },
+      {
+        id: 3,
+        type: 'topup',
+        amount: 200000,
+        description: 'Nạp tiền qua ngân hàng',
+        status: 'pending',
+        createdAt: '2024-01-16 09:15:00',
+        method: 'bank'
+      },
+      {
+        id: 4,
+        type: 'payment',
+        amount: -75000,
+        description: 'Mua vé Seminar AI in Education',
+        status: 'completed',
+        createdAt: '2024-01-17 16:45:00',
+        eventName: 'Seminar AI in Education'
+      },
+      {
+        id: 5,
+        type: 'topup',
+        amount: 1000000,
+        description: 'Nạp tiền qua thẻ tín dụng',
+        status: 'completed',
+        createdAt: '2024-01-18 11:20:00',
+        method: 'credit_card'
+      }
+    ];
+
+    setLoading(true);
+    setTimeout(() => {
+      setTransactions(mockTransactions);
+      setBalance(1275000); // 500000 + 200000 + 1000000 - 150000 - 75000 - pending
+      setLoading(false);
+    }, 1000);
   }, []);
 
-  const loadWalletData = async () => {
+  const handleTopUp = async (values) => {
     setLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setBalance(350000); // Current balance after transactions
-      setTransactions(mockTransactions);
-    } catch {
-      message.error('Không thể tải thông tin ví!');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleTopUp = async (values) => {
-    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
       const newTransaction = {
-        id: Date.now(),
+        id: transactions.length + 1,
         type: 'topup',
-        amount: values.amount,
+        amount: parseInt(values.amount),
         description: `Nạp tiền qua ${getMethodName(values.method)}`,
-        status: 'pending',
+        status: 'completed',
         createdAt: new Date().toLocaleString('vi-VN'),
         method: values.method
       };
 
       setTransactions(prev => [newTransaction, ...prev]);
-      
-      // Simulate processing
-      setTimeout(() => {
-        setTransactions(prev => prev.map(t => 
-          t.id === newTransaction.id 
-            ? { ...t, status: 'completed' }
-            : t
-        ));
-        setBalance(prev => prev + values.amount);
-        message.success('Nạp tiền thành công!');
-      }, 3000);
-
+      setBalance(prev => prev + parseInt(values.amount));
       setTopUpModalVisible(false);
       form.resetFields();
-      message.info('Đang xử lý giao dịch...');
+      message.success('Nạp tiền thành công!');
     } catch {
-      message.error('Không thể thực hiện giao dịch!');
+      message.error('Có lỗi xảy ra, vui lòng thử lại!');
+    } finally {
+      setLoading(false);
     }
   };
 
   const getMethodName = (method) => {
-    const names = {
+    const methods = {
       'momo': 'MoMo',
       'zalopay': 'ZaloPay',
       'bank': 'Ngân hàng',
-      'vnpay': 'VNPay'
+      'credit_card': 'Thẻ tín dụng'
     };
-    return names[method] || method;
+    return methods[method] || method;
   };
 
   const getMethodIcon = (method) => {
     const icons = {
       'momo': <MobileOutlined style={{ color: '#d82d8b' }} />,
       'zalopay': <MobileOutlined style={{ color: '#0068ff' }} />,
-      'bank': <BankOutlined style={{ color: '#1890ff' }} />,
-      'vnpay': <CreditCardOutlined style={{ color: '#1890ff' }} />
+      'bank': <BankOutlined style={{ color: '#52c41a' }} />,
+      'credit_card': <CreditCardOutlined style={{ color: '#fa8c16' }} />
     };
-    return icons[method] || <CreditCardOutlined />;
+    return icons[method] || <WalletOutlined />;
   };
 
-  const getTransactionIcon = (type) => {
-    return type === 'topup' 
-      ? <ArrowUpOutlined style={{ color: '#52c41a' }} />
-      : <ArrowDownOutlined style={{ color: '#f5222d' }} />;
+  const getStatusTag = (status) => {
+    const statusConfig = {
+      'completed': { color: 'success', text: 'Hoàn thành' },
+      'pending': { color: 'processing', text: 'Đang xử lý' },
+      'failed': { color: 'error', text: 'Thất bại' }
+    };
+    const config = statusConfig[status] || { color: 'default', text: status };
+    return <Tag color={config.color}>{config.text}</Tag>;
   };
 
-  const getStatusColor = (status) => {
-    const colors = {
-      'completed': 'green',
-      'pending': 'orange',
-      'failed': 'red'
-    };
-    return colors[status] || 'default';
-  };
-
-  const getStatusText = (status) => {
-    const texts = {
-      'completed': 'Thành công',
-      'pending': 'Đang xử lý',
-      'failed': 'Thất bại'
-    };
-    return texts[status] || status;
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND'
+    }).format(amount);
   };
 
   const columns = [
     {
-      title: 'Thời gian',
-      dataIndex: 'createdAt',
-      key: 'createdAt',
-      width: 150,
-    },
-    {
       title: 'Loại giao dịch',
-      key: 'transactionType',
+      key: 'type',
       render: (_, record) => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          {getTransactionIcon(record.type)}
-          <span>
-            {record.type === 'topup' ? 'Nạp tiền' : 'Thanh toán'}
-          </span>
-        </div>
-      ),
+        <Space>
+          {record.type === 'topup' ? (
+            <ArrowUpOutlined style={{ color: '#52c41a' }} />
+          ) : (
+            <ArrowDownOutlined style={{ color: '#ff4d4f' }} />
+          )}
+          {record.method && getMethodIcon(record.method)}
+          <span>{record.type === 'topup' ? 'Nạp tiền' : 'Thanh toán'}</span>
+        </Space>
+      )
     },
     {
       title: 'Mô tả',
       dataIndex: 'description',
-      key: 'description',
-      render: (text, record) => (
-        <div>
-          <div>{text}</div>
-          {record.eventName && (
-            <div style={{ fontSize: '12px', color: '#666' }}>
-              {record.eventName}
-            </div>
-          )}
-        </div>
-      ),
-    },
-    {
-      title: 'Phương thức',
-      key: 'method',
-      render: (_, record) => (
-        record.method ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            {getMethodIcon(record.method)}
-            <span>{getMethodName(record.method)}</span>
-          </div>
-        ) : '-'
-      ),
+      key: 'description'
     },
     {
       title: 'Số tiền',
-      dataIndex: 'amount',
       key: 'amount',
-      align: 'right',
-      render: (amount) => (
+      render: (_, record) => (
         <span style={{ 
-          color: amount > 0 ? '#52c41a' : '#f5222d',
+          color: record.amount > 0 ? '#52c41a' : '#ff4d4f',
           fontWeight: 'bold'
         }}>
-          {amount > 0 ? '+' : ''}{amount.toLocaleString('vi-VN')} VNĐ
+          {record.amount > 0 ? '+' : ''}{formatCurrency(record.amount)}
         </span>
-      ),
+      )
     },
     {
       title: 'Trạng thái',
-      dataIndex: 'status',
       key: 'status',
-      render: (status) => (
-        <Tag color={getStatusColor(status)}>
-          {getStatusText(status)}
-        </Tag>
-      ),
+      render: (_, record) => getStatusTag(record.status)
     },
+    {
+      title: 'Thời gian',
+      dataIndex: 'createdAt',
+      key: 'createdAt'
+    }
   ];
 
+  const heroSection = (
+    <motion.section 
+      className="wallet-hero"
+      variants={animationVariants.fadeInVariant}
+      initial="hidden"
+      animate="visible"
+    >
+      <div className="hero-content">
+        <motion.div
+          variants={animationVariants.titleTextVariant}
+        >
+          <h1>
+            <WalletOutlined style={{ marginRight: 12, color: '#1890ff' }} />
+            Ví của tôi
+          </h1>
+        </motion.div>
+        <motion.div
+          variants={animationVariants.itemVariant}
+        >
+          <p>
+            Quản lý số dư, nạp tiền và theo dõi lịch sử giao dịch của bạn
+          </p>
+        </motion.div>
+      </div>
+    </motion.section>
+  );
+
   return (
-    <MainLayout>
-      <div className="user-wallet-page" style={{ padding: '24px' }}>
-        <Row gutter={24}>
-          <Col span={24}>
-            <Card>
-              <Row gutter={24} align="middle">
-                <Col span={12}>
-                  <Statistic
-                    title="Số dư ví"
-                    value={balance}
-                    precision={0}
-                    valueStyle={{ color: '#3f8600', fontSize: '28px' }}
-                    prefix={<WalletOutlined />}
-                    suffix="VNĐ"
-                  />
-                </Col>
-                <Col span={12} style={{ textAlign: 'right' }}>
-                  <Space>
-                    <Button
-                      type="primary"
-                      size="large"
-                      icon={<PlusOutlined />}
-                      onClick={() => setTopUpModalVisible(true)}
-                    >
-                      Nạp tiền
-                    </Button>
-                  </Space>
-                </Col>
-              </Row>
-            </Card>
+    <PageAnimationWrapper 
+      className="user-wallet-page"
+      showFloatingElements={true}
+      floatingVariant="wallet"
+      heroSection={heroSection}
+      headerProps={{
+        showAnimation: true,
+        transparent: false,
+        showCart: true,
+        showNotifications: true
+      }}
+    >
+      {/* Balance Section */}
+      <motion.div
+        ref={balanceSection.ref}
+        variants={animationVariants.staggerContainerVariant}
+        initial="hidden"
+        animate={balanceSection.inView ? "visible" : "hidden"}
+      >
+        <Row gutter={[24, 24]} style={{ marginBottom: 24 }}>
+          <Col xs={24} sm={12} lg={8}>
+            <motion.div
+              variants={animationVariants.itemVariant}
+              {...hoverAnimations.cardHover}
+            >
+              <Card>
+                <Statistic
+                  title="Số dư hiện tại"
+                  value={balance}
+                  formatter={(value) => formatCurrency(value)}
+                  prefix={<WalletOutlined />}
+                  valueStyle={{ color: '#1890ff', fontSize: '2rem' }}
+                />
+              </Card>
+            </motion.div>
+          </Col>
+
+          <Col xs={24} sm={12} lg={8}>
+            <motion.div
+              variants={animationVariants.itemVariant}
+              {...hoverAnimations.cardHover}
+            >
+              <Card>
+                <Statistic
+                  title="Tổng nạp trong tháng"
+                  value={1700000}
+                  formatter={(value) => formatCurrency(value)}
+                  prefix={<ArrowUpOutlined />}
+                  valueStyle={{ color: '#52c41a' }}
+                />
+              </Card>
+            </motion.div>
+          </Col>
+
+          <Col xs={24} sm={12} lg={8}>
+            <motion.div
+              variants={animationVariants.itemVariant}
+              {...hoverAnimations.cardHover}
+            >
+              <Card>
+                <Statistic
+                  title="Tổng chi trong tháng"
+                  value={225000}
+                  formatter={(value) => formatCurrency(value)}
+                  prefix={<ArrowDownOutlined />}
+                  valueStyle={{ color: '#ff4d4f' }}
+                />
+              </Card>
+            </motion.div>
           </Col>
         </Row>
+      </motion.div>
 
-        <Divider />
+      {/* Quick Actions */}
+      <motion.div
+        ref={actionsSection.ref}
+        variants={animationVariants.slideInLeftVariant}
+        initial="hidden"
+        animate={actionsSection.inView ? "visible" : "hidden"}
+      >
+        <Card title="Thao tác nhanh" style={{ marginBottom: 24 }}>
+          <Space size="large" wrap>
+            <motion.div {...hoverAnimations.buttonHover}>
+              <Button 
+                type="primary" 
+                size="large" 
+                icon={<PlusOutlined />}
+                onClick={() => setTopUpModalVisible(true)}
+              >
+                Nạp tiền
+              </Button>
+            </motion.div>
+            <motion.div {...hoverAnimations.buttonHover}>
+              <Button 
+                size="large" 
+                icon={<HistoryOutlined />}
+              >
+                Lịch sử giao dịch
+              </Button>
+            </motion.div>
+            <motion.div {...hoverAnimations.buttonHover}>
+              <Button 
+                size="large" 
+                icon={<CreditCardOutlined />}
+              >
+                Quản lý thẻ
+              </Button>
+            </motion.div>
+          </Space>
+        </Card>
+      </motion.div>
 
+      {/* Transaction History */}
+      <motion.div
+        ref={transactionsSection.ref}
+        variants={animationVariants.slideInRightVariant}
+        initial="hidden"
+        animate={transactionsSection.inView ? "visible" : "hidden"}
+      >
         <Card 
           title={
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <HistoryOutlined />
-              <span>Lịch sử giao dịch</span>
-            </div>
+            <span>
+              <HistoryOutlined style={{ marginRight: 8 }} />
+              Lịch sử giao dịch
+            </span>
           }
         >
           <Table
@@ -268,92 +362,97 @@ const UserWalletPage = () => {
             pagination={{
               pageSize: 10,
               showSizeChanger: true,
-              showTotal: (total, range) =>
-                `${range[0]}-${range[1]} của ${total} giao dịch`,
+              showQuickJumper: true,
+              showTotal: (total) => `Tổng ${total} giao dịch`
             }}
           />
         </Card>
+      </motion.div>
 
-        <Modal
-          title="Nạp tiền vào ví"
-          open={topUpModalVisible}
-          onCancel={() => setTopUpModalVisible(false)}
-          onOk={() => form.submit()}
-          width={500}
+      {/* Top Up Modal */}
+      <Modal
+        title={
+          <span>
+            <PlusOutlined style={{ marginRight: 8 }} />
+            Nạp tiền vào ví
+          </span>
+        }
+        visible={topUpModalVisible}
+        onCancel={() => setTopUpModalVisible(false)}
+        footer={null}
+        width={500}
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleTopUp}
         >
-          <Form
-            form={form}
-            layout="vertical"
-            onFinish={handleTopUp}
+          <Form.Item
+            name="amount"
+            label="Số tiền nạp"
+            rules={[
+              { required: true, message: 'Vui lòng nhập số tiền!' },
+              { pattern: /^\d+$/, message: 'Số tiền phải là số nguyên!' }
+            ]}
           >
-            <Form.Item
-              name="amount"
-              label="Số tiền nạp"
-              rules={[
-                { required: true, message: 'Vui lòng nhập số tiền!' },
-                { type: 'number', min: 10000, message: 'Số tiền tối thiểu 10,000 VNĐ!' },
-                { type: 'number', max: 10000000, message: 'Số tiền tối đa 10,000,000 VNĐ!' }
-              ]}
-            >
-              <Input
-                type="number"
-                placeholder="Nhập số tiền"
-                suffix="VNĐ"
-                size="large"
-              />
-            </Form.Item>
+            <Input
+              size="large"
+              placeholder="Nhập số tiền"
+              suffix="VNĐ"
+              style={{ fontSize: '16px' }}
+            />
+          </Form.Item>
 
-            <Form.Item
-              name="method"
-              label="Phương thức thanh toán"
-              rules={[{ required: true, message: 'Vui lòng chọn phương thức!' }]}
-            >
-              <Select placeholder="Chọn phương thức thanh toán" size="large">
-                <Option value="momo">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <MobileOutlined style={{ color: '#d82d8b' }} />
-                    MoMo
-                  </div>
-                </Option>
-                <Option value="zalopay">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <MobileOutlined style={{ color: '#0068ff' }} />
-                    ZaloPay
-                  </div>
-                </Option>
-                <Option value="bank">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <BankOutlined style={{ color: '#1890ff' }} />
-                    Chuyển khoản ngân hàng
-                  </div>
-                </Option>
-                <Option value="vnpay">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <CreditCardOutlined style={{ color: '#1890ff' }} />
-                    VNPay
-                  </div>
-                </Option>
-              </Select>
-            </Form.Item>
+          <Form.Item
+            name="method"
+            label="Phương thức thanh toán"
+            rules={[{ required: true, message: 'Vui lòng chọn phương thức!' }]}
+          >
+            <Select size="large" placeholder="Chọn phương thức thanh toán">
+              <Option value="momo">
+                <Space>
+                  <MobileOutlined style={{ color: '#d82d8b' }} />
+                  MoMo
+                </Space>
+              </Option>
+              <Option value="zalopay">
+                <Space>
+                  <MobileOutlined style={{ color: '#0068ff' }} />
+                  ZaloPay
+                </Space>
+              </Option>
+              <Option value="bank">
+                <Space>
+                  <BankOutlined style={{ color: '#52c41a' }} />
+                  Chuyển khoản ngân hàng
+                </Space>
+              </Option>
+              <Option value="credit_card">
+                <Space>
+                  <CreditCardOutlined style={{ color: '#fa8c16' }} />
+                  Thẻ tín dụng
+                </Space>
+              </Option>
+            </Select>
+          </Form.Item>
 
-            <div style={{ 
-              background: '#f6f8fa', 
-              padding: '12px', 
-              borderRadius: '6px',
-              fontSize: '12px',
-              color: '#666'
-            }}>
-              <p style={{ margin: 0 }}>Lưu ý:</p>
-              <ul style={{ margin: '4px 0 0 16px' }}>
-                <li>Số tiền nạp tối thiểu: 10,000 VNĐ</li>
-                <li>Số tiền nạp tối đa: 10,000,000 VNĐ/lần</li>
-                <li>Phí giao dịch có thể được tính thêm tùy theo phương thức</li>
-              </ul>
-            </div>
-          </Form>
-        </Modal>
-      </div>
-    </MainLayout>
+          <Divider />
+
+          <Form.Item style={{ marginBottom: 0 }}>
+            <Space style={{ width: '100%', justifyContent: 'flex-end' }}>
+              <Button onClick={() => setTopUpModalVisible(false)}>
+                Hủy
+              </Button>
+              <motion.div {...hoverAnimations.buttonHover}>
+                <Button type="primary" htmlType="submit" loading={loading}>
+                  Nạp tiền
+                </Button>
+              </motion.div>
+            </Space>
+          </Form.Item>
+        </Form>
+      </Modal>
+    </PageAnimationWrapper>
   );
 };
 

@@ -5,12 +5,17 @@ import {
 } from 'antd';
 import {
   SearchOutlined, QuestionCircleOutlined, BookOutlined,
-   MessageOutlined, PhoneOutlined,
-  MailOutlined, DownloadOutlined, UserOutlined,
-  ClockCircleOutlined, CheckCircleOutlined,
+  MessageOutlined, PhoneOutlined, MailOutlined, DownloadOutlined, 
+  UserOutlined, ClockCircleOutlined, CheckCircleOutlined,
   VideoCameraFilled
 } from '@ant-design/icons';
-import MainLayout from '../components/layout/MainLayout';
+import { motion } from 'framer-motion';
+import PageAnimationWrapper from '../components/common/PageAnimationWrapper';
+import { 
+  useSectionAnimation, 
+  animationVariants, 
+  hoverAnimations 
+} from '../hooks/useAnimations';
 import '../assets/scss/HelpPage.scss';
 
 const { Title, Paragraph, Text } = Typography;
@@ -19,6 +24,12 @@ const { TabPane } = Tabs;
 
 const HelpPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Section animations
+  const quickHelpSection = useSectionAnimation();
+  const faqSection = useSectionAnimation();
+  const resourcesSection = useSectionAnimation();
+  const supportSection = useSectionAnimation();
 
   const faqData = [
     {
@@ -50,8 +61,8 @@ const HelpPage = () => {
           answer: 'Chính sách hoàn tiền phụ thuộc vào từng sự kiện. Thường vé có thể được hủy và hoàn 80% giá trị trong vòng 7 ngày trước sự kiện.'
         },
         {
-          question: 'Khi nào tôi nhận được hóa đơn VAT?',
-          answer: 'Hóa đơn VAT sẽ được gửi qua email trong vòng 24 giờ sau khi thanh toán thành công. Bạn cũng có thể tải xuống từ tài khoản cá nhân.'
+          question: 'Thanh toán không thành công, tôi phải làm gì?',
+          answer: 'Vui lòng kiểm tra thông tin thẻ, hạn mức, hoặc thử phương thức thanh toán khác. Nếu vẫn lỗi, liên hệ ngân hàng hoặc hotline hỗ trợ.'
         }
       ]
     },
@@ -59,337 +70,303 @@ const HelpPage = () => {
       category: 'Tài khoản',
       questions: [
         {
-          question: 'Làm sao để tạo tài khoản UniTic?',
-          answer: 'Nhấp vào "Đăng ký" ở góc phải màn hình, điền thông tin cần thiết và xác nhận email. Bạn cũng có thể đăng ký bằng tài khoản Google.'
+          question: 'Tôi quên mật khẩu, làm sao để lấy lại?',
+          answer: 'Nhấn "Quên mật khẩu" tại trang đăng nhập, nhập email đã đăng ký. Chúng tôi sẽ gửi link reset mật khẩu đến email của bạn.'
         },
         {
-          question: 'Tôi quên mật khẩu, phải làm sao?',
-          answer: 'Nhấp "Quên mật khẩu" ở trang đăng nhập, nhập email đã đăng ký. Chúng tôi sẽ gửi link đặt lại mật khẩu qua email.'
-        },
-        {
-          question: 'Làm thế nào để nâng cấp tài khoản Premium?',
-          answer: 'Vào "Cài đặt tài khoản" > "Nâng cấp Premium". Tài khoản Premium có nhiều ưu đãi như giảm phí dịch vụ, ưu tiên đặt vé.'
+          question: 'Làm thế nào để cập nhật thông tin cá nhân?',
+          answer: 'Đăng nhập tài khoản > Thông tin cá nhân > Chỉnh sửa thông tin > Lưu thay đổi.'
         }
       ]
     }
   ];
 
-  const tutorials = [
-    {
-      title: 'Hướng dẫn đặt vé lần đầu',
-      description: 'Video hướng dẫn chi tiết cách đặt vé từ A-Z',
-      duration: '5 phút',
-      type: 'video',
-      thumbnail: '/src/assets/img/demo.jpg'
-    },
-    {
-      title: 'Cách sử dụng mã giảm giá',
-      description: 'Hướng dẫn áp dụng mã giảm giá khi thanh toán',
-      duration: '3 phút',
-      type: 'guide',
-      thumbnail: '/src/assets/img/demo.jpg'
-    },
-    {
-      title: 'Quản lý vé đã mua',
-      description: 'Cách xem, tải xuống và chia sẻ vé',
-      duration: '4 phút',
-      type: 'video',
-      thumbnail: '/src/assets/img/demo.jpg'
-    }
-  ];
-
   const supportChannels = [
     {
-      channel: 'Hotline',
+      icon: <PhoneOutlined />,
+      title: 'Hotline hỗ trợ',
       info: '1900-xxxx',
       description: 'Hỗ trợ 24/7',
-      icon: <PhoneOutlined />,
+      action: 'Gọi ngay',
       color: '#52c41a'
     },
     {
-      channel: 'Email',
-      info: 'support@unitic.com',
-      description: 'Phản hồi trong 2 giờ',
-      icon: <MailOutlined />,
+      icon: <MessageOutlined />,
+      title: 'Live Chat',
+      info: 'Chat trực tuyến',
+      description: 'Phản hồi trong 5 phút',
+      action: 'Bắt đầu chat',
       color: '#1890ff'
     },
     {
-      channel: 'Live Chat',
-      info: 'Chat ngay',
-      description: 'Online 8:00-22:00',
-      icon: <MessageOutlined />,
+      icon: <MailOutlined />,
+      title: 'Email hỗ trợ',
+      info: 'support@unitic.com',
+      description: 'Phản hồi trong 24h',
+      action: 'Gửi email',
       color: '#722ed1'
+    },
+    {
+      icon: <VideoCameraFilled />,
+      title: 'Video hướng dẫn',
+      info: 'Thư viện video',
+      description: 'Hướng dẫn chi tiết',
+      action: 'Xem video',
+      color: '#fa541c'
     }
   ];
 
-  const filteredFAQ = faqData.map(category => ({
-    ...category,
-    questions: category.questions.filter(
-      q => q.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
-           q.answer.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  })).filter(category => category.questions.length > 0);
+  const resources = [
+    {
+      icon: <BookOutlined />,
+      title: 'Hướng dẫn sử dụng',
+      description: 'Tài liệu chi tiết về cách sử dụng UniTic',
+      action: 'Tải xuống'
+    },
+    {
+      icon: <QuestionCircleOutlined />,
+      title: 'FAQ tổng hợp',
+      description: 'Câu hỏi thường gặp và giải đáp',
+      action: 'Xem chi tiết'
+    },
+    {
+      icon: <UserOutlined />,
+      title: 'Cộng đồng người dùng',
+      description: 'Kết nối và chia sẻ kinh nghiệm',
+      action: 'Tham gia'
+    }
+  ];
+
+  const heroSection = (
+    <motion.section 
+      className="help-hero"
+      variants={animationVariants.fadeInVariant}
+      initial="hidden"
+      animate="visible"
+    >
+      <div className="hero-content">
+        <motion.div
+          variants={animationVariants.titleTextVariant}
+        >
+          <Title level={1}>Trung tâm hỗ trợ</Title>
+        </motion.div>
+        <motion.div
+          variants={animationVariants.itemVariant}
+        >
+          <Paragraph className="hero-description">
+            Tìm kiếm thông tin, hướng dẫn và nhận hỗ trợ cho mọi thắc mắc về UniTic
+          </Paragraph>
+        </motion.div>
+        <motion.div
+          className="search-section"
+          variants={animationVariants.itemVariant}
+        >
+          <Input.Group compact className="help-search">
+            <Input
+              size="large"
+              placeholder="Tìm kiếm câu hỏi hoặc từ khóa..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{ width: 'calc(100% - 80px)' }}
+            />
+            <Button 
+              type="primary" 
+              size="large" 
+              icon={<SearchOutlined />}
+              style={{ width: '80px' }}
+            >
+              Tìm
+            </Button>
+          </Input.Group>
+        </motion.div>
+      </div>
+    </motion.section>
+  );
 
   return (
-    <MainLayout>
-      <div className="help-page">
-        {/* Hero Section */}
-        <section className="help-hero">
-          <div className="hero-content">
-            <Title level={1}>Trung tâm trợ giúp</Title>
-            <Paragraph className="hero-description">
-              Tìm câu trả lời cho các câu hỏi thường gặp hoặc liên hệ với chúng tôi để được hỗ trợ
-            </Paragraph>
-            
-            <div className="search-section">
-              <Input.Search
-                placeholder="Tìm kiếm câu hỏi..."
-                enterButton={<SearchOutlined />}
-                size="large"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="help-search"
-              />
-            </div>
-          </div>
-        </section>
+    <PageAnimationWrapper 
+      className="help-page"
+      showFloatingElements={true}
+      floatingVariant="help"
+      heroSection={heroSection}
+      headerProps={{
+        showAnimation: true,
+        transparent: false,
+        showCart: true,
+        showNotifications: true
+      }}
+    >
+      <div className="container">
+        {/* Quick Help Section */}
+        <motion.section 
+          className="quick-help-section"
+          ref={quickHelpSection.ref}
+          variants={animationVariants.staggerContainerVariant}
+          initial="hidden"
+          animate={quickHelpSection.inView ? "visible" : "hidden"}
+        >
+          <motion.div
+            variants={animationVariants.titleRevealVariant}
+          >
+            <Title level={2} className="section-title">Hỗ trợ nhanh</Title>
+          </motion.div>
 
-        <div className="container">
-          {/* Quick Help */}
-          <section className="quick-help-section">
-            <Title level={2} className="section-title">Trợ giúp nhanh</Title>
-            <Row gutter={[24, 24]}>
-              {supportChannels.map((channel, index) => (
-                <Col xs={24} sm={8} key={index}>
+          <Row gutter={[24, 24]}>
+            {supportChannels.map((channel, index) => (
+              <Col xs={24} sm={12} lg={6} key={index}>
+                <motion.div
+                  variants={animationVariants.itemVariant}
+                  {...hoverAnimations.cardHover}
+                >
                   <Card className="support-channel-card" hoverable>
                     <div className="channel-icon" style={{ color: channel.color }}>
                       {channel.icon}
                     </div>
-                    <Title level={4}>{channel.channel}</Title>
+                    <Title level={4}>{channel.title}</Title>
                     <Text className="channel-info">{channel.info}</Text>
                     <Text className="channel-description">{channel.description}</Text>
-                    <Button type="primary" style={{ backgroundColor: channel.color }}>
-                      Liên hệ ngay
-                    </Button>
+                    <motion.div {...hoverAnimations.buttonHover}>
+                      <Button type="primary" style={{ backgroundColor: channel.color }}>
+                        {channel.action}
+                      </Button>
+                    </motion.div>
                   </Card>
-                </Col>
-              ))}
-            </Row>
-          </section>
+                </motion.div>
+              </Col>
+            ))}
+          </Row>
+        </motion.section>
 
-          {/* Main Content */}
-          <Row gutter={[32, 32]}>
-            {/* FAQ Section */}
-            <Col xs={24} lg={16}>
-              <Card title="Câu hỏi thường gặp" className="faq-card">
-                {searchTerm && (
-                  <Alert
-                    message={`Tìm thấy ${filteredFAQ.reduce((total, cat) => total + cat.questions.length, 0)} kết quả cho "${searchTerm}"`}
-                    type="info"
-                    style={{ marginBottom: '20px' }}
-                  />
-                )}
-                
-                <Tabs defaultActiveKey="0" className="faq-tabs">
-                  {filteredFAQ.map((category, index) => (
-                    <TabPane 
-                      tab={`${category.category} (${category.questions.length})`} 
-                      key={index}
-                    >
-                      <Collapse ghost>
-                        {category.questions.map((item, qIndex) => (
-                          <Panel 
-                            header={item.question} 
-                            key={qIndex}
-                            extra={<QuestionCircleOutlined />}
-                          >
-                            <Paragraph>{item.answer}</Paragraph>
-                          </Panel>
-                        ))}
-                      </Collapse>
-                    </TabPane>
-                  ))}
-                </Tabs>
-              </Card>
-            </Col>
+        {/* FAQ Section */}
+        <motion.section 
+          className="faq-section"
+          ref={faqSection.ref}
+          variants={animationVariants.fadeInVariant}
+          initial="hidden"
+          animate={faqSection.inView ? "visible" : "hidden"}
+        >
+          <motion.div
+            variants={animationVariants.titleRevealVariant}
+          >
+            <Title level={2} className="section-title">Câu hỏi thường gặp</Title>
+          </motion.div>
 
-            {/* Sidebar */}
-            <Col xs={24} lg={8}>
-              {/* Video Tutorials */}
-              <Card title="Hướng dẫn video" className="tutorials-card">
-                <List
-                  dataSource={tutorials}
-                  renderItem={tutorial => (
-                    <List.Item>
-                      <List.Item.Meta
-                        avatar={
-                          <div className="tutorial-thumbnail">
-                            <img src={tutorial.thumbnail} alt={tutorial.title} />
-                            <div className="play-overlay">
-                              {tutorial.type === 'video' ? <VideoCameraFilled /> : <BookOutlined />}
-                            </div>
-                          </div>
-                        }
-                        title={tutorial.title}
-                        description={
-                          <Space direction="vertical" size="small">
-                            <Text type="secondary">{tutorial.description}</Text>
-                            <Space>
-                              <Tag color="blue">{tutorial.duration}</Tag>
-                              <Tag color={tutorial.type === 'video' ? 'red' : 'green'}>
-                                {tutorial.type === 'video' ? 'Video' : 'Hướng dẫn'}
-                              </Tag>
-                            </Space>
-                          </Space>
-                        }
-                      />
-                    </List.Item>
-                  )}
-                />
-              </Card>
-
-              {/* Status & Updates */}
-              <Card title="Tình trạng hệ thống" className="status-card">
-                <Space direction="vertical" size="large" style={{ width: '100%' }}>
-                  <div className="status-item">
-                    <Space>
-                      <CheckCircleOutlined style={{ color: '#52c41a' }} />
-                      <Text strong>Hệ thống thanh toán</Text>
-                    </Space>
-                    <Tag color="success">Hoạt động bình thường</Tag>
-                  </div>
-                  
-                  <div className="status-item">
-                    <Space>
-                      <CheckCircleOutlined style={{ color: '#52c41a' }} />
-                      <Text strong>Dịch vụ đặt vé</Text>
-                    </Space>
-                    <Tag color="success">Hoạt động bình thường</Tag>
-                  </div>
-                  
-                  <div className="status-item">
-                    <Space>
-                      <ClockCircleOutlined style={{ color: '#faad14' }} />
-                      <Text strong>Gửi email</Text>
-                    </Space>
-                    <Tag color="warning">Chậm hơn bình thường</Tag>
-                  </div>
-                </Space>
-
-                <Divider />
-
-                <div className="updates-section">
-                  <Title level={5}>Cập nhật gần đây</Title>
-                  <List size="small">
-                    <List.Item>
-                      <Text type="secondary">25/06/2024</Text>
-                      <Text>Cải thiện tốc độ tải trang</Text>
-                    </List.Item>
-                    <List.Item>
-                      <Text type="secondary">24/06/2024</Text>
-                      <Text>Bổ sung phương thức thanh toán mới</Text>
-                    </List.Item>
-                  </List>
-                </div>
-              </Card>
-
-              {/* Download Links */}
-              <Card title="Tài liệu hỗ trợ" className="downloads-card">
-                <List size="small">
-                  <List.Item
-                    actions={[
-                      <Button type="link" icon={<DownloadOutlined />} key="download">
-                        Tải xuống
-                      </Button>
-                    ]}
-                  >
-                    <List.Item.Meta
-                      title="Hướng dẫn sử dụng"
-                      description="PDF - 2.5MB"
-                    />
-                  </List.Item>
-                  
-                  <List.Item
-                    actions={[
-                      <Button type="link" icon={<DownloadOutlined />} key="download">
-                        Tải xuống
-                      </Button>
-                    ]}
-                  >
-                    <List.Item.Meta
-                      title="Điều khoản dịch vụ"
-                      description="PDF - 1.2MB"
-                    />
-                  </List.Item>
-                  
-                  <List.Item
-                    actions={[
-                      <Button type="link" icon={<DownloadOutlined />} key="download">
-                        Tải xuống
-                      </Button>
-                    ]}
-                  >
-                    <List.Item.Meta
-                      title="Chính sách bảo mật"
-                      description="PDF - 800KB"
-                    />
-                  </List.Item>
-                </List>
-              </Card>
+          <Row justify="center">
+            <Col xs={24} lg={18}>
+              <motion.div
+                variants={animationVariants.staggerContainerVariant}
+              >
+                <Card className="faq-card">
+                  <Tabs defaultActiveKey="0" type="card">
+                    {faqData.map((category, categoryIndex) => (
+                      <TabPane tab={category.category} key={categoryIndex}>
+                        <Collapse ghost>
+                          {category.questions.map((faq, index) => (
+                            <Panel 
+                              header={
+                                <motion.div
+                                  variants={animationVariants.itemVariant}
+                                  className="faq-question"
+                                >
+                                  <QuestionCircleOutlined style={{ marginRight: 8, color: '#1890ff' }} />
+                                  {faq.question}
+                                </motion.div>
+                              } 
+                              key={index}
+                            >
+                              <motion.div
+                                variants={animationVariants.itemVariant}
+                                className="faq-answer"
+                              >
+                                {faq.answer}
+                              </motion.div>
+                            </Panel>
+                          ))}
+                        </Collapse>
+                      </TabPane>
+                    ))}
+                  </Tabs>
+                </Card>
+              </motion.div>
             </Col>
           </Row>
+        </motion.section>
 
-          {/* Contact Form */}
-          <section className="contact-section">
-            <Card title="Vẫn cần hỗ trợ?" className="contact-form-card">
-              <Row gutter={[32, 32]}>
-                <Col xs={24} lg={12}>
+        {/* Resources Section */}
+        <motion.section 
+          className="resource-section"
+          ref={resourcesSection.ref}
+          variants={animationVariants.staggerContainerVariant}
+          initial="hidden"
+          animate={resourcesSection.inView ? "visible" : "hidden"}
+        >
+          <motion.div
+            variants={animationVariants.titleRevealVariant}
+          >
+            <Title level={2} className="section-title">Tài nguyên hữu ích</Title>
+          </motion.div>
+
+          <Row gutter={[24, 24]}>
+            {resources.map((resource, index) => (
+              <Col xs={24} md={8} key={index}>
+                <motion.div
+                  variants={animationVariants.itemVariant}
+                  {...hoverAnimations.cardHover}
+                >
+                  <Card className="resource-card" hoverable>
+                    <div className="resource-icon">{resource.icon}</div>
+                    <Title level={4}>{resource.title}</Title>
+                    <Paragraph className="resource-description">
+                      {resource.description}
+                    </Paragraph>
+                    <motion.div {...hoverAnimations.buttonHover}>
+                      <Button type="primary" icon={<DownloadOutlined />}>
+                        {resource.action}
+                      </Button>
+                    </motion.div>
+                  </Card>
+                </motion.div>
+              </Col>
+            ))}
+          </Row>
+        </motion.section>
+
+        {/* Contact Support Section */}
+        <motion.section 
+          className="contact-support-section"
+          ref={supportSection.ref}
+          variants={animationVariants.scaleInVariant}
+          initial="hidden"
+          animate={supportSection.inView ? "visible" : "hidden"}
+        >
+          <Row justify="center">
+            <Col xs={24} md={16} lg={12}>
+              <motion.div {...hoverAnimations.cardHover}>
+                <Card className="contact-support-card">
+                  <Title level={3}>Vẫn cần hỗ trợ?</Title>
                   <Paragraph>
-                    Không tìm thấy câu trả lời? Hãy gửi câu hỏi cho chúng tôi và 
-                    chúng tôi sẽ phản hồi trong thời gian sớm nhất.
+                    Đội ngũ hỗ trợ của chúng tôi luôn sẵn sàng giúp đỡ bạn 24/7. 
+                    Hãy liên hệ với chúng tôi để được hỗ trợ tốt nhất.
                   </Paragraph>
-                  
-                  <Space direction="vertical" size="large" style={{ width: '100%' }}>
-                    <Input placeholder="Tiêu đề câu hỏi" />
-                    <Input.TextArea 
-                      rows={4} 
-                      placeholder="Mô tả chi tiết vấn đề của bạn..."
-                    />
-                    <Button type="primary" size="large" icon={<MessageOutlined />}>
-                      Gửi câu hỏi
-                    </Button>
+                  <Space size="large">
+                    <motion.div {...hoverAnimations.buttonHover}>
+                      <Button type="primary" size="large" icon={<MessageOutlined />}>
+                        Liên hệ hỗ trợ
+                      </Button>
+                    </motion.div>
+                    <motion.div {...hoverAnimations.buttonHover}>
+                      <Button size="large" icon={<PhoneOutlined />}>
+                        Gọi hotline
+                      </Button>
+                    </motion.div>
                   </Space>
-                </Col>
-                
-                <Col xs={24} lg={12}>
-                  <div className="contact-info">
-                    <Title level={4}>Thông tin liên hệ</Title>
-                    <Space direction="vertical" size="middle">
-                      <div>
-                        <Text strong>Email hỗ trợ:</Text>
-                        <Text> support@unitic.com</Text>
-                      </div>
-                      <div>
-                        <Text strong>Hotline:</Text>
-                        <Text> 1900-xxxx</Text>
-                      </div>
-                      <div>
-                        <Text strong>Giờ làm việc:</Text>
-                        <Text> 8:00 - 22:00 (Thứ 2 - Chủ nhật)</Text>
-                      </div>
-                      <div>
-                        <Text strong>Thời gian phản hồi:</Text>
-                        <Text> Trong vòng 2 giờ</Text>
-                      </div>
-                    </Space>
-                  </div>
-                </Col>
-              </Row>
-            </Card>
-          </section>
-        </div>
+                </Card>
+              </motion.div>
+            </Col>
+          </Row>
+        </motion.section>
       </div>
-    </MainLayout>
+    </PageAnimationWrapper>
   );
 };
 

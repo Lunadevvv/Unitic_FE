@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Table, Card, Button, Input, Select, Tag, Space, Modal, Form,
   Typography, Row, Col, Statistic, Avatar, Popconfirm, message,
@@ -11,6 +12,14 @@ import {
   FileImageOutlined, TeamOutlined, DollarOutlined, ClockCircleOutlined
 } from '@ant-design/icons';
 import AdminLayout from '../../components/layout/AdminLayout';
+import { 
+  fetchEvents, 
+  createEvent, 
+  updateEvent, 
+  updateEventStatus,
+  deleteEvent 
+} from '../../store/actions/eventsActions';
+import { fetchCategories } from '../../store/actions/categoryActions';
 import '../../assets/scss/EventManagementPage.scss';
 
 const { Title, Text } = Typography;
@@ -18,70 +27,11 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 
-// Mock data
-const mockEvents = [
-  {
-    id: '1',
-    name: 'Concert Sơn Tùng MTP 2024',
-    category: 'music',
-    location: 'Sân vận động Mỹ Đình',
-    startDate: '2024-08-15',
-    endDate: '2024-08-15',
-    startTime: '20:00',
-    endTime: '23:00',
-    status: 'active',
-    ticketsSold: 8500,
-    totalTickets: 10000,
-    revenue: 25500000,
-    price: 300000,
-    organizer: 'M-TP Entertainment',
-    description: 'Đêm nhạc hoành tráng với những hit đình đám',
-    image: '/src/assets/img/event1.jpeg',
-    featured: true
-  },
-  {
-    id: '2',
-    name: 'Hội thảo Marketing Digital',
-    category: 'education',
-    location: 'Trung tâm Hội nghị Quốc gia',
-    startDate: '2024-07-20',
-    endDate: '2024-07-21',
-    startTime: '08:00',
-    endTime: '17:00',
-    status: 'upcoming',
-    ticketsSold: 450,
-    totalTickets: 500,
-    revenue: 22500000,
-    price: 500000,
-    organizer: 'Digital Marketing Vietnam',
-    description: 'Hội thảo chuyên sâu về marketing số',
-    image: '/src/assets/img/event2.jpeg',
-    featured: false
-  },
-  {
-    id: '3',
-    name: 'Triển lãm Nghệ thuật đương đại',
-    category: 'art',
-    location: 'Bảo tàng Mỹ thuật Việt Nam',
-    startDate: '2024-06-01',
-    endDate: '2024-06-30',
-    startTime: '09:00',
-    endTime: '18:00',
-    status: 'ended',
-    ticketsSold: 1200,
-    totalTickets: 1500,
-    revenue: 24000000,
-    price: 200000,
-    organizer: 'Vietnam Art Foundation',
-    description: 'Triển lãm các tác phẩm nghệ thuật đương đại',
-    image: '/src/assets/img/event3.png',
-    featured: true
-  }
-];
-
 const EventManagementPage = () => {
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { events, loading, error } = useSelector(state => state.events);
+  const { categories } = useSelector(state => state.category);
+  
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [searchText, setSearchText] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
@@ -90,22 +40,18 @@ const EventManagementPage = () => {
   const [editingEvent, setEditingEvent] = useState(null);
   const [form] = Form.useForm();
 
-  // ...existing code...
+  useEffect(() => {
+    // Load events and categories when component mounts
+    dispatch(fetchEvents());
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      try {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setEvents(mockEvents);
-      } catch {
-        message.error('Lỗi khi tải danh sách sự kiện');
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadData();
-  }, []);
+    // Handle errors
+    if (error) {
+      message.error(error);
+    }
+  }, [error]);
 
   const handleAddEvent = () => {
     setEditingEvent(null);
@@ -125,55 +71,53 @@ const EventManagementPage = () => {
 
   const handleDeleteEvent = async (eventId) => {
     try {
-      setEvents(events.filter(event => event.id !== eventId));
+      await dispatch(deleteEvent(eventId)).unwrap();
       message.success('Xóa sự kiện thành công');
-    } catch {
-      message.error('Lỗi khi xóa sự kiện');
+    } catch (error) {
+      message.error('Lỗi khi xóa sự kiện: ' + error);
     }
   };
 
   const handleSubmit = async (values) => {
     try {
       const eventData = {
-        ...values,
-        startDate: values.dateRange[0],
-        endDate: values.dateRange[1],
-        startTime: values.timeRange[0],
-        endTime: values.timeRange[1]
+        name: values.name,
+        description: values.description,
+        date_Start: values.dateRange[0],
+        date_End: values.dateRange[1],
+        price: values.price,
+        categoryName: values.category,
+        slot: values.totalTickets
       };
-      delete eventData.dateRange;
-      delete eventData.timeRange;
 
       if (editingEvent) {
-        setEvents(events.map(event => 
-          event.id === editingEvent.id ? { ...event, ...eventData } : event
-        ));
+        await dispatch(updateEvent({ 
+          eventId: editingEvent.id, 
+          eventData 
+        })).unwrap();
         message.success('Cập nhật sự kiện thành công');
       } else {
-        const newEvent = {
-          id: Date.now().toString(),
-          ...eventData,
-          ticketsSold: 0,
-          revenue: 0
-        };
-        setEvents([...events, newEvent]);
+        await dispatch(createEvent(eventData)).unwrap();
         message.success('Thêm sự kiện thành công');
       }
+      
       setIsModalVisible(false);
       form.resetFields();
-    } catch {
-      message.error('Lỗi khi lưu thông tin sự kiện');
+    } catch (error) {
+      message.error('Lỗi khi lưu thông tin sự kiện: ' + error);
     }
   };
 
   const handleStatusChange = async (eventId, newStatus) => {
     try {
-      setEvents(events.map(event => 
-        event.id === eventId ? { ...event, status: newStatus } : event
-      ));
-      message.success(`${newStatus === 'active' ? 'Kích hoạt' : newStatus === 'paused' ? 'Tạm dừng' : 'Dừng'} sự kiện thành công`);
-    } catch {
-      message.error('Lỗi khi thay đổi trạng thái sự kiện');
+      await dispatch(updateEventStatus({ 
+        eventId, 
+        eventData: { status: newStatus },
+        status: newStatus 
+      })).unwrap();
+      message.success('Cập nhật trạng thái thành công');
+    } catch (error) {
+      message.error('Lỗi khi cập nhật trạng thái: ' + error);
     }
   };
 
@@ -208,39 +152,29 @@ const EventManagementPage = () => {
     },
     {
       title: 'Danh mục',
-      dataIndex: 'category',
-      key: 'category',
-      render: (category) => {
-        const categories = {
-          music: { label: 'Âm nhạc', color: 'red' },
-          education: { label: 'Giáo dục', color: 'blue' },
-          art: { label: 'Nghệ thuật', color: 'purple' },
-          sports: { label: 'Thể thao', color: 'green' },
-          technology: { label: 'Công nghệ', color: 'orange' }
-        };
-        const cat = categories[category] || { label: category, color: 'default' };
-        return <Tag color={cat.color}>{cat.label}</Tag>;
+      dataIndex: 'cateID',
+      key: 'cateID',
+      render: (cateID) => {
+        const category = categories?.find(cat => cat.cateID === cateID);
+        return <Tag color="blue">{category?.name || cateID}</Tag>;
       },
-      filters: [
-        { text: 'Âm nhạc', value: 'music' },
-        { text: 'Giáo dục', value: 'education' },
-        { text: 'Nghệ thuật', value: 'art' },
-        { text: 'Thể thao', value: 'sports' },
-        { text: 'Công nghệ', value: 'technology' }
-      ],
-      onFilter: (value, record) => record.category === value,
+      filters: categories?.map(cat => ({ text: cat.name, value: cat.cateID })),
+      onFilter: (value, record) => record.cateID === value,
     },
     {
       title: 'Thời gian',
-      dataIndex: 'startDate',
-      key: 'startDate',
+      dataIndex: 'date_Start',
+      key: 'date_Start',
       render: (_, record) => (
         <div>
-          <div>{new Date(record.startDate).toLocaleDateString('vi-VN')}</div>
-          <Text type="secondary">{record.startTime} - {record.endTime}</Text>
+          <div>{new Date(record.date_Start).toLocaleDateString('vi-VN')}</div>
+          <Text type="secondary">
+            {new Date(record.date_Start).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })} - 
+            {new Date(record.date_End).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+          </Text>
         </div>
       ),
-      sorter: (a, b) => new Date(a.startDate) - new Date(b.startDate),
+      sorter: (a, b) => new Date(a.date_Start) - new Date(b.date_Start),
     },
     {
       title: 'Vé',
@@ -248,25 +182,25 @@ const EventManagementPage = () => {
       render: (_, record) => (
         <div>
           <div>
-            <Text strong>{record.ticketsSold}</Text>
-            <Text type="secondary">/{record.totalTickets}</Text>
+            <Text strong>0</Text>
+            <Text type="secondary">/{record.slot}</Text>
           </div>
           <div style={{ fontSize: '12px', color: '#999' }}>
-            {((record.ticketsSold / record.totalTickets) * 100).toFixed(1)}%
+            0%
           </div>
         </div>
       ),
     },
     {
-      title: 'Doanh thu',
-      dataIndex: 'revenue',
-      key: 'revenue',
+      title: 'Giá vé',
+      dataIndex: 'price',
+      key: 'price',
       render: (value) => (
-        <Text strong style={{ color: '#52c41a' }}>
-          {value.toLocaleString('vi-VN')} ₫
+        <Text strong style={{ color: value > 0 ? '#52c41a' : '#999' }}>
+          {value > 0 ? `${value.toLocaleString('vi-VN')} ₫` : 'Miễn phí'}
         </Text>
       ),
-      sorter: (a, b) => a.revenue - b.revenue,
+      sorter: (a, b) => a.price - b.price,
     },
     {
       title: 'Trạng thái',
@@ -330,7 +264,7 @@ const EventManagementPage = () => {
           />
           <Popconfirm
             title="Bạn có chắc chắn muốn xóa sự kiện này?"
-            onConfirm={() => handleDeleteEvent(record.id)}
+            onConfirm={() => handleDeleteEvent(record.eventID)}
             okText="Xóa"
             cancelText="Hủy"
           >
@@ -476,7 +410,7 @@ const EventManagementPage = () => {
           <Table
             columns={columns}
             dataSource={filteredEvents}
-            rowKey="id"
+            rowKey="eventID"
             loading={loading}
             rowSelection={rowSelection}
             pagination={{
@@ -519,11 +453,21 @@ const EventManagementPage = () => {
                   rules={[{ required: true, message: 'Vui lòng chọn danh mục!' }]}
                 >
                   <Select placeholder="Chọn danh mục">
-                    <Option value="music">Âm nhạc</Option>
-                    <Option value="education">Giáo dục</Option>
-                    <Option value="art">Nghệ thuật</Option>
-                    <Option value="sports">Thể thao</Option>
-                    <Option value="technology">Công nghệ</Option>
+                    {categories?.map(cat => (
+                      <Option key={cat.id} value={cat.name}>
+                        {cat.name}
+                      </Option>
+                    ))}
+                    {/* Fallback options nếu không có categories từ API */}
+                    {!categories?.length && (
+                      <>
+                        <Option value="music">Âm nhạc</Option>
+                        <Option value="education">Giáo dục</Option>
+                        <Option value="art">Nghệ thuật</Option>
+                        <Option value="sports">Thể thao</Option>
+                        <Option value="technology">Công nghệ</Option>
+                      </>
+                    )}
                   </Select>
                 </Form.Item>
               </Col>

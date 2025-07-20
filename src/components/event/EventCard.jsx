@@ -20,33 +20,62 @@ const EventCard = ({
   onLike
 }) => {
   const navigate = useNavigate();
-  const { 
-    id, 
-    title, 
-    image, 
-    date, 
-    time,
-    location, 
-    description, 
-    price, 
-    category,
-    isFeatured,
-    soldCount = 0,
-    capacity = 100,
-    rating = 4.5,
-    isLiked = false
+  
+  // Map API fields to component fields
+  const {
+    eventID: id,
+    name: title,
+    description,
+    date_Start: startDate,
+    date_End: endDate,
+    price,
+    cateID: categoryId,
+    slot: capacity,
+    status
   } = event;
+  
+  // Default values for fields not in API
+  const image = eventPlaceholder;
+  const location = 'Địa điểm sẽ được thông báo';
+  const category = categoryId; // You might want to map this to category name
+  const isFeatured = status === 1;
+  const soldCount = 0; // Not provided by API
+  const rating = 4.5; // Not provided by API
+  const isLiked = false; // Not provided by API
   
   // Format date
   const formatDate = (dateString) => {
+    if (!dateString) return 'Ngày chưa xác định';
     const options = { day: 'numeric', month: 'short', year: 'numeric' };
     return new Date(dateString).toLocaleDateString('vi-VN', options);
   };
   
   // Format time
-  const formatTime = (timeString) => {
-    return timeString || '19:00';
+  const formatTime = (dateString) => {
+    if (!dateString) return '19:00';
+    return new Date(dateString).toLocaleTimeString('vi-VN', { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
   };
+
+  // Calculate progress based on dates
+  const calculateProgress = () => {
+    if (!startDate || !endDate) return 0;
+    const now = new Date();
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    
+    if (now < start) return 0;
+    if (now > end) return 100;
+    
+    const total = end.getTime() - start.getTime();
+    const current = now.getTime() - start.getTime();
+    return Math.round((current / total) * 100);
+  };
+
+  const progress = calculateProgress();
+  const eventDate = new Date(startDate);
   
   // Format price
   const formatPrice = (priceValue) => {
@@ -55,14 +84,16 @@ const EventCard = ({
   
   // Calculate event status
   const getEventStatus = () => {
-    const eventDate = new Date(date);
+    if (!startDate) return { text: 'Chưa có thông tin', class: 'pending' };
+    
+    const eventStartDate = new Date(startDate);
     const now = new Date();
     
     if (soldCount >= capacity) {
       return { text: 'Hết vé', class: 'sold-out' };
-    } else if (eventDate < now) {
+    } else if (eventStartDate < now) {
       return { text: 'Đã kết thúc', class: 'ended' };
-    } else if (eventDate.getTime() - now.getTime() < 7 * 24 * 60 * 60 * 1000) {
+    } else if (eventStartDate.getTime() - now.getTime() < 7 * 24 * 60 * 60 * 1000) {
       return { text: 'Sắp diễn ra', class: 'soon' };
     } else {
       return { text: 'Còn vé', class: 'available' };
@@ -94,7 +125,7 @@ const EventCard = ({
         <div className="event-card__image">
           <img src={image || eventPlaceholder} alt={title} />
           <div className="event-card__date">
-            <CalendarOutlined className="icon" /> {formatDate(date)}
+            <CalendarOutlined className="icon" /> {formatDate(startDate)}
           </div>
           {isFeatured && <div className="event-card__featured">Hot</div>}
         </div>
@@ -141,10 +172,10 @@ const EventCard = ({
           
           <div className="event-card__details">
             <div className="event-card__detail">
-              <CalendarOutlined className="icon" /> {formatDate(date)}
+              <CalendarOutlined className="icon" /> {formatDate(startDate)}
             </div>
             <div className="event-card__detail">
-              <ClockCircleOutlined className="icon" /> {formatTime(time)}
+              <ClockCircleOutlined className="icon" /> {formatTime(startDate)}
             </div>
             <div className="event-card__detail">
               <EnvironmentOutlined className="icon" /> {location}
@@ -188,7 +219,7 @@ const EventCard = ({
         <img src={image || eventPlaceholder} alt={title} />
         
         <div className="event-card__date">
-          <CalendarOutlined className="icon" /> {formatDate(date)}
+          <CalendarOutlined className="icon" /> {formatDate(startDate)}
         </div>
         
         <div className="event-card__like">

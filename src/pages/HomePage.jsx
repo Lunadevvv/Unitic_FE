@@ -1,15 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Layout, Carousel, Row, Col, Card, Flex, Button } from 'antd';
 import { FacebookOutlined, YoutubeOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import { motion, useInView } from 'framer-motion';
+import MainLayout from '../components/layout/MainLayout';
+import { fetchEvents } from '../store/actions/eventsActions';
 import '../assets/scss/HomePage.scss';
-import { useNavigate } from 'react-router-dom';
 
-const { Header, Content, Footer } = Layout;
+const { Content } = Layout;
 
 const HomePage = () => {
-  const navigate = useNavigate();
   const [scrollPosition, setScrollPosition] = useState(0);
+  const dispatch = useDispatch();
+  
+  const { events, loading } = useSelector(state => state.events);
   
   const handleScroll = () => {
     const position = window.pageYOffset;
@@ -17,26 +21,26 @@ const HomePage = () => {
   };
   
   useEffect(() => {
+    // Fetch events when component mounts
+    dispatch(fetchEvents());
+    
     window.addEventListener('scroll', handleScroll);
     
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [dispatch]);
 
   const parallaxStyle = {
     transform: `translateY(${scrollPosition * 0.3}px)`,
   };
 
-  const headerRef = useRef(null);
   const carouselRef = useRef(null);
   const eventSectionRef = useRef(null);
   const expertSectionRef = useRef(null);
   const sponsorSectionRef = useRef(null);
   const introSectionRef = useRef(null);
   
-
-  const headerInView = useInView(headerRef, { once: false, amount: 0.3 });
   const carouselInView = useInView(carouselRef, { once: false, amount: 0.3 });
   const eventSectionInView = useInView(eventSectionRef, { once: false, amount: 0.3 });
   const expertSectionInView = useInView(expertSectionRef, { once: false, amount: 0.3 });
@@ -139,59 +143,18 @@ const HomePage = () => {
   };
 
   return (
-    <Layout className="homepage_container">
-      <motion.div
-        ref={headerRef}
-        animate={headerInView ? "visible" : "hidden"}
-        initial="hidden"
-        className="header-animation-container"
-      >
-        <Header className="homepage_header">
-          <motion.div 
-            className="logo"
-            variants={{
-              hidden: { opacity: 0, x: -50 },
-              visible: { opacity: 1, x: 0, transition: { duration: 0.6 } }
-            }}
-          >
-            <div className="text-logo animate-gradient">UniTic</div>
-          </motion.div>
-          <motion.div 
-            className="top-navigation"
-            variants={{
-              hidden: { opacity: 0, x: 50 },
-              visible: { opacity: 1, x: 0, transition: { duration: 0.6, staggerChildren: 0.1, delayChildren: 0.2 } }
-            }}
-          >
-            <motion.span className="nav-item" variants={itemVariant}>
-              <span className="nav-text">Trang chủ</span>
-              <span className="nav-hover-effect"></span>
-            </motion.span>
-            <motion.span className="nav-item" variants={itemVariant}>
-             <a href="/events" className="nav-link">
-               <span className="nav-text">Sự kiện</span>
-              <span className="nav-hover-effect"></span>
-             </a>
-            </motion.span>
-            <motion.span className="nav-item" variants={itemVariant}>
-              <span className="nav-text">Về chúng tôi</span>
-              <span className="nav-hover-effect"></span>
-            </motion.span>
-            <motion.button 
-              className="login-button pulse-animation" 
-              onClick={()=>navigate('/signin')}
-              variants={itemVariant}
-              whileHover={{ scale: 1.05, y: -3 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <span className="button-text">Đăng nhập</span>
-              <span className="button-overlay"></span>
-            </motion.button>
-          </motion.div>
-        </Header>
-      </motion.div>
-
-      <Content className="homepage_body">
+    <MainLayout 
+      headerProps={{
+        showAnimation: true,
+        transparent: true,
+        fixed: false,
+        showCart: false,
+        showNotifications: false
+      }}
+      showFooter={true}
+      className="homepage_container"
+    >
+      <div className="homepage_body">
         {renderFloatingElements()}
         
          <motion.div 
@@ -640,113 +603,8 @@ const HomePage = () => {
             </motion.div>
           </div>
         </motion.div>
-      </Content>
-
-      <Footer className="homepage_footer">
-        <Row gutter={[16, 16]}>
-          <Col xs={24} md={8}>
-            <motion.div 
-              className="footer-section"
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: false, amount: 0.3 }}
-            >
-              <h3 className="footer-title">UniTic</h3>
-              <motion.p 
-                className="stagger-animation"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                viewport={{ once: false, amount: 0.3 }}
-              >
-                UniTic là nền tảng kết nối sinh viên với các sự kiện, hội thảo,
-                và cơ hội nghề nghiệp. Chúng tôi cam kết mang đến những trải nghiệm
-                học hỏi và phát triển tốt nhất cho sinh viên.
-              </motion.p>
-            </motion.div>
-          </Col>
-          <Col xs={24} md={8}>
-            <motion.div 
-              className="footer-section"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: false, amount: 0.3 }}
-            >
-              <h3 className="footer-title">Social Media</h3>
-              <div className="social-icons">
-                <motion.a 
-                  href="#" 
-                  className="social-icon-link hover-float"
-                  whileHover={{ scale: 1.2, rotate: 5 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <FacebookOutlined className="social-icon" />
-                </motion.a>
-                <motion.a 
-                  href="#" 
-                  className="social-icon-link hover-float"
-                  whileHover={{ scale: 1.2, rotate: -5 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <YoutubeOutlined className="social-icon" />
-                </motion.a>
-              </div>
-            </motion.div>
-          </Col>
-          <Col xs={24} md={8}>
-            <motion.div 
-              className="footer-section"
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: false, amount: 0.3 }}
-            >
-              <h3 className="footer-title">Về chúng tôi</h3>
-              <motion.ul 
-                className="footer-links stagger-list"
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: false, amount: 0.3 }}
-                variants={{
-                  hidden: { opacity: 0 },
-                  visible: {
-                    opacity: 1,
-                    transition: {
-                      staggerChildren: 0.1,
-                      delayChildren: 0.2
-                    }
-                  }
-                }}
-              >
-                <motion.li variants={itemVariant}>
-                  <a href="#" className="link-hover-effect">Giới thiệu</a>
-                </motion.li>
-                <motion.li variants={itemVariant}>
-                  <a href="#" className="link-hover-effect">Liên hệ</a>
-                </motion.li>
-                <motion.li variants={itemVariant}>
-                  <a href="#" className="link-hover-effect">Điều khoản sử dụng</a>
-                </motion.li>
-                <motion.li variants={itemVariant}>
-                  <a href="#" className="link-hover-effect">Chính sách bảo mật</a>
-                </motion.li>
-              </motion.ul>
-            </motion.div>
-          </Col>
-        </Row>
-        <motion.div 
-          className="copyright"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          viewport={{ once: false, amount: 0.3 }}
-        >
-          © 2025 UniTic. All rights reserved.
-        </motion.div>
-      </Footer>
-    </Layout>
+      </div>
+    </MainLayout>
   );
 };
 

@@ -113,3 +113,21 @@ export const switchCategoryStatus = createAsyncThunk(
     }
   }
 );
+
+// Delete category permanently (if needed)
+export const deleteCategory = createAsyncThunk(
+  "category/deleteCategory",
+  async (categoryId, { rejectWithValue }) => {
+    try {
+      // Note: This might be a different endpoint for permanent deletion
+      await BASE_URL.delete(`Unitic/Category/permanent/${categoryId}`);
+      return categoryId; // Return the ID for removal from state
+    } catch (error) {
+      let message =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to delete category";
+      return rejectWithValue(message);
+    }
+  }
+);

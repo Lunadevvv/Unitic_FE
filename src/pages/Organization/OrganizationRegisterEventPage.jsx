@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Steps, Card, Button, message, Breadcrumb } from 'antd';
 import { HomeOutlined, PlusOutlined, EyeOutlined, CheckOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import MainLayout from '../../components/layout/MainLayout';
 import OrganizationEventForm from '../../components/organization/OrganizationEventForm';
 import EventPreview from '../../components/organization/EventPreview';
+import { createEvent } from '../../store/actions/eventsActions';
 import '../../assets/scss/OrganizationRegisterEventPage.scss';
 
 const { Step } = Steps;
 
 const OrganizationRegisterEventPage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [currentStep, setCurrentStep] = useState(0);
   const [eventData, setEventData] = useState({});
   const [loading, setLoading] = useState(false);
@@ -41,8 +44,7 @@ const OrganizationRegisterEventPage = () => {
   const handlePreviewConfirm = async () => {
     setLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await dispatch(createEvent(eventData));
       
       message.success('Đăng ký sự kiện thành công! Chờ admin duyệt.');
       setCurrentStep(2);
@@ -50,8 +52,9 @@ const OrganizationRegisterEventPage = () => {
       setTimeout(() => {
         navigate('/organization/events');
       }, 2000);
-    } catch {
+    } catch (error) {
       message.error('Có lỗi xảy ra. Vui lòng thử lại!');
+      console.error('Error creating event:', error);
     } finally {
       setLoading(false);
     }

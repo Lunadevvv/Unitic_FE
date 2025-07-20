@@ -14,6 +14,7 @@ import EventCard from '../../components/event/EventCard';
 import EventCarousel from '../../components/event/EventCarousel';
 import CategoryTabs from '../../components/event/CategoryTabs';
 import EventFilter from '../../components/event/EventFilter';
+import MainLayout from '../../components/layout/MainLayout';
 import '../../assets/scss/EventPage.scss';
 import { useEvents } from '../../hooks/useEvents';
 
@@ -114,7 +115,8 @@ const EventsPage = () => {
   };
   
   return (
-    <div className="events-page">
+    <MainLayout>
+      <div className="events-page">
       <div className="event-hero">
         <div className="event-hero-content">
           <motion.h1 
@@ -376,6 +378,7 @@ const EventsPage = () => {
         </section>
       </div>
     </div>
+    </MainLayout>
   );
 };
 

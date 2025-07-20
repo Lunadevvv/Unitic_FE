@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import {
   loginUser,
   registerUser,
+  registerRole,
   logoutUser,
   refreshToken,
   verifyEmail,
@@ -78,6 +79,19 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      // Register role
+      .addCase(registerRole.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(registerRole.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(registerRole.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
       // Logout
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
@@ -97,31 +111,6 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(changePassword.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-      // Refresh token
-      .addCase(refreshToken.fulfilled, (state, action) => {
-        state.token = action.payload.token;
-        state.loading = false;
-      })
-      .addCase(refreshToken.rejected, (state) => {
-        state.user = null;
-        state.token = null;
-        state.isAuthenticated = false;
-        state.role = 'guest';
-        state.loading = false;
-      })
-      // Verify email
-      .addCase(verifyEmail.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(verifyEmail.fulfilled, (state) => {
-        state.loading = false;
-        state.error = null;
-      })
-      .addCase(verifyEmail.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -148,6 +137,31 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(resetPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Refresh token
+      .addCase(refreshToken.fulfilled, (state, action) => {
+        state.token = action.payload.token;
+        state.loading = false;
+      })
+      .addCase(refreshToken.rejected, (state) => {
+        state.user = null;
+        state.token = null;
+        state.isAuthenticated = false;
+        state.role = 'guest';
+        state.loading = false;
+      })
+      // Verify email
+      .addCase(verifyEmail.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(verifyEmail.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(verifyEmail.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

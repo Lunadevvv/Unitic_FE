@@ -1,10 +1,37 @@
-import { Button, Checkbox, Form, Input, Typography, Divider } from "antd";
+import { Button, Checkbox, Form, Input, Typography, Divider, message } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import styles from "./signin.module.css";
 import GoogleIcon from "../../components/ui/GoogleIcon";
-import { useNavigate } from "react-router-dom";
+import { loginUser } from "../../store/actions/authActions";
 
 function SignIn() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { loading, error, isAuthenticated } = useSelector(state => state.auth);
+  const [form] = Form.useForm();
+
+  useEffect(() => {
+    // Redirect if already authenticated
+    if (isAuthenticated) {
+      navigate('/');
+    }
+  }, [isAuthenticated, navigate]);
+
+  useEffect(() => {
+    // Show error message if login fails
+    if (error) {
+      message.error(error);
+    }
+  }, [error]);
+
+  const handleSubmit = async (values) => {
+    dispatch(loginUser({
+      Email: values.email,
+      Password: values.password
+    }));
+  };
   return (
     <div className={styles.container}>
       <div className={styles.leftSection}>
@@ -15,22 +42,35 @@ function SignIn() {
       </div>
       <div className={styles.rightSection}>
         <div className={styles.formWrapper}>
-          <Form layout="vertical">
+          <Form layout="vertical" form={form} onFinish={handleSubmit}>
             <Typography strong className={styles.back} 
             onClick={() => navigate("/")}
             >
               {'< '}Quay về trang chủ
             </Typography>
-            <Input
-              placeholder="Email"
+            <Form.Item
               name="email"
-              className={styles.mainInput}
-            />
-            <Input.Password
-              placeholder="Mật khẩu"
+              rules={[
+                { required: true, message: 'Vui lòng nhập email!' },
+                { type: 'email', message: 'Email không hợp lệ!' }
+              ]}
+            >
+              <Input
+                placeholder="Email"
+                className={styles.mainInput}
+              />
+            </Form.Item>
+            <Form.Item
               name="password"
-              className={styles.mainInput}
-            />
+              rules={[
+                { required: true, message: 'Vui lòng nhập mật khẩu!' }
+              ]}
+            >
+              <Input.Password
+                placeholder="Mật khẩu"
+                className={styles.mainInput}
+              />
+            </Form.Item>
             <div className={styles.optionsRow}>
               <Form.Item name="remember" valuePropName="checked" noStyle>
                 <Checkbox className={styles.remember}>
@@ -46,6 +86,7 @@ function SignIn() {
                 type="primary"
                 htmlType="submit"
                 block
+                loading={loading}
                 className={styles.loginBtn}
               >
                 Đăng nhập

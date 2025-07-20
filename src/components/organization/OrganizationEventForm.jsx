@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { 
   Form, Input, Select, DatePicker, TimePicker, InputNumber, 
   Card, Row, Col, Button, Switch, Divider, Space 
@@ -8,6 +9,7 @@ import {
   DollarOutlined, FileTextOutlined, TagsOutlined
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
+import { fetchCategories } from '../../store/actions/categoryActions';
 import EventUploadImage from './EventUploadImage';
 import EventTicketTypeForm from './EventTicketTypeForm';
 
@@ -15,10 +17,16 @@ const { TextArea } = Input;
 const { Option } = Select;
 
 const OrganizationEventForm = ({ initialData = {}, onSubmit }) => {
+  const dispatch = useDispatch();
+  const { categories } = useSelector(state => state.category);
   const [form] = Form.useForm();
   const [hasTickets, setHasTickets] = useState(initialData.hasTickets || false);
   const [ticketTypes, setTicketTypes] = useState(initialData.ticketTypes || []);
   const [imageUrl, setImageUrl] = useState(initialData.imageUrl || '');
+
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
   const eventTypes = [
     { value: 'meeting', label: 'Meeting', description: 'Cuộc họp nội bộ' },
@@ -28,16 +36,15 @@ const OrganizationEventForm = ({ initialData = {}, onSubmit }) => {
     { value: 'networking', label: 'Networking', description: 'Sự kiện kết nối' }
   ];
 
-  const categories = [
-    'Công nghệ', 'Kinh doanh', 'Marketing', 'Giáo dục', 'Y tế',
-    'Tài chính', 'Bất động sản', 'Du lịch', 'Thể thao', 'Nghệ thuật'
-  ];
-
   const handleFormSubmit = (values) => {
     const formData = {
-      ...values,
-      startDate: values.startDate?.toISOString(),
-      endDate: values.endDate?.toISOString(),
+      name: values.title,
+      description: values.description,
+      date_Start: values.startDate?.toISOString(),
+      date_End: values.endDate?.toISOString(),
+      price: values.price || 0,
+      CateId: values.category,
+      slot: values.maxAttendees || 0,
       hasTickets,
       ticketTypes: hasTickets ? ticketTypes : [],
       imageUrl,
@@ -74,7 +81,6 @@ const OrganizationEventForm = ({ initialData = {}, onSubmit }) => {
         onFinish={handleFormSubmit}
         initialValues={{
           type: 'seminar',
-          category: 'Công nghệ',
           maxAttendees: 50,
           isPublic: true,
           hasTickets: false
@@ -155,10 +161,10 @@ const OrganizationEventForm = ({ initialData = {}, onSubmit }) => {
                 label="Danh mục"
                 rules={[{ required: true, message: 'Vui lòng chọn danh mục!' }]}
               >
-                <Select placeholder="Chọn danh mục">
-                  {categories.map(category => (
-                    <Option key={category} value={category}>
-                      <TagsOutlined /> {category}
+                <Select placeholder="Chọn danh mục" showSearch>
+                  {categories?.map(category => (
+                    <Option key={category.cateID} value={category.cateID}>
+                      <TagsOutlined /> {category.name}
                     </Option>
                   ))}
                 </Select>

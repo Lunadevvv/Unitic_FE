@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Card, Form, Input, Button, Upload, Avatar, Row, Col, Typography,
   Tabs, List, Tag, Statistic, DatePicker, Select, Switch, 
@@ -12,6 +13,8 @@ import {
   TrophyOutlined, GiftOutlined, CrownOutlined
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
+import { fetchUserProfile, updateUserProfile } from '../../store/actions/userActions';
+import { fetchUniversities } from '../../store/actions/universityActions';
 import '../../assets/scss/UserProfilePage.scss';
 
 const { Title, Text, Paragraph } = Typography;
@@ -19,6 +22,9 @@ const { TabPane } = Tabs;
 const { Option } = Select;
 
 const UserProfilePage = () => {
+  const dispatch = useDispatch();
+  const { profile, loading: profileLoading } = useSelector(state => state.user);
+  const { universities } = useSelector(state => state.university);
   const [form] = Form.useForm();
   const [passwordForm] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -27,31 +33,12 @@ const UserProfilePage = () => {
   const [deleteAccountVisible, setDeleteAccountVisible] = useState(false);
 
   const [userProfile, setUserProfile] = useState({
-    id: 'USR001',
-    fullName: 'Nguyễn Văn A',
-    email: 'user@example.com',
-    phone: '0123456789',
-    dateOfBirth: '1995-05-15',
-    gender: 'male',
-    address: '123 Đường ABC, Quận XYZ, TP. HCM',
-    avatar: '/src/assets/img/demo.jpg',
-    joinDate: '2023-01-15',
-    membershipLevel: 'Premium',
-    totalEvents: 15,
-    totalSpent: 3500000,
-    favoriteGenres: ['Âm nhạc', 'Công nghệ', 'Kinh doanh'],
-    achievements: [
-      { id: 1, name: 'Event Explorer', description: 'Tham dự 10 sự kiện', earned: true },
-      { id: 2, name: 'Music Lover', description: 'Tham dự 5 sự kiện âm nhạc', earned: true },
-      { id: 3, name: 'Early Bird', description: 'Đặt vé sớm 5 lần', earned: false }
-    ],
-    preferences: {
-      emailNotifications: true,
-      smsNotifications: false,
-      eventRecommendations: true,
-      promotionalEmails: true,
-      darkMode: false
-    }
+    id: '',
+    firstName: '',
+    lastName: '',
+    mssv: '',
+    wallet: 0,
+    university: null
   });
 
   const [stats] = useState({
@@ -62,29 +49,42 @@ const UserProfilePage = () => {
   });
 
   useEffect(() => {
-    // Populate form with user data
-    form.setFieldsValue({
-      ...userProfile,
-      dateOfBirth: userProfile.dateOfBirth ? dayjs(userProfile.dateOfBirth) : null
-    });
-  }, [userProfile, form]);
+    // Fetch user profile and universities on mount
+    dispatch(fetchUserProfile());
+    dispatch(fetchUniversities());
+  }, [dispatch]);
+
+  useEffect(() => {
+    // Update local state when profile is loaded
+    if (profile) {
+      setUserProfile(profile);
+      form.setFieldsValue({
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        mssv: profile.mssv,
+        universityid: profile.university?.id
+      });
+    }
+  }, [profile, form]);
 
   const handleUpdateProfile = async (values) => {
     setLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const profileData = {
+        id: userProfile.id,
+        firstName: values.firstName,
+        lastName: values.lastName,
+        mssv: values.mssv,
+        wallet: userProfile.wallet,
+        universityid: values.universityid,
+      };
       
-      setUserProfile(prev => ({
-        ...prev,
-        ...values,
-        dateOfBirth: values.dateOfBirth ? values.dateOfBirth.format('YYYY-MM-DD') : prev.dateOfBirth
-      }));
+      await dispatch(updateUserProfile(profileData)).unwrap();
       
       setEditing(false);
       message.success('Cập nhật thông tin thành công!');
-    } catch {
-      message.error('Cập nhật thất bại. Vui lòng thử lại!');
+    } catch (error) {
+      message.error(error || 'Cập nhật thất bại. Vui lòng thử lại!');
     } finally {
       setLoading(false);
     }
@@ -131,9 +131,7 @@ const UserProfilePage = () => {
       <Row gutter={[24, 24]} align="middle">
         <Col xs={24} sm={8} md={6}>
           <div className="avatar-section">
-            <Badge count={userProfile.membershipLevel === 'Premium' ? <CrownOutlined style={{ color: '#faad14' }} /> : 0}>
-              <Avatar size={120} src={userProfile.avatar} icon={<UserOutlined />} />
-            </Badge>
+            <Avatar size={120} icon={<UserOutlined />} />
             <Upload
               showUploadList={false}
               onChange={handleAvatarUpload}
@@ -149,34 +147,27 @@ const UserProfilePage = () => {
         <Col xs={24} sm={16} md={18}>
           <div className="profile-info">
             <div className="profile-name">
-              <Title level={2}>{userProfile.fullName}</Title>
-              <Tag color="gold" className="membership-tag">
-                {userProfile.membershipLevel} Member
+              <Title level={2}>{userProfile.firstName} {userProfile.lastName}</Title>
+              <Tag color="blue" className="membership-tag">
+                MSSV: {userProfile.mssv}
               </Tag>
             </div>
             
             <Space direction="vertical" size="small" className="profile-details">
-              <Text><MailOutlined /> {userProfile.email}</Text>
-              <Text><PhoneOutlined /> {userProfile.phone}</Text>
-              <Text><CalendarOutlined /> Tham gia từ {dayjs(userProfile.joinDate).format('DD/MM/YYYY')}</Text>
+              <Text><EnvironmentOutlined /> {userProfile.university?.name}</Text>
+              <Text><GiftOutlined /> Số dư ví: {userProfile.wallet?.toLocaleString('vi-VN') || 0} ₫</Text>
             </Space>
 
             <Row gutter={16} className="profile-stats">
-              <Col span={6}>
-                <Statistic title="Sự kiện tham gia" value={userProfile.totalEvents} />
-              </Col>
-              <Col span={6}>
+              <Col span={12}>
                 <Statistic 
-                  title="Tổng chi tiêu" 
-                  value={userProfile.totalSpent} 
+                  title="Số dư ví" 
+                  value={userProfile.wallet || 0} 
                   formatter={(value) => `${value.toLocaleString('vi-VN')} ₫`}
                 />
               </Col>
-              <Col span={6}>
-                <Statistic title="Sự kiện yêu thích" value={stats.favoriteEvents} />
-              </Col>
-              <Col span={6}>
-                <Statistic title="Thành tựu" value={userProfile.achievements.filter(a => a.earned).length} />
+              <Col span={12}>
+                <Statistic title="Trường đại học" value={userProfile.university?.name || 'Chưa cập nhật'} />
               </Col>
             </Row>
           </div>
@@ -206,45 +197,35 @@ const UserProfilePage = () => {
       >
         <Row gutter={16}>
           <Col xs={24} sm={12}>
-            <Form.Item name="fullName" label="Họ và tên" rules={[{ required: true }]}>
+            <Form.Item name="firstName" label="Tên" rules={[{ required: true }]}>
               <Input prefix={<UserOutlined />} />
             </Form.Item>
           </Col>
           <Col xs={24} sm={12}>
-            <Form.Item name="email" label="Email" rules={[{ required: true, type: 'email' }]}>
-              <Input prefix={<MailOutlined />} />
+            <Form.Item name="lastName" label="Họ" rules={[{ required: true }]}>
+              <Input prefix={<UserOutlined />} />
             </Form.Item>
           </Col>
         </Row>
 
         <Row gutter={16}>
           <Col xs={24} sm={12}>
-            <Form.Item name="phone" label="Số điện thoại">
-              <Input prefix={<PhoneOutlined />} />
+            <Form.Item name="mssv" label="Mã số sinh viên" rules={[{ required: true }]}>
+              <Input />
             </Form.Item>
           </Col>
           <Col xs={24} sm={12}>
-            <Form.Item name="dateOfBirth" label="Ngày sinh">
-              <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
-            </Form.Item>
-          </Col>
-        </Row>
-
-        <Row gutter={16}>
-          <Col xs={24} sm={12}>
-            <Form.Item name="gender" label="Giới tính">
-              <Select>
-                <Option value="male">Nam</Option>
-                <Option value="female">Nữ</Option>
-                <Option value="other">Khác</Option>
+            <Form.Item name="universityid" label="Trường đại học" rules={[{ required: true }]}>
+              <Select placeholder="Chọn trường đại học" showSearch>
+                {universities?.map((university) => (
+                  <Option key={university.id} value={university.id}>
+                    {university.name}
+                  </Option>
+                ))}
               </Select>
             </Form.Item>
           </Col>
         </Row>
-
-        <Form.Item name="address" label="Địa chỉ">
-          <Input.TextArea rows={3} prefix={<EnvironmentOutlined />} />
-        </Form.Item>
 
         {editing && (
           <Form.Item>

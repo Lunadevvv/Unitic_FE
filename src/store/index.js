@@ -10,6 +10,9 @@ import cartReducer from './reducers/cartSlice';
 import uiReducer from './reducers/uiSlice';
 import userReducer from './reducers/userSlice';
 import adminReducer from './reducers/adminSlice';
+import contactReducer from './reducers/contactSlice';
+import categoryReducer from './reducers/categorySlice';
+import universityReducer from './reducers/universitySlice';
 
 // Persist configurations
 const persistConfig = {
@@ -44,6 +47,9 @@ const rootReducer = combineReducers({
   ui: persistReducer(uiPersistConfig, uiReducer),
   user: userReducer,
   admin: adminReducer,
+  contact: contactReducer,
+  category: categoryReducer,
+  university: universityReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

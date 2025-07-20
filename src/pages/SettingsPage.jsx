@@ -8,7 +8,13 @@ import {
   SafetyOutlined, DeleteOutlined, ExclamationCircleOutlined,
   SettingOutlined, NotificationOutlined, DatabaseOutlined
 } from '@ant-design/icons';
-import MainLayout from '../components/layout/MainLayout';
+import { motion } from 'framer-motion';
+import PageAnimationWrapper from '../components/common/PageAnimationWrapper';
+import { 
+  useSectionAnimation, 
+  animationVariants, 
+  hoverAnimations 
+} from '../hooks/useAnimations';
 import '../assets/scss/SettingsPage.scss';
 
 const { Title, Text, Paragraph } = Typography;
@@ -34,6 +40,12 @@ const SettingsPage = () => {
   const [deleteAccountVisible, setDeleteAccountVisible] = useState(false);
   const [exportDataVisible, setExportDataVisible] = useState(false);
 
+  // Section animations
+  const themeSection = useSectionAnimation();
+  const notificationSection = useSectionAnimation();
+  const privacySection = useSectionAnimation();
+  const dataSection = useSectionAnimation();
+
   const handleSettingChange = (category, key, value) => {
     setSettings(prev => ({
       ...prev,
@@ -53,311 +65,397 @@ const SettingsPage = () => {
     message.success('Cài đặt đã được cập nhật');
   };
 
-  const handleExportData = () => {
-    message.success('Đã gửi yêu cầu xuất dữ liệu. Bạn sẽ nhận được email trong vòng 24 giờ.');
-    setExportDataVisible(false);
-  };
-
   const handleDeleteAccount = () => {
-    message.error('Chức năng này chưa được triển khai');
     setDeleteAccountVisible(false);
+    message.error('Tính năng này đang trong quá trình phát triển');
   };
 
-  const themeOptions = [
-    { value: 'light', label: 'Sáng', icon: <SunOutlined /> },
-    { value: 'dark', label: 'Tối', icon: <MoonOutlined /> },
-    { value: 'auto', label: 'Tự động', icon: <SettingOutlined /> }
-  ];
+  const handleExportData = () => {
+    setExportDataVisible(false);
+    message.success('Dữ liệu sẽ được gửi đến email của bạn trong vòng 24h');
+  };
 
-  const languageOptions = [
-    { value: 'vi', label: 'Tiếng Việt' },
-    { value: 'en', label: 'English' }
-  ];
+  const heroSection = (
+    <motion.section 
+      className="settings-header"
+      variants={animationVariants.fadeInVariant}
+      initial="hidden"
+      animate="visible"
+    >
+      <motion.div
+        variants={animationVariants.titleTextVariant}
+      >
+        <Title level={2}>
+          <SettingOutlined style={{ marginRight: 12, color: '#1890ff' }} />
+          Cài đặt tài khoản
+        </Title>
+      </motion.div>
+      <motion.div
+        variants={animationVariants.itemVariant}
+      >
+        <Paragraph>
+          Quản lý preferences, privacy và các cài đặt khác của bạn
+        </Paragraph>
+      </motion.div>
+    </motion.section>
+  );
 
   return (
-    <MainLayout>
-      <div className="settings-page">
-        <div className="settings-container">
-          <div className="settings-header">
-            <Title level={2}>
-              <SettingOutlined /> Cài đặt
-            </Title>
-            <Paragraph>
-              Tùy chỉnh trải nghiệm sử dụng UniTic theo ý muốn của bạn
-            </Paragraph>
-          </div>
-
-          <Row gutter={[24, 24]}>
-            {/* General Settings */}
-            <Col xs={24} lg={12}>
-              <Card title="Cài đặt chung" className="settings-card">
-                <div className="setting-item">
-                  <div className="setting-info">
-                    <Text strong>Giao diện</Text>
-                    <Text type="secondary">Chọn chủ đề hiển thị</Text>
-                  </div>
-                  <Select
-                    value={settings.theme}
-                    onChange={(value) => handleSimpleSettingChange('theme', value)}
-                    style={{ width: 120 }}
-                  >
-                    {themeOptions.map(option => (
-                      <Option key={option.value} value={option.value}>
-                        {option.icon} {option.label}
-                      </Option>
-                    ))}
-                  </Select>
-                </div>
-
-                <Divider />
-
-                <div className="setting-item">
-                  <div className="setting-info">
-                    <Text strong>Ngôn ngữ</Text>
-                    <Text type="secondary">Chọn ngôn ngữ hiển thị</Text>
-                  </div>
-                  <Select
-                    value={settings.language}
-                    onChange={(value) => handleSimpleSettingChange('language', value)}
-                    style={{ width: 120 }}
-                  >
-                    {languageOptions.map(option => (
-                      <Option key={option.value} value={option.value}>
-                        <GlobalOutlined /> {option.label}
-                      </Option>
-                    ))}
-                  </Select>
-                </div>
-              </Card>
-
-              {/* Privacy Settings */}
-              <Card title="Quyền riêng tư" className="settings-card">
-                <List
-                  dataSource={[
-                    {
-                      title: 'Hiển thị hồ sơ công khai',
-                      description: 'Cho phép người khác xem thông tin cơ bản của bạn',
-                      key: 'profileVisible'
-                    },
-                    {
-                      title: 'Hiển thị hoạt động',
-                      description: 'Cho phép người khác xem các sự kiện bạn tham gia',
-                      key: 'showActivity'
-                    },
-                    {
-                      title: 'Chia sẻ dữ liệu',
-                      description: 'Chia sẻ dữ liệu ẩn danh để cải thiện dịch vụ',
-                      key: 'dataSharing'
-                    }
-                  ]}
-                  renderItem={item => (
-                    <List.Item
-                      actions={[
-                        <Switch
-                          key={item.key}
-                          checked={settings.privacy[item.key]}
-                          onChange={(checked) => handleSettingChange('privacy', item.key, checked)}
-                        />
-                      ]}
+    <PageAnimationWrapper 
+      className="settings-page"
+      showFloatingElements={true}
+      floatingVariant="settings"
+      heroSection={heroSection}
+      headerProps={{
+        showAnimation: true,
+        transparent: false,
+        showCart: true,
+        showNotifications: true
+      }}
+    >
+      <div className="settings-container">
+        {/* Theme & Language Settings */}
+        <motion.div
+          ref={themeSection.ref}
+          variants={animationVariants.slideInLeftVariant}
+          initial="hidden"
+          animate={themeSection.inView ? "visible" : "hidden"}
+        >
+          <Card 
+            title={
+              <span>
+                <SunOutlined style={{ marginRight: 8 }} />
+                Giao diện & Ngôn ngữ
+              </span>
+            }
+            className="settings-card"
+          >
+            <Row gutter={[24, 16]}>
+              <Col xs={24} md={12}>
+                <Space direction="vertical" style={{ width: '100%' }}>
+                  <Text strong>Chế độ giao diện</Text>
+                  <motion.div {...hoverAnimations.buttonHover}>
+                    <Select
+                      value={settings.theme}
+                      onChange={(value) => handleSimpleSettingChange('theme', value)}
+                      style={{ width: '100%' }}
+                      size="large"
                     >
-                      <List.Item.Meta
-                        avatar={<SafetyOutlined />}
-                        title={item.title}
-                        description={item.description}
-                      />
-                    </List.Item>
-                  )}
-                />
-              </Card>
-            </Col>
+                      <Option value="light">
+                        <SunOutlined /> Sáng
+                      </Option>
+                      <Option value="dark">
+                        <MoonOutlined /> Tối
+                      </Option>
+                    </Select>
+                  </motion.div>
+                </Space>
+              </Col>
 
-            {/* Notification Settings */}
-            <Col xs={24} lg={12}>
-              <Card title="Thông báo" className="settings-card">
-                <List
-                  dataSource={[
-                    {
-                      title: 'Thông báo email',
-                      description: 'Nhận thông báo qua email',
-                      key: 'email'
-                    },
-                    {
-                      title: 'Thông báo đẩy',
-                      description: 'Nhận thông báo trên trình duyệt',
-                      key: 'push'
-                    },
-                    {
-                      title: 'Thông báo SMS',
-                      description: 'Nhận thông báo qua tin nhắn',
-                      key: 'sms'
-                    },
-                    {
-                      title: 'Email marketing',
-                      description: 'Nhận thông tin khuyến mãi và sự kiện mới',
-                      key: 'marketing'
-                    }
-                  ]}
-                  renderItem={item => (
-                    <List.Item
-                      actions={[
-                        <Switch
-                          key={item.key}
-                          checked={settings.notifications[item.key]}
-                          onChange={(checked) => handleSettingChange('notifications', item.key, checked)}
-                        />
-                      ]}
+              <Col xs={24} md={12}>
+                <Space direction="vertical" style={{ width: '100%' }}>
+                  <Text strong>Ngôn ngữ</Text>
+                  <motion.div {...hoverAnimations.buttonHover}>
+                    <Select
+                      value={settings.language}
+                      onChange={(value) => handleSimpleSettingChange('language', value)}
+                      style={{ width: '100%' }}
+                      size="large"
                     >
-                      <List.Item.Meta
-                        avatar={<BellOutlined />}
-                        title={item.title}
-                        description={item.description}
-                      />
-                    </List.Item>
-                  )}
-                />
-              </Card>
+                      <Option value="vi">
+                        <GlobalOutlined /> Tiếng Việt
+                      </Option>
+                      <Option value="en">
+                        <GlobalOutlined /> English
+                      </Option>
+                    </Select>
+                  </motion.div>
+                </Space>
+              </Col>
+            </Row>
+          </Card>
+        </motion.div>
 
-              {/* Data Management */}
-              <Card title="Quản lý dữ liệu" className="settings-card">
-                <Space direction="vertical" size="large" style={{ width: '100%' }}>
-                  <div className="data-item">
-                    <div className="data-info">
-                      <Text strong>Xuất dữ liệu</Text>
-                      <Text type="secondary" className="data-description">
-                        Tải xuống bản sao dữ liệu cá nhân của bạn
-                      </Text>
-                    </div>
-                    <Button 
+        {/* Notification Settings */}
+        <motion.div
+          ref={notificationSection.ref}
+          variants={animationVariants.slideInRightVariant}
+          initial="hidden"
+          animate={notificationSection.inView ? "visible" : "hidden"}
+        >
+          <Card 
+            title={
+              <span>
+                <BellOutlined style={{ marginRight: 8 }} />
+                Thông báo
+              </span>
+            }
+            className="settings-card"
+          >
+            <List>
+              <List.Item>
+                <List.Item.Meta
+                  avatar={<NotificationOutlined />}
+                  title="Thông báo email"
+                  description="Nhận thông báo về sự kiện và cập nhật qua email"
+                />
+                <motion.div {...hoverAnimations.floatHover}>
+                  <Switch
+                    checked={settings.notifications.email}
+                    onChange={(checked) => handleSettingChange('notifications', 'email', checked)}
+                  />
+                </motion.div>
+              </List.Item>
+
+              <List.Item>
+                <List.Item.Meta
+                  avatar={<BellOutlined />}
+                  title="Thông báo đẩy"
+                  description="Nhận thông báo đẩy trên trình duyệt"
+                />
+                <motion.div {...hoverAnimations.floatHover}>
+                  <Switch
+                    checked={settings.notifications.push}
+                    onChange={(checked) => handleSettingChange('notifications', 'push', checked)}
+                  />
+                </motion.div>
+              </List.Item>
+
+              <List.Item>
+                <List.Item.Meta
+                  avatar={<NotificationOutlined />}
+                  title="Thông báo SMS"
+                  description="Nhận thông báo quan trọng qua SMS"
+                />
+                <motion.div {...hoverAnimations.floatHover}>
+                  <Switch
+                    checked={settings.notifications.sms}
+                    onChange={(checked) => handleSettingChange('notifications', 'sms', checked)}
+                  />
+                </motion.div>
+              </List.Item>
+
+              <List.Item>
+                <List.Item.Meta
+                  avatar={<DatabaseOutlined />}
+                  title="Email marketing"
+                  description="Nhận thông tin về sự kiện mới và ưu đãi"
+                />
+                <motion.div {...hoverAnimations.floatHover}>
+                  <Switch
+                    checked={settings.notifications.marketing}
+                    onChange={(checked) => handleSettingChange('notifications', 'marketing', checked)}
+                  />
+                </motion.div>
+              </List.Item>
+            </List>
+          </Card>
+        </motion.div>
+
+        {/* Privacy Settings */}
+        <motion.div
+          ref={privacySection.ref}
+          variants={animationVariants.slideInLeftVariant}
+          initial="hidden"
+          animate={privacySection.inView ? "visible" : "hidden"}
+        >
+          <Card 
+            title={
+              <span>
+                <SafetyOutlined style={{ marginRight: 8 }} />
+                Quyền riêng tư
+              </span>
+            }
+            className="settings-card"
+          >
+            <Alert
+              message="Bảo vệ thông tin cá nhân"
+              description="Quản lý cách thông tin của bạn được hiển thị và chia sẻ"
+              type="info"
+              showIcon
+              style={{ marginBottom: 16 }}
+            />
+
+            <List>
+              <List.Item>
+                <List.Item.Meta
+                  title="Hiển thị profile công khai"
+                  description="Cho phép người khác xem thông tin cơ bản của bạn"
+                />
+                <motion.div {...hoverAnimations.floatHover}>
+                  <Switch
+                    checked={settings.privacy.profileVisible}
+                    onChange={(checked) => handleSettingChange('privacy', 'profileVisible', checked)}
+                  />
+                </motion.div>
+              </List.Item>
+
+              <List.Item>
+                <List.Item.Meta
+                  title="Hiển thị hoạt động"
+                  description="Cho phép người khác xem các sự kiện bạn đã tham gia"
+                />
+                <motion.div {...hoverAnimations.floatHover}>
+                  <Switch
+                    checked={settings.privacy.showActivity}
+                    onChange={(checked) => handleSettingChange('privacy', 'showActivity', checked)}
+                  />
+                </motion.div>
+              </List.Item>
+
+              <List.Item>
+                <List.Item.Meta
+                  title="Chia sẻ dữ liệu"
+                  description="Cho phép chia sẻ dữ liệu ẩn danh để cải thiện dịch vụ"
+                />
+                <motion.div {...hoverAnimations.floatHover}>
+                  <Switch
+                    checked={settings.privacy.dataSharing}
+                    onChange={(checked) => handleSettingChange('privacy', 'dataSharing', checked)}
+                  />
+                </motion.div>
+              </List.Item>
+            </List>
+          </Card>
+        </motion.div>
+
+        {/* Data Management */}
+        <motion.div
+          ref={dataSection.ref}
+          variants={animationVariants.scaleInVariant}
+          initial="hidden"
+          animate={dataSection.inView ? "visible" : "hidden"}
+        >
+          <Card 
+            title={
+              <span>
+                <DatabaseOutlined style={{ marginRight: 8 }} />
+                Quản lý dữ liệu
+              </span>
+            }
+            className="settings-card"
+          >
+            <Space direction="vertical" style={{ width: '100%' }} size="large">
+              <Alert
+                message="Quản lý dữ liệu cá nhân"
+                description="Export dữ liệu hoặc xóa tài khoản vĩnh viễn"
+                type="warning"
+                showIcon
+              />
+
+              <Row gutter={[16, 16]}>
+                <Col xs={24} sm={12}>
+                  <motion.div {...hoverAnimations.buttonHover}>
+                    <Button
+                      size="large"
+                      block
                       icon={<DatabaseOutlined />}
                       onClick={() => setExportDataVisible(true)}
                     >
-                      Xuất dữ liệu
+                      Export dữ liệu
                     </Button>
-                  </div>
+                  </motion.div>
+                </Col>
 
-                  <Divider />
-
-                  <Alert
-                    message="Khu vực nguy hiểm"
-                    description="Các hành động sau đây không thể hoàn tác"
-                    type="warning"
-                    showIcon
-                  />
-
-                  <div className="data-item">
-                    <div className="data-info">
-                      <Text strong>Xóa tài khoản</Text>
-                      <Text type="secondary" className="data-description">
-                        Xóa vĩnh viễn tài khoản và tất cả dữ liệu liên quan
-                      </Text>
-                    </div>
-                    <Button 
-                      danger 
+                <Col xs={24} sm={12}>
+                  <motion.div {...hoverAnimations.buttonHover}>
+                    <Button
+                      danger
+                      size="large"
+                      block
                       icon={<DeleteOutlined />}
                       onClick={() => setDeleteAccountVisible(true)}
                     >
                       Xóa tài khoản
                     </Button>
-                  </div>
-                </Space>
-              </Card>
-            </Col>
-          </Row>
+                  </motion.div>
+                </Col>
+              </Row>
 
-          {/* Current Settings Summary */}
-          <Card title="Tóm tắt cài đặt hiện tại" className="settings-summary">
-            <Row gutter={[16, 16]}>
-              <Col xs={12} sm={6}>
-                <div className="summary-item">
-                  <Text type="secondary">Giao diện</Text>
-                  <Tag color="blue">{themeOptions.find(t => t.value === settings.theme)?.label}</Tag>
-                </div>
-              </Col>
-              <Col xs={12} sm={6}>
-                <div className="summary-item">
-                  <Text type="secondary">Ngôn ngữ</Text>
-                  <Tag color="green">{languageOptions.find(l => l.value === settings.language)?.label}</Tag>
-                </div>
-              </Col>
-              <Col xs={12} sm={6}>
-                <div className="summary-item">
-                  <Text type="secondary">Thông báo email</Text>
-                  <Tag color={settings.notifications.email ? 'success' : 'default'}>
-                    {settings.notifications.email ? 'Bật' : 'Tắt'}
-                  </Tag>
-                </div>
-              </Col>
-              <Col xs={12} sm={6}>
-                <div className="summary-item">
-                  <Text type="secondary">Hồ sơ công khai</Text>
-                  <Tag color={settings.privacy.profileVisible ? 'success' : 'default'}>
-                    {settings.privacy.profileVisible ? 'Hiển thị' : 'Ẩn'}
-                  </Tag>
-                </div>
-              </Col>
-            </Row>
+              <div>
+                <Text type="secondary">
+                  <SafetyOutlined style={{ marginRight: 4 }} />
+                  Tất cả thay đổi được bảo mật và chỉ bạn mới có thể truy cập
+                </Text>
+              </div>
+            </Space>
           </Card>
-        </div>
-
-        {/* Export Data Modal */}
-        <Modal
-          title="Xuất dữ liệu cá nhân"
-          open={exportDataVisible}
-          onCancel={() => setExportDataVisible(false)}
-          onOk={handleExportData}
-          okText="Xuất dữ liệu"
-          cancelText="Hủy"
-        >
-          <Alert
-            message="Thông tin xuất dữ liệu"
-            description="Chúng tôi sẽ tạo một file chứa tất cả dữ liệu cá nhân của bạn và gửi đến email đã đăng ký trong vòng 24 giờ."
-            type="info"
-            showIcon
-            style={{ marginBottom: '16px' }}
-          />
-          <Paragraph>
-            File sẽ bao gồm:
-          </Paragraph>
-          <ul>
-            <li>Thông tin hồ sơ cá nhân</li>
-            <li>Lịch sử đặt vé và tham gia sự kiện</li>
-            <li>Cài đặt và tùy chọn</li>
-            <li>Dữ liệu tương tác với hệ thống</li>
-          </ul>
-        </Modal>
-
-        {/* Delete Account Modal */}
-        <Modal
-          title="Xóa tài khoản"
-          open={deleteAccountVisible}
-          onCancel={() => setDeleteAccountVisible(false)}
-          onOk={handleDeleteAccount}
-          okText="Xóa tài khoản"
-          cancelText="Hủy"
-          okButtonProps={{ danger: true }}
-        >
-          <Alert
-            message="Cảnh báo nghiêm trọng!"
-            description="Hành động này sẽ xóa vĩnh viễn tài khoản của bạn và không thể hoàn tác."
-            type="error"
-            showIcon
-            style={{ marginBottom: '16px' }}
-          />
-          <Paragraph>
-            Khi xóa tài khoản, bạn sẽ mất:
-          </Paragraph>
-          <ul>
-            <li>Tất cả thông tin cá nhân</li>
-            <li>Lịch sử đặt vé và tham gia sự kiện</li>
-            <li>Các vé đã mua chưa sử dụng</li>
-            <li>Điểm thưởng và ưu đãi</li>
-          </ul>
-          <Paragraph strong>
-            Bạn có chắc chắn muốn tiếp tục?
-          </Paragraph>
-        </Modal>
+        </motion.div>
       </div>
-    </MainLayout>
+
+      {/* Delete Account Modal */}
+      <Modal
+        title={
+          <span style={{ color: '#ff4d4f' }}>
+            <ExclamationCircleOutlined style={{ marginRight: 8 }} />
+            Xác nhận xóa tài khoản
+          </span>
+        }
+        visible={deleteAccountVisible}
+        onCancel={() => setDeleteAccountVisible(false)}
+        footer={[
+          <Button key="cancel" onClick={() => setDeleteAccountVisible(false)}>
+            Hủy
+          </Button>,
+          <Button key="delete" type="primary" danger onClick={handleDeleteAccount}>
+            Xóa tài khoản
+          </Button>
+        ]}
+      >
+        <Alert
+          message="Cảnh báo!"
+          description="Hành động này không thể hoàn tác. Tất cả dữ liệu của bạn sẽ bị xóa vĩnh viễn."
+          type="error"
+          showIcon
+          style={{ marginBottom: 16 }}
+        />
+        <Paragraph>
+          Khi xóa tài khoản, bạn sẽ mất:
+        </Paragraph>
+        <List size="small">
+          <List.Item>• Tất cả thông tin cá nhân</List.Item>
+          <List.Item>• Lịch sử đặt vé</List.Item>
+          <List.Item>• Điểm thưởng và ưu đãi</List.Item>
+          <List.Item>• Các cài đặt tùy chỉnh</List.Item>
+        </List>
+      </Modal>
+
+      {/* Export Data Modal */}
+      <Modal
+        title={
+          <span>
+            <DatabaseOutlined style={{ marginRight: 8 }} />
+            Export dữ liệu cá nhân
+          </span>
+        }
+        visible={exportDataVisible}
+        onCancel={() => setExportDataVisible(false)}
+        footer={[
+          <Button key="cancel" onClick={() => setExportDataVisible(false)}>
+            Hủy
+          </Button>,
+          <Button key="export" type="primary" onClick={handleExportData}>
+            Export dữ liệu
+          </Button>
+        ]}
+      >
+        <Paragraph>
+          Chúng tôi sẽ chuẩn bị file chứa tất cả dữ liệu cá nhân của bạn bao gồm:
+        </Paragraph>
+        <List size="small">
+          <List.Item>• Thông tin hồ sơ</List.Item>
+          <List.Item>• Lịch sử giao dịch</List.Item>
+          <List.Item>• Danh sách sự kiện đã tham gia</List.Item>
+          <List.Item>• Cài đặt và preferences</List.Item>
+        </List>
+        <Alert
+          message="File sẽ được gửi đến email đã đăng ký trong vòng 24 giờ"
+          type="info"
+          showIcon
+          style={{ marginTop: 16 }}
+        />
+      </Modal>
+    </PageAnimationWrapper>
   );
 };
 

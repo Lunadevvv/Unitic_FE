@@ -41,7 +41,7 @@ export const fetchEventsByStatus = createAsyncThunk(
   "events/fetchEventsByStatus",
   async (status, { rejectWithValue }) => {
     try {
-      const response = await BASE_URL.get(`Unitic/event/status/${status}`);
+      const response = await BASE_URL.get(`Unitic/event/status/?status=${status}`);
       const data = response.data;
       return data;
     } catch (error) {
@@ -65,7 +65,7 @@ export const createEvent = createAsyncThunk(
         date_Start: eventData.date_Start,
         date_End: eventData.date_End,
         price: eventData.price,
-        categoryName: eventData.categoryName,
+        CateId: eventData.CateId,
         slot: eventData.slot,
       });
       const data = response.data;
@@ -91,6 +91,7 @@ export const updateEvent = createAsyncThunk(
         date_Start: eventData.date_Start,
         date_End: eventData.date_End,
         price: eventData.price,
+        cateID: eventData.cateID,
         categoryName: eventData.categoryName,
         slot: eventData.slot
       });
@@ -106,15 +107,15 @@ export const updateEvent = createAsyncThunk(
 // Update event status
 export const updateEventStatus = createAsyncThunk(
   "events/updateEventStatus",
-  async ({ eventId, eventData, status }, { rejectWithValue }) => {
+  async ({ eventId, status }, { rejectWithValue }) => {
     try {
-      const response = await BASE_URL.put(`Unitic/event/status/${eventId}/${eventData.status}`, {
+      const response = await BASE_URL.put(`Unitic/event/status/${eventId}/?status=${status}`, {
         Status: status
       });
       const data = response.data;
       return data;
     } catch (error) {
-      let message = error.response?.data?.message || error.message || 'Failed to update event';
+      let message = error.response?.data?.message || error.message || 'Failed to update event status';
       return rejectWithValue(message);
     }
   }

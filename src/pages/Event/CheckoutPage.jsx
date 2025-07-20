@@ -14,6 +14,7 @@ import {
 } from '@ant-design/icons';
 import { useEvents } from '../../hooks/useEvents';
 import { useCart } from '../../hooks/useCart';
+import MainLayout from '../../components/layout/MainLayout';
 import '../../assets/scss/CheckoutPage.scss';
 
 const { Title, Text } = Typography;
@@ -387,7 +388,8 @@ const renderPaymentMethod = () => (
   }
 
   return (
-    <div className="checkout-page">
+    <MainLayout>
+      <div className="checkout-page">
       <div className="checkout-header">
         <div className="container">
           <Breadcrumb
@@ -464,6 +466,7 @@ const renderPaymentMethod = () => (
         </Row>
       </div>
     </div>
+    </MainLayout>
   );
 };
 

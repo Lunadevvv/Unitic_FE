@@ -1,80 +1,56 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
-import {
-  Row, Col, Divider, Tag, Button, Carousel, Tooltip, message,
-  Breadcrumb, Tabs, List, Typography, Space, Spin
-} from 'antd';
-import {
-  CalendarOutlined,
-  EnvironmentOutlined,
-  TeamOutlined,
-  ShareAltOutlined,
-  HeartOutlined,
-  HeartFilled,
-  StarFilled,
-  ArrowLeftOutlined,
-  UserOutlined,
-  HomeOutlined,
-  TagOutlined,
-  ClockCircleOutlined,
-  DollarOutlined,
-  ArrowRightOutlined
-} from '@ant-design/icons';
-import { useEvents } from '../../hooks/useEvents';
+import { useSelector, useDispatch } from 'react-redux';
+import { Row, Col, Divider, Tag, Button, Carousel, Tooltip, message, Breadcrumb, Tabs, List, Typography, Space, Spin } from 'antd';
+import { CalendarOutlined, EnvironmentOutlined, TeamOutlined, ShareAltOutlined, HeartOutlined, HeartFilled, StarFilled, ArrowLeftOutlined, UserOutlined, HomeOutlined, TagOutlined, ClockCircleOutlined, DollarOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import EventCard from '../../components/event/EventCard';
 import MainLayout from '../../components/layout/MainLayout';
+import { fetchEventById, fetchEvents } from '../../store/actions/eventsActions';
 import '../../assets/scss/EventDetail.scss';
 
 const { TabPane } = Tabs;
 const { Title, Paragraph, Text } = Typography;
 
+
 const EventDetailsPage = () => {
   const { detailid } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
-
-  const {
-    getEventById,
-    getRelatedEvents,
-    events: allEventsFromHook,
-    loading: eventsHookLoading // Đây là loading state từ hook của bạn
-  } = useEvents();
-
-  const [event, setEvent] = useState(null);
-  const [relatedEvents, setRelatedEvents] = useState([]);
-  const [categoryEvents, setCategoryEvents] = useState([]);
+  const { currentEvent: event, categoryEvents = [], relatedEvents = [], loading } = useSelector(state => state.events);
   const [isLiked, setIsLiked] = useState(false);
-  const [isLoadingPage, setIsLoadingPage] = useState(true); // Loading state riêng của trang
-
-  // Get fromCategory parameter outside of re-renders
   const fromCategory = searchParams.get('fromCategory');
 
-  // Use useCallback for navigation functions to prevent recreation on each render
+  useEffect(() => {
+    if (detailid) {
+      dispatch(fetchEventById(detailid));
+    }
+    // Also fetch related events
+    dispatch(fetchEvents());
+  }, [dispatch, detailid]);
+
   const handleCategoryClick = useCallback((category, e) => {
     if (e) {
-      e.preventDefault(); // Ngăn hành vi mặc định của thẻ HTML
-      e.stopPropagation(); // Ngăn sự kiện nổi bọt lên các phần tử cha (đặc biệt là Link)
+      e.preventDefault();
+      e.stopPropagation();
     }
-    navigate({
-      pathname: '/events',
-      search: `?category=${encodeURIComponent(category)}`
-    });
-  }, [navigate]); // navigate là stable, nên chỉ cần nó trong dependency array
+    navigate({ pathname: '/events', search: `?category=${encodeURIComponent(category)}` });
+  }, [navigate]);
 
   const handleBackButtonClick = useCallback(() => {
     if (fromCategory) {
-      navigate(`/events?category=${encodeURIComponent(fromCategory)}`); // Đảm bảo encodeURIComponent
+      navigate(`/events?category=${encodeURIComponent(fromCategory)}`);
     } else {
       navigate('/events');
     }
-  }, [navigate, fromCategory]); // fromCategory có thể thay đổi
+  }, [navigate, fromCategory]);
 
   const handleAddToCart = () => {
-    // Điều hướng đến trang checkout với thông tin sự kiện
-    navigate(`/checkout/${event.id}`, {
+    if (!event) return;
+    navigate(`/checkout/${event.eventID}`, {
       state: {
         checkoutData: {
-          eventId: event.id,
+          eventId: event.eventID,
           ticketType: 'Standard',
           quantity: 1,
           price: event.price || 0
@@ -84,98 +60,25 @@ const EventDetailsPage = () => {
   };
 
   const toggleLike = () => {
-    setIsLiked(!isLiked);
+    setIsLiked(liked => !liked);
     message.info(isLiked ? 'Đã xóa khỏi danh sách yêu thích' : 'Đã thêm vào danh sách yêu thích');
   };
 
-  // === FIX LỖI "Maximum update depth exceeded" Ở ĐÂY ===
-  useEffect(() => {
-    let isMounted = true; // Biến cờ để kiểm tra component còn mounted hay không
-
-    // Đặt loading state của trang về true khi bắt đầu tải dữ liệu mới
-    setIsLoadingPage(true);
-    window.scrollTo(0, 0); // Cuộn lên đầu trang
-
-    // Chỉ thực hiện fetch dữ liệu khi eventsHookLoading đã hoàn tất
-    if (eventsHookLoading) {
-      return; // Nếu hook vẫn đang tải, đợi lần render tiếp theo
-    }
-
-    const fetchedEvent = getEventById(detailid); // Lấy sự kiện theo ID
-
-    if (!isMounted) return; // Nếu component đã unmount, không làm gì nữa
-
-    if (fetchedEvent) {
-      // Chỉ cập nhật state nếu dữ liệu thực sự khác
-      setEvent(prevEvent => {
-        if (!prevEvent || prevEvent.id !== fetchedEvent.id) {
-          return fetchedEvent;
-        }
-        return prevEvent;
-      });
-
-      const related = getRelatedEvents(detailid, 3);
-      setRelatedEvents(prevRelated => {
-        // So sánh mảng để tránh cập nhật không cần thiết
-        if (JSON.stringify(prevRelated) !== JSON.stringify(related)) {
-          return related;
-        }
-        return prevRelated;
-      });
-
-      if (allEventsFromHook && allEventsFromHook.length > 0) {
-        const sameCategoryEvents = allEventsFromHook
-          .filter(e => e.category === fetchedEvent.category && e.id !== fetchedEvent.id)
-          .slice(0, 4);
-        setCategoryEvents(prevCategoryEvents => {
-          // So sánh mảng để tránh cập nhật không cần thiết
-          if (JSON.stringify(prevCategoryEvents) !== JSON.stringify(sameCategoryEvents)) {
-            return sameCategoryEvents;
-          }
-          return prevCategoryEvents;
-        });
-      }
-      
-      // Khi đã có dữ liệu, đặt loading state của trang về false
-      if (isMounted) {
-        setIsLoadingPage(false);
-      }
-    } else {
-      // Nếu không tìm thấy sự kiện, báo lỗi và điều hướng
-      message.error('Không tìm thấy sự kiện này.');
-      if (isMounted) { // Chỉ điều hướng nếu component vẫn mounted
-        navigate('/events', { replace: true }); // Dùng replace để tránh thêm vào lịch sử trình duyệt
-      }
-    }
-
-    // Cleanup function: Đặt isMounted về false khi component unmount
-    return () => {
-      isMounted = false;
-    };
-  }, [
-    detailid, // Re-run khi detailid thay đổi (chuyển sang sự kiện khác)
-    getEventById, // Callback function từ hook, nên là stable
-    getRelatedEvents, // Callback function từ hook, nên là stable
-    allEventsFromHook, // Dữ liệu từ hook, nếu thay đổi sẽ re-run
-    eventsHookLoading, // Khi loading state của hook thay đổi (từ true sang false)
-    navigate // navigate function là stable, nhưng nên có để ESLint không cảnh báo
-    // Không thêm setEvent, setRelatedEvents, setCategoryEvents vào đây để tránh vòng lặp
-  ]);
-
-  if (isLoadingPage || !event) {
+  if (loading || !event) {
     return (
       <div className="event-detail-loading">
         <Spin size="large" />
         <p>Đang tải thông tin sự kiện...</p>
-        {!isLoadingPage && !event && <p>Sự kiện không tồn tại hoặc đã bị xóa.</p>}
+        {!loading && !event && <p>Sự kiện không tồn tại hoặc đã bị xóa.</p>}
       </div>
     );
   }
 
   return (
-    <div className="event-detail-page">
+    <MainLayout>
+      <div className="event-detail-page">
       <div className="event-detail-header">
-        <div className="parallax-bg" style={{ backgroundImage: `url(${event.image})` }}></div>
+        <div className="parallax-bg" style={{ backgroundImage: `url('/src/assets/img/event1.jpeg')` }}></div>
         <div className="event-header-overlay"></div>
         <div className="event-header-content">
           <Button
@@ -186,21 +89,21 @@ const EventDetailsPage = () => {
           >
             Quay lại danh sách
           </Button>
-          {event.isFeatured && <div className="featured-badge">Sự kiện nổi bật</div>}
-          <h1 className="event-title">{event.title}</h1>
+          {event?.status === 1 && <div className="featured-badge">Sự kiện nổi bật</div>}
+          <h1 className="event-title">{event?.name}</h1>
           <div className="event-meta">
             <div className="event-info">
               <span className="event-rating">
-                <StarFilled /> {event.rating || 4.5} ({event.soldCount} đã bán)
+                <StarFilled /> 4.5 (0 đã bán)
               </span>
               <Tag className="event-status available">Còn vé</Tag>
               <Tag
                 color="blue"
                 className="category-tag"
-                onClick={(e) => handleCategoryClick(event.category, e)}
+                onClick={(e) => handleCategoryClick(event?.cateID, e)}
                 style={{ cursor: 'pointer' }}
               >
-                {event.category}
+                {event?.cateID}
               </Tag>
             </div>
           </div>
@@ -225,13 +128,13 @@ const EventDetailsPage = () => {
             },
             {
               title: (
-                <Link to={`/events?category=${encodeURIComponent(event.category)}`}>
-                  {event.category}
+                <Link to={`/events?category=${encodeURIComponent(event?.cateID || '')}`}>
+                  {event?.cateID}
                 </Link>
               ),
             },
             {
-              title: event.title,
+              title: event?.name,
             },
           ]}
         />
@@ -242,10 +145,10 @@ const EventDetailsPage = () => {
               <div className="event-gallery">
                 <Carousel autoplay effect="fade">
                   <div className="gallery-item">
-                    <img src={event.image} alt={`${event.title} - gallery 1`} />
+                    <img src="/src/assets/img/event1.jpeg" alt={`${event?.name} - gallery 1`} />
                   </div>
                   <div className="gallery-item">
-                    <img src={event.image} alt={`${event.title} - gallery 2`} />
+                    <img src="/src/assets/img/event2.jpeg" alt={`${event?.name} - gallery 2`} />
                   </div>
                 </Carousel>
               </div>
@@ -255,39 +158,30 @@ const EventDetailsPage = () => {
                   <div className="event-description">
                     <Title level={4}>Giới thiệu sự kiện</Title>
                     <Paragraph>
-                      {event.description || 'Chưa có mô tả cho sự kiện này.'}
+                      {event?.description || 'Chưa có mô tả cho sự kiện này.'}
                     </Paragraph>
-
-                    {event.longDescription && (
-                      <>
-                        <Title level={5}>Mô tả chi tiết</Title>
-                        <Paragraph>
-                          {event.longDescription}
-                        </Paragraph>
-                      </>
-                    )}
 
                     <Space className="event-highlights" wrap>
                       <div className="highlight-item">
                         <CalendarOutlined className="highlight-icon" />
                         <div className="highlight-content">
-                          <Text strong>{new Date(event.date).toLocaleDateString('vi-VN')}</Text>
-                          <Text type="secondary">Ngày diễn ra</Text>
+                          <Text strong>{event?.date_Start ? new Date(event.date_Start).toLocaleDateString('vi-VN') : 'Chưa xác định'}</Text>
+                          <Text type="secondary">Ngày bắt đầu</Text>
                         </div>
                       </div>
 
                       <div className="highlight-item">
                         <ClockCircleOutlined className="highlight-icon" />
                         <div className="highlight-content">
-                          <Text strong>{event.time || 'Thời gian chưa xác định'}</Text>
-                          <Text type="secondary">Thời gian</Text>
+                          <Text strong>{event?.date_End ? new Date(event.date_End).toLocaleDateString('vi-VN') : 'Chưa xác định'}</Text>
+                          <Text type="secondary">Ngày kết thúc</Text>
                         </div>
                       </div>
 
                       <div className="highlight-item">
                         <EnvironmentOutlined className="highlight-icon" />
                         <div className="highlight-content">
-                          <Text strong>{event.location}</Text>
+                          <Text strong>Địa điểm sẽ được thông báo</Text>
                           <Text type="secondary">Địa điểm</Text>
                         </div>
                       </div>
@@ -295,32 +189,36 @@ const EventDetailsPage = () => {
                       <div className="highlight-item">
                         <DollarOutlined className="highlight-icon" />
                         <div className="highlight-content">
-                          <Text strong>{event.price ? `${event.price.toLocaleString('vi-VN')} VNĐ` : 'Miễn phí'}</Text>
+                          <Text strong>{event?.price ? `${event.price.toLocaleString('vi-VN')} VNĐ` : 'Miễn phí'}</Text>
                           <Text type="secondary">Giá vé</Text>
+                        </div>
+                      </div>
+
+                      <div className="highlight-item">
+                        <TeamOutlined className="highlight-icon" />
+                        <div className="highlight-content">
+                          <Text strong>{event?.slot || 0} người</Text>
+                          <Text type="secondary">Số lượng chỗ</Text>
                         </div>
                       </div>
                     </Space>
 
                     <Divider />
-                    <Title level={4}>Lịch trình sự kiện</Title>
-                    <List
-                      className="event-schedule"
-                      size="large"
-                      bordered
-                      dataSource={[
-                        { time: '18:30 - 19:00', title: 'Đón khách & check-in' },
-                        { time: '19:00 - 19:15', title: 'Khai mạc sự kiện' },
-                        { time: '19:15 - 20:30', title: 'Chương trình chính' },
-                        { time: '20:30 - 21:00', title: 'Giao lưu & kết nối' },
-                        { time: '21:00 - 22:00', title: 'Bế mạc & tặng quà lưu niệm' }
-                      ]}
-                      renderItem={item => (
-                        <List.Item>
-                          <Text className="schedule-time">{item.time}</Text>
-                          <Text>{item.title}</Text>
-                        </List.Item>
-                      )}
-                    />
+                    <Title level={4}>Thông tin thêm</Title>
+                    {event.schedule && event.schedule.length > 0 && (
+                      <List
+                        className="event-schedule"
+                        size="large"
+                        bordered
+                        dataSource={event.schedule}
+                        renderItem={item => (
+                          <List.Item>
+                            <Text className="schedule-time">{item.time}</Text>
+                            <Text>{item.title}</Text>
+                          </List.Item>
+                        )}
+                      />
+                    )}
                   </div>
                 </TabPane>
 
@@ -330,8 +228,8 @@ const EventDetailsPage = () => {
                     <Paragraph>
                       <EnvironmentOutlined /> {event.address || event.location}
                     </Paragraph>
+                    {/* Có thể nhúng bản đồ động hoặc để lại hình ảnh tĩnh nếu có API key */}
                     <div className="location-map">
-                      {/* Thêm API Key của bạn vào đây */}
                       <img
                         src={`https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(event.address || event.location)}&zoom=14&size=600x300&maptype=roadmap&markers=color:red%7C${encodeURIComponent(event.address || event.location)}&key=YOUR_Maps_API_KEY`}
                         alt="Bản đồ địa điểm sự kiện"
@@ -508,7 +406,7 @@ const EventDetailsPage = () => {
 
         <Divider />
 
-     {categoryEvents.length > 0 && (
+     {categoryEvents && categoryEvents.length > 0 && (
           <section className="category-events-section">
             <div className="section-header">
               <h2 className="section-title">
@@ -555,7 +453,7 @@ const EventDetailsPage = () => {
 
         <Divider />
 
-        {relatedEvents.length > 0 && (
+        {relatedEvents && relatedEvents.length > 0 && (
           <div className="related-events">
             <h2>Sự kiện tương tự</h2>
             <Row gutter={[20, 20]}>
@@ -590,13 +488,7 @@ const EventDetailsPage = () => {
                         <p><EnvironmentOutlined /> {relEvent.location}</p>
                         <div className="related-event-footer">
                           <span className="related-event-price">{relEvent.price ? `${relEvent.price.toLocaleString('vi-VN')} VNĐ` : 'Miễn phí'}</span>
-                          {/* Nút Xem chi tiết:
-                              - Nếu muốn nút ĐIỀU HƯỚNG THEO LINK CHA:
-                                + Bỏ onClick handler của nút này
-                              - Nếu muốn nút có hành vi RIÊNG (ví dụ, mở modal thay vì điều hướng):
-                                + Giữ onClick và thêm e.stopPropagation()
-                          */}
-                          <Button size="small" type="primary">Xem chi tiết</Button>
+                      <Button size="small" type="primary">Xem chi tiết</Button>
                         </div>
                       </div>
                     </div>
@@ -608,6 +500,7 @@ const EventDetailsPage = () => {
         )}
       </div>
     </div>
+    </MainLayout>
   );
 };
 

@@ -2,8 +2,10 @@ import { createSlice } from '@reduxjs/toolkit';
 import {
   fetchEvents,
   fetchEventById,
+  fetchEventsByStatus,
   createEvent,
   updateEvent,
+  updateEventStatus,
   deleteEvent,
   fetchEventsByCategory,
   fetchFeaturedEvents,
@@ -98,6 +100,20 @@ const eventsSlice = createSlice({
         state.error = action.payload;
         state.currentEvent = null;
       })
+      // Fetch events by status
+      .addCase(fetchEventsByStatus.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchEventsByStatus.fulfilled, (state, action) => {
+        state.loading = false;
+        state.events = action.payload.events || action.payload;
+        state.pagination.total = action.payload.total || action.payload.length;
+      })
+      .addCase(fetchEventsByStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
       // Create event
       .addCase(createEvent.pending, (state) => {
         state.loading = true;
@@ -112,7 +128,12 @@ const eventsSlice = createSlice({
         state.error = action.payload;
       })
       // Update event
+      .addCase(updateEvent.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(updateEvent.fulfilled, (state, action) => {
+        state.loading = false;
         const index = state.events.findIndex(event => event.id === action.payload.id);
         if (index !== -1) {
           state.events[index] = action.payload;
@@ -120,6 +141,29 @@ const eventsSlice = createSlice({
         if (state.currentEvent?.id === action.payload.id) {
           state.currentEvent = action.payload;
         }
+      })
+      .addCase(updateEvent.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Update event status
+      .addCase(updateEventStatus.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateEventStatus.fulfilled, (state, action) => {
+        state.loading = false;
+        const index = state.events.findIndex(event => event.id === action.payload.id);
+        if (index !== -1) {
+          state.events[index] = action.payload;
+        }
+        if (state.currentEvent?.id === action.payload.id) {
+          state.currentEvent = action.payload;
+        }
+      })
+      .addCase(updateEventStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       })
       // Delete event
       .addCase(deleteEvent.fulfilled, (state, action) => {

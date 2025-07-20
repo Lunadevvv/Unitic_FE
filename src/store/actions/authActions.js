@@ -9,14 +9,23 @@ export const loginUser = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await BASE_URL.post("UniTic/auth/login", {
-        Email: credentials.email,
-        Password: credentials.password,
+        Email: credentials.Email,
+        Password: credentials.Password,
       });
       const data = response.data;
       // Store token in cookies
       Cookies.set("ACCESS_TOKEN", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      return data;
+      
+      // Fetch user profile after successful login
+      try {
+        const profileResponse = await BASE_URL.get("api/profile");
+        const userProfile = profileResponse.data;
+        localStorage.setItem("user", JSON.stringify(userProfile));
+        return { token: data.token, message: data.message, user: userProfile };
+      } catch (_profileError) {
+        // If profile fetch fails, still return success with token
+        return { token: data.token, message: data.message };
+      }
     } catch (error) {
       let message =
         error.response?.data?.message || error.message || "Login failed";
