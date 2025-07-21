@@ -21,7 +21,7 @@ import { useEvents } from '../../hooks/useEvents';
 const { Option } = Select;
 
 const EventsPage = () => {
-  const { events, loading, error, categories: apiCategories } = useEvents();
+  const { events, loading, error } = useEvents();
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState('grid');
