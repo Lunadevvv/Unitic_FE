@@ -8,9 +8,7 @@ const BASE_URL = axios.create({
     }
 });
 
-// Add a request interceptor
 BASE_URL.interceptors.request.use(function (config) {
-    // get token from cookies named ACCESS_TOKEN
     const token = Cookies.get('ACCESS_TOKEN');
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
