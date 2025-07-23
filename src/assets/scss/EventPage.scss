@@ -1,14 +1,18 @@
-@use 'base';
-@use 'layout';
-@use 'header';
-@use 'carousel';
-@use 'sections';
-@use 'cards';
-@use 'animations';
-@use 'filter';
+@use "base";
+@use "layout";
+@use "header";
+@use "carousel";
+@use "sections";
+@use "cards";
+@use "animations";
+@use "filter";
 
 .events-page {
-  background: linear-gradient(to bottom, base.$accent-color-1, base.$dark-light-bg);
+  background: linear-gradient(
+    to bottom,
+    base.$accent-color-1,
+    base.$dark-light-bg
+  );
   min-height: 100vh;
 
   .event-hero {
@@ -96,7 +100,8 @@
 
           &:hover {
             opacity: 0.9;
-            box-shadow: base.$neon-shadow-purple, 0 0 20px rgba(base.$primary-color, 0.8);
+            box-shadow: base.$neon-shadow-purple,
+              0 0 20px rgba(base.$primary-color, 0.8);
             transform: translateY(-3px);
           }
         }
@@ -148,7 +153,11 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(135deg, rgba(base.$darker-bg, 0.85), rgba(base.$dark-background, 0.95));
+      background: linear-gradient(
+        135deg,
+        rgba(base.$darker-bg, 0.85),
+        rgba(base.$dark-background, 0.95)
+      );
       z-index: 1;
     }
 
@@ -158,7 +167,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-image: url('');
+      background-image: url("");
       background-size: cover;
       background-position: center;
       filter: brightness(0.6) blur(3px);
@@ -175,7 +184,8 @@
       overflow: hidden;
       z-index: 2;
 
-      .floating-circle, .floating-square {
+      .floating-circle,
+      .floating-square {
         position: absolute;
         filter: blur(25px);
         opacity: 0.7;
@@ -229,17 +239,26 @@
       }
 
       @keyframes floatEffect {
-        0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 0.7; }
-        50% { transform: translate(25px, 35px) scale(1.15) rotate(7deg); opacity: 0.8; }
-        100% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 0.7; }
+        0% {
+          transform: translate(0, 0) scale(1) rotate(0deg);
+          opacity: 0.7;
+        }
+        50% {
+          transform: translate(25px, 35px) scale(1.15) rotate(7deg);
+          opacity: 0.8;
+        }
+        100% {
+          transform: translate(0, 0) scale(1) rotate(0deg);
+          opacity: 0.7;
+        }
       }
     }
   }
 
   .event-content-container {
     max-width: 1200px;
-    margin: 60px auto;
-    padding: 0 30px;
+    margin: 60px auto 0;
+    padding: 0 30px 30px;
 
     @media (max-width: 768px) {
       margin: 30px auto;
@@ -266,7 +285,7 @@
   }
 
   .event-section {
-    margin-bottom: 60px;
+    // margin-bottom: 60px;
     background-color: base.$secondary-color;
     padding: 30px;
     border-radius: base.$border-radius;
