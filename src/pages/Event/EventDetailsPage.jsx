@@ -18,6 +18,7 @@ const EventDetailsPage = () => {
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
   const { currentEvent: event, categoryEvents = [], relatedEvents = [], loading } = useSelector(state => state.events);
+  const { isAuthenticated } = useSelector(state => state.auth);
   const [isLiked, setIsLiked] = useState(false);
   const fromCategory = searchParams.get('fromCategory');
 
@@ -45,15 +46,30 @@ const EventDetailsPage = () => {
     }
   }, [navigate, fromCategory]);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!event) return;
-    navigate(`/checkout/${event.eventID}`, {
+    
+    // Kiểm tra xem user đã đăng nhập chưa
+    if (!isAuthenticated) {
+      message.warning('Vui lòng đăng nhập để mua vé');
+      navigate('/signin');
+      return;
+    }
+
+    // Chuyển đến trang checkout với thông tin sự kiện
+    navigate(`/checkout/${event.eventID || detailid}`, {
       state: {
         checkoutData: {
-          eventId: event.eventID,
+          eventId: event.eventID || detailid,
+          eventTitle: event.name,
+          eventDate: event.date_Start,
+          eventTime: event.time || '19:00',
+          eventLocation: event.location || 'Địa điểm sẽ được thông báo',
+          eventImage: event.image || '/src/assets/img/event1.jpeg',
           ticketType: 'Standard',
           quantity: 1,
-          price: event.price || 0
+          price: event.price || 0,
+          totalAmount: event.price || 0
         }
       }
     });

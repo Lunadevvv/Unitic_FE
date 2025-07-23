@@ -11,6 +11,7 @@ import {
   SyncOutlined, UserOutlined, CalendarOutlined, CreditCardOutlined
 } from '@ant-design/icons';
 import AdminLayout from '../../components/layout/AdminLayout';
+import { useBooking } from '../../hooks/useBooking';
 import '../../assets/scss/OrderManagementPage.scss';
 
 const { Title, Text } = Typography;
@@ -18,67 +19,9 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 const { Step } = Steps;
 
-// Mock data
-const mockOrders = [
-  {
-    id: 'ORD001',
-    customerName: 'Nguyễn Văn A',
-    customerEmail: 'nguyenvana@example.com',
-    customerPhone: '0123456789',
-    eventName: 'Concert Sơn Tùng MTP 2024',
-    eventDate: '2024-08-15',
-    ticketType: 'VIP',
-    quantity: 2,
-    unitPrice: 1500000,
-    totalAmount: 3000000,
-    status: 'completed',
-    paymentMethod: 'credit_card',
-    paymentStatus: 'paid',
-    orderDate: '2024-06-20 14:30:00',
-    paymentDate: '2024-06-20 14:32:15',
-    notes: 'Khách hàng yêu cầu ghế gần sân khấu'
-  },
-  {
-    id: 'ORD002',
-    customerName: 'Trần Thị B',
-    customerEmail: 'tranthib@example.com',
-    customerPhone: '0987654321',
-    eventName: 'Hội thảo Marketing Digital',
-    eventDate: '2024-07-20',
-    ticketType: 'Standard',
-    quantity: 1,
-    unitPrice: 500000,
-    totalAmount: 500000,
-    status: 'pending',
-    paymentMethod: 'bank_transfer',
-    paymentStatus: 'pending',
-    orderDate: '2024-06-25 09:15:00',
-    paymentDate: null,
-    notes: ''
-  },
-  {
-    id: 'ORD003',
-    customerName: 'Lê Văn C',
-    customerEmail: 'levanc@example.com',
-    customerPhone: '0456789123',
-    eventName: 'Triển lãm Nghệ thuật',
-    eventDate: '2024-06-30',
-    ticketType: 'Standard',
-    quantity: 3,
-    unitPrice: 200000,
-    totalAmount: 600000,
-    status: 'cancelled',
-    paymentMethod: 'e_wallet',
-    paymentStatus: 'refunded',
-    orderDate: '2024-06-18 16:45:00',
-    paymentDate: '2024-06-18 16:47:30',
-    notes: 'Khách hàng hủy do có việc đột xuất'
-  }
-];
-
 const OrderManagementPage = () => {
+  const { bookings, loading, getAllBookings } = useBooking();
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterPaymentStatus, setFilterPaymentStatus] = useState('all');
@@ -87,18 +30,41 @@ const OrderManagementPage = () => {
 
   useEffect(() => {
     const loadData = async () => {
-      setLoading(true);
       try {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setOrders(mockOrders);
-      } catch {
-        message.error('Lỗi khi tải danh sách đơn hàng');
-      } finally {
-        setLoading(false);
+        await getAllBookings();
+      } catch (error) {
+        message.error('Lỗi khi tải danh sách đơn hàng: ' + error.message);
       }
     };
+
     loadData();
-  }, []);
+  }, [getAllBookings]);
+
+  useEffect(() => {
+    // Transform bookings to orders format
+    if (bookings) {
+      const transformedOrders = bookings.map(booking => ({
+        id: booking.bookingID || booking.id,
+        orderNumber: `ORD${booking.bookingID || booking.id}`,
+        customerName: booking.userName || booking.user?.name || 'Khách hàng',
+        customerEmail: booking.userEmail || booking.user?.email || 'N/A',
+        customerPhone: booking.userPhone || booking.user?.phone || 'N/A', 
+        eventName: booking.eventName || booking.event?.name || 'Sự kiện không xác định',
+        eventDate: booking.event?.date_Start || booking.eventDate,
+        ticketType: 'Standard',
+        quantity: booking.quantity || 1,
+        unitPrice: booking.price || booking.event?.price || 0,
+        totalAmount: (booking.quantity || 1) * (booking.price || booking.event?.price || 0),
+        status: booking.status === 1 ? 'completed' : 'cancelled',
+        paymentMethod: 'wallet',
+        paymentStatus: booking.status === 1 ? 'paid' : 'failed',
+        orderDate: booking.createdAt || booking.bookingDate || new Date().toISOString(),
+        paymentDate: booking.updatedAt || booking.createdAt || new Date().toISOString(),
+        notes: booking.notes || ''
+      }));
+      setOrders(transformedOrders);
+    }
+  }, [bookings]);
 
   const handleViewOrder = (order) => {
     setViewingOrder(order);

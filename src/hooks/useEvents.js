@@ -127,11 +127,11 @@ export const useEvents = (options = {}) => {
    * @param {number|string} id - The event ID
    * @returns {Object|null} The event object or null if not found
    */
-  const getEventById = (id) => {
+  const getEventById = useCallback((id) => {
     if (!storeEvents || storeEvents.length === 0) return null;
     const apiEvent = storeEvents.find(event => event.eventID === String(id) || event.eventID === Number(id));
     return apiEvent ? transformEvent(apiEvent) : null;
-  };
+  }, [storeEvents, transformEvent]);
 
   /**
    * Get related events for a given event

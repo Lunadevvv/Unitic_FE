@@ -11,75 +11,26 @@ import {
   CrownOutlined, UserAddOutlined
 } from '@ant-design/icons';
 import AdminLayout from '../../components/layout/AdminLayout';
+import useAccounts from '../../hooks/useAccounts';
+import { getUserDisplayName, getRoleDisplayName } from '../../utils/userUtils';
 import '../../assets/scss/UserManagementPage.scss';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
-// Mock data
-const mockUsers = [
-  {
-    id: '1',
-    name: 'Nguyễn Văn A',
-    email: 'nguyenvana@example.com',
-    phone: '0123456789',
-    role: 'user',
-    status: 'active',
-    membershipLevel: 'Premium',
-    joinDate: '2024-01-15',
-    lastLogin: '2024-06-25 14:30',
-    totalEvents: 15,
-    totalSpent: 2500000,
-    avatar: '/src/assets/img/demo.jpg'
-  },
-  {
-    id: '2',
-    name: 'Trần Thị B',
-    email: 'tranthib@example.com',
-    phone: '0987654321',
-    role: 'user',
-    status: 'inactive',
-    membershipLevel: 'Basic',
-    joinDate: '2024-02-20',
-    lastLogin: '2024-06-20 09:15',
-    totalEvents: 8,
-    totalSpent: 1200000,
-    avatar: '/src/assets/img/demo.jpg'
-  },
-  {
-    id: '3',
-    name: 'Lê Văn C',
-    email: 'levanc@example.com',
-    phone: '0456789123',
-    role: 'moderator',
-    status: 'active',
-    membershipLevel: 'VIP',
-    joinDate: '2023-12-10',
-    lastLogin: '2024-06-26 16:45',
-    totalEvents: 32,
-    totalSpent: 5800000,
-    avatar: '/src/assets/img/demo.jpg'
-  },
-  {
-    id: '4',
-    name: 'Phạm Thị D',
-    email: 'phamthid@example.com',
-    phone: '0789123456',
-    role: 'admin',
-    status: 'active',
-    membershipLevel: 'Premium',
-    joinDate: '2023-08-05',
-    lastLogin: '2024-06-26 10:20',
-    totalEvents: 5,
-    totalSpent: 850000,
-    avatar: '/src/assets/img/demo.jpg'
-  }
-];
-
 const UserManagementPage = () => {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(false);
+  // Redux state
+  const {
+    accounts,
+    accountsLoading,
+    accountsError,
+    universities,
+    loadAccounts,
+    loadUniversities
+  } = useAccounts();
+
+  // Local state
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [searchText, setSearchText] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
@@ -91,20 +42,31 @@ const UserManagementPage = () => {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      try {
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setUsers(mockUsers);
-      } catch {
-        message.error('Lỗi khi tải danh sách người dùng');
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadData();
-  }, []);
+    loadAccounts();
+    loadUniversities();
+  }, [loadAccounts, loadUniversities]);
+
+  // Show error if there's any
+  useEffect(() => {
+    if (accountsError) {
+      message.error(`Lỗi khi tải dữ liệu: ${accountsError}`);
+    }
+  }, [accountsError]);
+
+  // Filter accounts based on search and filters
+  const filteredAccounts = accounts.filter(account => {
+    const matchesSearch = !searchText || 
+      getUserDisplayName(account).toLowerCase().includes(searchText.toLowerCase()) ||
+      account.email.toLowerCase().includes(searchText.toLowerCase());
+    
+    const matchesStatus = filterStatus === 'all' || 
+      (filterStatus === 'active' && account.status !== 'inactive') ||
+      (filterStatus === 'inactive' && account.status === 'inactive');
+    
+    const matchesRole = filterRole === 'all' || account.role.toString() === filterRole;
+    
+    return matchesSearch && matchesStatus && matchesRole;
+  });
 
   const handleAddUser = () => {
     setEditingUser(null);
@@ -114,7 +76,14 @@ const UserManagementPage = () => {
 
   const handleEditUser = (user) => {
     setEditingUser(user);
-    form.setFieldsValue(user);
+    form.setFieldsValue({
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      mssv: user.mssv,
+      role: user.role,
+      universityName: user.university?.name
+    });
     setIsModalVisible(true);
   };
 
@@ -125,37 +94,29 @@ const UserManagementPage = () => {
 
   const handleDeleteUser = async (userId) => {
     try {
-      setUsers(users.filter(user => user.id !== userId));
+      // TODO: Implement actual delete API call with userId
+      console.log('Deleting user:', userId);
       message.success('Xóa người dùng thành công');
+      loadAccounts(); // Reload data
     } catch {
-      setUsers(users.filter(user => user.id !== userId));
-      message.success('Xóa người dùng thành công');
+      message.error('Lỗi khi xóa người dùng');
     }
   };
 
   const handleSubmit = async (values) => {
     try {
       if (editingUser) {
-        // Update user
-        setUsers(users.map(user => 
-          user.id === editingUser.id ? { ...user, ...values } : user
-        ));
+        // TODO: Implement update API call with values
+        console.log('Updating user:', editingUser.id, values);
         message.success('Cập nhật người dùng thành công');
       } else {
-        // Add new user
-        const newUser = {
-          id: Date.now().toString(),
-          ...values,
-          joinDate: new Date().toISOString().split('T')[0],
-          lastLogin: 'Chưa đăng nhập',
-          totalEvents: 0,
-          totalSpent: 0
-        };
-        setUsers([...users, newUser]);
+        // TODO: Implement create API call with values
+        console.log('Creating user:', values);
         message.success('Thêm người dùng thành công');
       }
       setIsModalVisible(false);
       form.resetFields();
+      loadAccounts(); // Reload data
     } catch {
       message.error('Lỗi khi lưu thông tin người dùng');
     }
@@ -166,9 +127,10 @@ const UserManagementPage = () => {
       title: 'Xác nhận xóa',
       content: `Bạn có chắc chắn muốn xóa ${selectedRowKeys.length} người dùng đã chọn?`,
       onOk: () => {
-        setUsers(users.filter(user => !selectedRowKeys.includes(user.id)));
+        // TODO: Implement bulk delete API call
         setSelectedRowKeys([]);
         message.success('Xóa người dùng thành công');
+        loadAccounts(); // Reload data
       }
     });
   };
@@ -176,15 +138,15 @@ const UserManagementPage = () => {
   const columns = [
     {
       title: 'Người dùng',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'firstName',
+      key: 'user',
       render: (text, record) => (
         <Space>
-          <Avatar src={record.avatar} icon={<UserOutlined />} />
+          <Avatar icon={<UserOutlined />} />
           <div>
             <div className="user-name">
-              {text}
-              {record.membershipLevel === 'VIP' && (
+              {getUserDisplayName(record)}
+              {record.role === 1 && (
                 <CrownOutlined style={{ color: '#faad14', marginLeft: 4 }} />
               )}
             </div>
@@ -192,7 +154,7 @@ const UserManagementPage = () => {
           </div>
         </Space>
       ),
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      sorter: (a, b) => getUserDisplayName(a).localeCompare(getUserDisplayName(b)),
     },
     {
       title: 'Vai trò',
@@ -200,93 +162,71 @@ const UserManagementPage = () => {
       key: 'role',
       render: (role) => {
         const colors = {
-          admin: 'red',
-          moderator: 'orange',
-          user: 'blue'
+          1: 'red',
+          2: 'orange', 
+          3: 'green',
+          4: 'blue',
+          5: 'default'
         };
-        const labels = {
-          admin: 'Quản trị viên',
-          moderator: 'Kiểm duyệt viên',
-          user: 'Người dùng'
-        };
-        return <Tag color={colors[role]}>{labels[role]}</Tag>;
+        return <Tag color={colors[role]}>{getRoleDisplayName(role)}</Tag>;
       },
       filters: [
-        { text: 'Quản trị viên', value: 'admin' },
-        { text: 'Kiểm duyệt viên', value: 'moderator' },
-        { text: 'Người dùng', value: 'user' }
+        { text: 'Admin', value: '1' },
+        { text: 'Moderator', value: '2' },
+        { text: 'Teacher', value: '3' },
+        { text: 'Student', value: '4' },
+        { text: 'User', value: '5' }
       ],
-      onFilter: (value, record) => record.role === value,
+      onFilter: (value, record) => record.role.toString() === value,
     },
     {
-      title: 'Thành viên',
-      dataIndex: 'membershipLevel',
-      key: 'membershipLevel',
-      render: (level) => {
-        const colors = {
-          VIP: 'gold',
-          Premium: 'purple',
-          Basic: 'default'
-        };
-        return <Tag color={colors[level]}>{level}</Tag>;
-      },
+      title: 'Trường học',
+      dataIndex: 'university',
+      key: 'university',
+      render: (university) => university?.name || 'N/A',
     },
     {
-      title: 'Trạng thái',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status) => (
-        <Badge 
-          status={status === 'active' ? 'success' : 'default'} 
-          text={status === 'active' ? 'Hoạt động' : 'Không hoạt động'} 
-        />
-      ),
-      filters: [
-        { text: 'Hoạt động', value: 'active' },
-        { text: 'Không hoạt động', value: 'inactive' }
-      ],
-      onFilter: (value, record) => record.status === value,
+      title: 'MSSV',
+      dataIndex: 'mssv',
+      key: 'mssv',
+      render: (mssv) => mssv || 'N/A',
     },
     {
-      title: 'Ngày tham gia',
-      dataIndex: 'joinDate',
-      key: 'joinDate',
-      render: (date) => new Date(date).toLocaleDateString('vi-VN'),
-      sorter: (a, b) => new Date(a.joinDate) - new Date(b.joinDate),
-    },
-    {
-      title: 'Đăng nhập cuối',
-      dataIndex: 'lastLogin',
-      key: 'lastLogin',
-      render: (text) => <Text type="secondary">{text}</Text>
+      title: 'Ví tiền',
+      dataIndex: 'wallet',
+      key: 'wallet',
+      render: (wallet) => `${wallet?.toLocaleString() || 0} VNĐ`,
+      sorter: (a, b) => (a.wallet || 0) - (b.wallet || 0),
     },
     {
       title: 'Thao tác',
       key: 'actions',
+      fixed: 'right',
+      width: 150,
       render: (_, record) => (
         <Space>
-          <Button 
-            type="text" 
-            icon={<EyeOutlined />} 
+          <Button
+            type="text"
+            icon={<EyeOutlined />}
             onClick={() => handleViewUser(record)}
             title="Xem chi tiết"
           />
-          <Button 
-            type="text" 
-            icon={<EditOutlined />} 
+          <Button
+            type="text"
+            icon={<EditOutlined />}
             onClick={() => handleEditUser(record)}
             title="Chỉnh sửa"
           />
           <Popconfirm
             title="Bạn có chắc chắn muốn xóa người dùng này?"
             onConfirm={() => handleDeleteUser(record.id)}
-            okText="Xóa"
-            cancelText="Hủy"
+            okText="Có"
+            cancelText="Không"
           >
-            <Button 
-              type="text" 
-              icon={<DeleteOutlined />} 
+            <Button
+              type="text"
               danger
+              icon={<DeleteOutlined />}
               title="Xóa"
             />
           </Popconfirm>
@@ -295,27 +235,16 @@ const UserManagementPage = () => {
     },
   ];
 
-  const filteredUsers = users.filter(user => {
-    const matchesSearch = user.name.toLowerCase().includes(searchText.toLowerCase()) ||
-                         user.email.toLowerCase().includes(searchText.toLowerCase());
-    const matchesStatus = filterStatus === 'all' || user.status === filterStatus;
-    const matchesRole = filterRole === 'all' || user.role === filterRole;
-    return matchesSearch && matchesStatus && matchesRole;
-  });
-
   const rowSelection = {
     selectedRowKeys,
     onChange: setSelectedRowKeys,
   };
 
-  const totalUsers = users.length;
-  const activeUsers = users.filter(u => u.status === 'active').length;
-  const premiumUsers = users.filter(u => u.membershipLevel === 'Premium' || u.membershipLevel === 'VIP').length;
-  const newUsersThisMonth = users.filter(u => {
-    const joinDate = new Date(u.joinDate);
-    const now = new Date();
-    return joinDate.getMonth() === now.getMonth() && joinDate.getFullYear() === now.getFullYear();
-  }).length;
+  // Statistics based on accounts data
+  const totalUsers = accounts.length;
+  const activeUsers = accounts.filter(u => u.role !== 0).length; // Assuming role 0 is inactive
+  const adminUsers = accounts.filter(u => u.role === 1).length; // Assuming role 1 is admin
+  const userAccounts = accounts.filter(u => u.role === 5).length; // Assuming role 5 is regular user
 
   return (
     <AdminLayout>
@@ -359,8 +288,8 @@ const UserManagementPage = () => {
           <Col xs={24} sm={12} lg={6}>
             <Card>
               <Statistic
-                title="Thành viên Premium"
-                value={premiumUsers}
+                title="Admin Users"
+                value={adminUsers}
                 prefix={<CrownOutlined />}
                 valueStyle={{ color: '#faad14' }}
               />
@@ -369,8 +298,8 @@ const UserManagementPage = () => {
           <Col xs={24} sm={12} lg={6}>
             <Card>
               <Statistic
-                title="Mới tháng này"
-                value={newUsersThisMonth}
+                title="Regular Users"
+                value={userAccounts}
                 prefix={<CalendarOutlined />}
                 valueStyle={{ color: '#1890ff' }}
               />
@@ -426,9 +355,9 @@ const UserManagementPage = () => {
         <Card>
           <Table
             columns={columns}
-            dataSource={filteredUsers}
+            dataSource={filteredAccounts}
             rowKey="id"
-            loading={loading}
+            loading={accountsLoading}
             rowSelection={rowSelection}
             pagination={{
               showSizeChanger: true,
@@ -456,13 +385,25 @@ const UserManagementPage = () => {
             <Row gutter={16}>
               <Col span={12}>
                 <Form.Item
-                  name="name"
-                  label="Họ và tên"
-                  rules={[{ required: true, message: 'Vui lòng nhập họ tên!' }]}
+                  name="firstName"
+                  label="Tên"
+                  rules={[{ required: true, message: 'Vui lòng nhập tên!' }]}
                 >
                   <Input />
                 </Form.Item>
               </Col>
+              <Col span={12}>
+                <Form.Item
+                  name="lastName"
+                  label="Họ"
+                  rules={[{ required: true, message: 'Vui lòng nhập họ!' }]}
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+            </Row>
+            
+            <Row gutter={16}>
               <Col span={12}>
                 <Form.Item
                   name="email"
@@ -475,16 +416,32 @@ const UserManagementPage = () => {
                   <Input />
                 </Form.Item>
               </Col>
+              <Col span={12}>
+                <Form.Item
+                  name="mssv"
+                  label="MSSV"
+                >
+                  <Input placeholder="Mã số sinh viên (nếu có)" />
+                </Form.Item>
+              </Col>
             </Row>
 
             <Row gutter={16}>
               <Col span={12}>
                 <Form.Item
-                  name="phone"
-                  label="Số điện thoại"
-                  rules={[{ required: true, message: 'Vui lòng nhập số điện thoại!' }]}
+                  name="universityName"
+                  label="Trường học"
+                  rules={[{ required: true, message: 'Vui lòng chọn trường!' }]}
                 >
-                  <Input />
+                  <Select
+                    showSearch
+                    placeholder="Chọn trường học"
+                    optionFilterProp="children"
+                  >
+                    {universities.map(uni => (
+                      <Option key={uni.id} value={uni.name}>{uni.name}</Option>
+                    ))}
+                  </Select>
                 </Form.Item>
               </Col>
               <Col span={12}>
@@ -494,41 +451,28 @@ const UserManagementPage = () => {
                   rules={[{ required: true, message: 'Vui lòng chọn vai trò!' }]}
                 >
                   <Select>
-                    <Option value="user">Người dùng</Option>
-                    <Option value="moderator">Kiểm duyệt viên</Option>
-                    <Option value="admin">Quản trị viên</Option>
+                    <Option value={1}>Admin</Option>
+                    <Option value={2}>Moderator</Option>
+                    <Option value={3}>Teacher</Option>
+                    <Option value={4}>Student</Option>
+                    <Option value={5}>User</Option>
                   </Select>
                 </Form.Item>
               </Col>
             </Row>
 
-            <Row gutter={16}>
-              <Col span={12}>
-                <Form.Item
-                  name="status"
-                  label="Trạng thái"
-                  rules={[{ required: true, message: 'Vui lòng chọn trạng thái!' }]}
-                >
-                  <Select>
-                    <Option value="active">Hoạt động</Option>
-                    <Option value="inactive">Không hoạt động</Option>
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  name="membershipLevel"
-                  label="Cấp độ thành viên"
-                  rules={[{ required: true, message: 'Vui lòng chọn cấp độ!' }]}
-                >
-                  <Select>
-                    <Option value="Basic">Basic</Option>
-                    <Option value="Premium">Premium</Option>
-                    <Option value="VIP">VIP</Option>
-                  </Select>
-                </Form.Item>
-              </Col>
-            </Row>
+            {!editingUser && (
+              <Form.Item
+                name="password"
+                label="Mật khẩu"
+                rules={[
+                  { required: true, message: 'Vui lòng nhập mật khẩu!' },
+                  { min: 6, message: 'Mật khẩu phải có ít nhất 6 ký tự!' }
+                ]}
+              >
+                <Input.Password />
+              </Form.Item>
+            )}
 
             <Form.Item>
               <Space>
@@ -564,36 +508,21 @@ const UserManagementPage = () => {
           {viewingUser && (
             <Descriptions bordered column={2}>
               <Descriptions.Item label="Avatar" span={2}>
-                <Avatar size={64} src={viewingUser.avatar} icon={<UserOutlined />} />
+                <Avatar size={64} icon={<UserOutlined />} />
               </Descriptions.Item>
-              <Descriptions.Item label="Họ và tên">{viewingUser.name}</Descriptions.Item>
+              <Descriptions.Item label="Họ và tên">{getUserDisplayName(viewingUser)}</Descriptions.Item>
               <Descriptions.Item label="Email">{viewingUser.email}</Descriptions.Item>
-              <Descriptions.Item label="Số điện thoại">{viewingUser.phone}</Descriptions.Item>
+              <Descriptions.Item label="MSSV">{viewingUser.mssv || 'N/A'}</Descriptions.Item>
               <Descriptions.Item label="Vai trò">
-                <Tag color={viewingUser.role === 'admin' ? 'red' : viewingUser.role === 'moderator' ? 'orange' : 'blue'}>
-                  {viewingUser.role === 'admin' ? 'Quản trị viên' : 
-                   viewingUser.role === 'moderator' ? 'Kiểm duyệt viên' : 'Người dùng'}
+                <Tag color={viewingUser.role === 1 ? 'red' : viewingUser.role === 2 ? 'orange' : 'blue'}>
+                  {getRoleDisplayName(viewingUser.role)}
                 </Tag>
               </Descriptions.Item>
-              <Descriptions.Item label="Trạng thái">
-                <Badge 
-                  status={viewingUser.status === 'active' ? 'success' : 'default'} 
-                  text={viewingUser.status === 'active' ? 'Hoạt động' : 'Không hoạt động'} 
-                />
+              <Descriptions.Item label="Trường học">
+                {viewingUser.university?.name || 'N/A'}
               </Descriptions.Item>
-              <Descriptions.Item label="Cấp độ thành viên">
-                <Tag color={viewingUser.membershipLevel === 'VIP' ? 'gold' : 
-                           viewingUser.membershipLevel === 'Premium' ? 'purple' : 'default'}>
-                  {viewingUser.membershipLevel}
-                </Tag>
-              </Descriptions.Item>
-              <Descriptions.Item label="Ngày tham gia">
-                {new Date(viewingUser.joinDate).toLocaleDateString('vi-VN')}
-              </Descriptions.Item>
-              <Descriptions.Item label="Đăng nhập cuối">{viewingUser.lastLogin}</Descriptions.Item>
-              <Descriptions.Item label="Tổng sự kiện tham gia">{viewingUser.totalEvents}</Descriptions.Item>
-              <Descriptions.Item label="Tổng chi tiêu">
-                {viewingUser.totalSpent.toLocaleString('vi-VN')} ₫
+              <Descriptions.Item label="Ví tiền">
+                {(viewingUser.wallet || 0).toLocaleString('vi-VN')} ₫
               </Descriptions.Item>
             </Descriptions>
           )}

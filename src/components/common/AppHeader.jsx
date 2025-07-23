@@ -8,6 +8,7 @@ import {
 import { motion, useInView } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../../hooks/useCart';
+import { useAuth } from '../../hooks/useAuth';
 import '../../assets/scss/AppHeader.scss';
 
 const { Header } = Layout;
@@ -23,6 +24,7 @@ const   AppHeader = ({
   const navigate = useNavigate();
   const location = useLocation();
   const { totalItems } = useCart();
+  const { logout } = useAuth();
   const [scrollPosition, setScrollPosition] = useState(0);
   
   const headerRef = useRef(null);
@@ -91,7 +93,7 @@ const   AppHeader = ({
       label: 'Đăng xuất',
       icon: <LogoutOutlined />,
       onClick: () => {
-        // Handle logout
+        logout();
         navigate('/');
       }
     }
@@ -195,11 +197,17 @@ const   AppHeader = ({
               >
                 <div className="user-profile">
                   <Avatar 
-                    src={user.avatar} 
                     icon={<UserOutlined />}
                     className="user-avatar"
                   />
-                  <span className="user-name">{user.name}</span>
+                  <span className="user-name">
+                    {(user.firstName && user.lastName) 
+                      ? `${user.firstName} ${user.lastName}` 
+                      : (user.FirstName && user.LastName)
+                        ? `${user.FirstName} ${user.LastName}`
+                        : user.name || user.email || user.Email || 'Người dùng'
+                    }
+                  </span>
                 </div>
               </Dropdown>
             </motion.div>

@@ -1,19 +1,19 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
-  Row, Col, Card, Form, Input, Button, Divider, Steps, Radio,
-  Typography, Space, message, Modal, Select, Checkbox, Tag,
-  List, Avatar, InputNumber, Breadcrumb, Spin
+  Row, Col, Card, Form, Input, Button, Divider, Steps,
+  Typography, message, Checkbox, InputNumber, Spin, Breadcrumb,
+  Avatar, List, Space
 } from 'antd';
 import {
-  CreditCardOutlined, WalletOutlined, BankOutlined,
-  SafetyOutlined, CheckCircleOutlined, UserOutlined,
+  WalletOutlined, SafetyOutlined, CheckCircleOutlined, UserOutlined,
   PhoneOutlined, MailOutlined, EnvironmentOutlined,
-  CalendarOutlined, ArrowLeftOutlined, HomeOutlined,
-  ShoppingCartOutlined, DollarOutlined, TagsOutlined
+  ArrowLeftOutlined, ShoppingCartOutlined, TagsOutlined, HomeOutlined,
+  CalendarOutlined
 } from '@ant-design/icons';
 import { useEvents } from '../../hooks/useEvents';
 import { useCart } from '../../hooks/useCart';
+import { useBooking } from '../../hooks/useBooking';
 import MainLayout from '../../components/layout/MainLayout';
 import '../../assets/scss/CheckoutPage.scss';
 
@@ -28,10 +28,10 @@ const CheckoutPage = () => {
 
   const { getEventById } = useEvents();
   const { cartItems, clearCart, updateCartItem, removeFromCart } = useCart();
+  const { purchaseTicket, loading: bookingLoading } = useBooking();
 
   const [event, setEvent] = useState(null);
   const [currentStep] = useState(0);
-  const [paymentMethod, setPaymentMethod] = useState('card');
   const [loading, setLoading] = useState(false);
   const [orderSummary, setOrderSummary] = useState({
     subtotal: 0,
@@ -72,7 +72,7 @@ const CheckoutPage = () => {
       const eventData = getEventById(detailid);
       setEvent(eventData);
     }
-  }, [detailid, getEventById]);
+  }, [detailid, getEventById]); // Now getEventById is memoized so it's safe
   
   // Separate useEffect for order summary
   useEffect(() => {
@@ -88,30 +88,65 @@ const CheckoutPage = () => {
     setLoading(true);
     
     try {
-      // Simulate payment processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Bước 1: Gọi API buy-ticket để tạo booking
+      let bookingResult = null;
       
-      // Clear cart if checkout from cart
-      if (!checkoutData) {
-        clearCart();
+      if (checkoutData) {
+        // Mua từ event detail page
+        console.log('Creating booking for event:', checkoutData.eventId);
+        bookingResult = await purchaseTicket(checkoutData.eventId, checkoutData.quantity);
+        
+        // Kiểm tra kết quả
+        if (bookingResult?.type?.includes('rejected')) {
+          throw new Error(bookingResult.payload);
+        }
+        
+        console.log('Booking created successfully:', bookingResult);
+      } else {
+        // Mua từ cart (có thể có nhiều items)
+        // TODO: Implement multiple booking creation for cart items
+        throw new Error('Checkout from cart not implemented yet');
       }
       
-      message.success('Thanh toán thành công!');
+      // Bước 2: Nếu booking thành công, chuyển đến success page
+      message.success('Mua vé thành công!');
       navigate('/payment/success', {
         state: {
           orderData: {
             ...values,
             event: event,
             orderSummary: orderSummary,
-            paymentMethod: paymentMethod,
-            orderNumber: generateOrderNumber(),
+            paymentMethod: 'wallet',
+            orderNumber: `ORD${bookingResult?.payload?.id || Date.now()}`,
+            bookingId: bookingResult?.payload?.id || bookingResult?.payload?.bookingID,
             checkoutItems: checkoutData ? [checkoutData] : cartItems
           }
         }
       });
-    } catch {
-      message.error('Thanh toán thất bại. Vui lòng thử lại!');
-      navigate('/payment/failure');
+      
+      // Clear cart if checkout from cart
+      if (!checkoutData) {
+        clearCart();
+      }
+      
+    } catch (error) {
+      console.error('Payment/Booking error:', error);
+      
+      // Xử lý lỗi specific
+      let errorMessage = 'Có lỗi xảy ra khi mua vé. Vui lòng thử lại!';
+      
+      if (error.message?.includes('Insufficient funds')) {
+        errorMessage = 'Tài khoản của bạn không đủ số dư để mua vé. Vui lòng nạp thêm tiền vào ví.';
+      } else if (error.message?.includes('Event not found')) {
+        errorMessage = 'Sự kiện không tồn tại hoặc đã bị hủy.';
+      } else if (error.message?.includes('Event is full')) {
+        errorMessage = 'Sự kiện đã hết vé. Vui lòng chọn sự kiện khác.';
+      }
+      
+      message.error(errorMessage);
+      
+      // Có thể chuyển đến failure page hoặc ở lại checkout
+      // navigate('/payment/failure');
     } finally {
       setLoading(false);
     }
@@ -259,80 +294,45 @@ const renderCustomerInfo = () => (
   );
 const renderPaymentMethod = () => (
     <Card title="Phương thức thanh toán" className="payment-method-card">
-      <Radio.Group
-        value={paymentMethod}
-        onChange={(e) => setPaymentMethod(e.target.value)}
-        className="payment-methods"
-      >
-        <Space direction="vertical" size="large" style={{ width: '100%' }}>
-          <Radio value="card" className="payment-option">
-            <div className="payment-option-content">
-              <CreditCardOutlined className="payment-icon" />
-              <div className="payment-details">
-                <Text strong>Thẻ tín dụng/ghi nợ</Text>
-                <Text type="secondary">Visa, Mastercard, JCB</Text>
-              </div>
-            </div>
-          </Radio>
-          
-          <Radio value="banking" className="payment-option">
-            <div className="payment-option-content">
-              <BankOutlined className="payment-icon" />
-              <div className="payment-details">
-                <Text strong>Chuyển khoản ngân hàng</Text>
-                <Text type="secondary">Vietcombank, Techcombank, BIDV</Text>
-              </div>
-            </div>
-          </Radio>
-          
-          <Radio value="ewallet" className="payment-option">
-            <div className="payment-option-content">
-              <WalletOutlined className="payment-icon" />
-              <div className="payment-details">
-                <Text strong>Ví điện tử</Text>
-                <Text type="secondary">MoMo, ZaloPay, VNPay</Text>
-              </div>
-            </div>
-          </Radio>
-        </Space>
-      </Radio.Group>
-
-      {paymentMethod === 'card' && (
-        <div className="card-form">
-          <Divider />
-          <Row gutter={16}>
-            <Col xs={24}>
-              <Form.Item
-                name="cardNumber"
-                label="Số thẻ"
-                rules={[{ required: true, message: 'Vui lòng nhập số thẻ!' }]}
-              >
-                <Input placeholder="1234 5678 9012 3456" />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={16}>
-            <Col xs={12}>
-              <Form.Item
-                name="expiryDate"
-                label="Ngày hết hạn"
-                rules={[{ required: true, message: 'Vui lòng nhập ngày hết hạn!' }]}
-              >
-                <Input placeholder="MM/YY" />
-              </Form.Item>
-            </Col>
-            <Col xs={12}>
-              <Form.Item
-                name="cvv"
-                label="CVV"
-                rules={[{ required: true, message: 'Vui lòng nhập CVV!' }]}
-              >
-                <Input placeholder="123" />
-              </Form.Item>
-            </Col>
-          </Row>
+      <div className="wallet-payment-section">
+        <div className="wallet-option-selected">
+          <WalletOutlined className="wallet-icon" />
+          <div className="wallet-details">
+            <Text strong className="wallet-title">Thanh toán từ ví Unitic</Text>
+            <Text type="secondary" className="wallet-description">
+              Sử dụng số dư trong ví của bạn để thanh toán nhanh chóng và an toàn
+            </Text>
+          </div>
+          <CheckCircleOutlined className="check-icon" />
         </div>
-      )}
+        
+        <div className="wallet-balance-info">
+          <div className="balance-item">
+            <Text type="secondary">Số dư hiện tại:</Text>
+            <Text strong className="balance-amount">2,500,000 VNĐ</Text>
+          </div>
+          <div className="balance-item">
+            <Text type="secondary">Số tiền cần thanh toán:</Text>
+            <Text strong className="payment-amount">
+              {orderSummary.total.toLocaleString('vi-VN')} VNĐ
+            </Text>
+          </div>
+          <div className="balance-item">
+            <Text type="secondary">Số dư sau thanh toán:</Text>
+            <Text strong className={`remaining-balance ${(2500000 - orderSummary.total) < 0 ? 'insufficient' : 'sufficient'}`}>
+              {(2500000 - orderSummary.total).toLocaleString('vi-VN')} VNĐ
+            </Text>
+          </div>
+        </div>
+
+        {(2500000 - orderSummary.total) < 0 && (
+          <div className="insufficient-funds-warning">
+            <Text type="danger">
+              ⚠️ Số dư không đủ. Vui lòng nạp thêm {Math.abs(2500000 - orderSummary.total).toLocaleString('vi-VN')} VNĐ vào ví
+            </Text>
+          </div>
+        )}
+      </div>
     </Card>
   );
 
@@ -369,11 +369,13 @@ const renderPaymentMethod = () => (
         type="primary"
         size="large"
         block
-        loading={loading}
+        loading={loading || bookingLoading?.buyTicket}
         onClick={() => form.submit()}
-        className="checkout-button"
+        className="checkout-button wallet-payment-btn"
+        disabled={(2500000 - orderSummary.total) < 0 || loading || bookingLoading?.buyTicket}
       >
-        <DollarOutlined /> Thanh toán {orderSummary.total.toLocaleString('vi-VN')} VNĐ
+        <WalletOutlined /> 
+        {loading || bookingLoading?.buyTicket ? 'Đang xử lý...' : `Thanh toán từ ví ${orderSummary.total.toLocaleString('vi-VN')} VNĐ`}
       </Button>
     </Card>
   );
@@ -441,7 +443,7 @@ const renderPaymentMethod = () => (
               <Steps current={currentStep} className="checkout-steps">
                 <Step title="Thông tin vé" icon={<TagsOutlined />} />
                 <Step title="Thông tin khách hàng" icon={<UserOutlined />} />
-                <Step title="Thanh toán" icon={<CreditCardOutlined />} />
+                <Step title="Thanh toán" icon={<WalletOutlined />} />
               </Steps>
 
               <div className="checkout-content">

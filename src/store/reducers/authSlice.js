@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import Cookies from 'js-cookie';
 import {
   loginUser,
   registerUser,
@@ -9,6 +10,8 @@ import {
   forgotPassword,
   resetPassword,
   changePassword,
+  fetchUserProfile,
+  fetchUniversities,
 } from '../actions/authActions';
 
 // Initial state
@@ -19,6 +22,8 @@ const initialState = {
   loading: false,
   error: null,
   role: JSON.parse(localStorage.getItem('user'))?.role || 'guest',
+  universities: [],
+  universitiesLoading: false,
 };
 
 // Auth slice
@@ -39,8 +44,11 @@ const authSlice = createSlice({
       state.token = token;
       state.isAuthenticated = true;
       state.role = user.role;
+      
+      // Save to both localStorage and cookies
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
+      Cookies.set('ACCESS_TOKEN', token, { expires: 7 }); // Expires in 7 days
     },
   },
   extraReducers: (builder) => {
@@ -57,6 +65,11 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
         state.role = action.payload.user.role;
         state.error = null;
+        
+        // Save to both localStorage and cookies
+        localStorage.setItem('token', action.payload.token);
+        localStorage.setItem('user', JSON.stringify(action.payload.user));
+        Cookies.set('ACCESS_TOKEN', action.payload.token, { expires: 7 });
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -100,6 +113,10 @@ const authSlice = createSlice({
         state.role = 'guest';
         state.loading = false;
         state.error = null;
+        // Clear both localStorage and cookies
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        Cookies.remove('ACCESS_TOKEN');
       })
       // Change password
       .addCase(changePassword.pending, (state) => {
@@ -163,6 +180,34 @@ const authSlice = createSlice({
       })
       .addCase(verifyEmail.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.payload;
+      })
+      // Fetch user profile
+      .addCase(fetchUserProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUserProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+        state.error = null;
+      })
+      .addCase(fetchUserProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Fetch universities
+      .addCase(fetchUniversities.pending, (state) => {
+        state.universitiesLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchUniversities.fulfilled, (state, action) => {
+        state.universitiesLoading = false;
+        state.universities = action.payload;
+        state.error = null;
+      })
+      .addCase(fetchUniversities.rejected, (state, action) => {
+        state.universitiesLoading = false;
         state.error = action.payload;
       });
   },

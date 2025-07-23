@@ -13,6 +13,7 @@ import adminReducer from './reducers/adminSlice';
 import contactReducer from './reducers/contactSlice';
 import categoryReducer from './reducers/categorySlice';
 import universityReducer from './reducers/universitySlice';
+import bookingReducer from './reducers/bookingSlice';
 
 // Persist configurations
 const persistConfig = {
@@ -50,6 +51,7 @@ const rootReducer = combineReducers({
   contact: contactReducer,
   category: categoryReducer,
   university: universityReducer,
+  booking: bookingReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

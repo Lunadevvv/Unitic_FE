@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Layout } from 'antd';
 import { motion } from 'framer-motion';
 import AppHeader from '../common/AppHeader';
 import AppFooter from '../common/AppFooter';
 import FloatingElements from '../common/FloatingElements';
 import { animationVariants } from '../../hooks/useAnimations';
+import { useAuth } from '../../hooks/useAuth';
 import '../../assets/scss/MainLayout.scss';
 
 const { Content } = Layout;
@@ -16,20 +17,21 @@ const MainLayout = ({
   showFooter = true,
   className = '',
   contentClassName = '',
-  user = null,
   // Animation props
   showAnimations = true,
   showFloatingElements = false,
   floatingVariant = 'default',
   heroSection = null
 }) => {
-  // Mock user data - replace with actual auth context
-  const currentUser = user || {
-    name: 'Nguyễn Văn A',
-    email: 'user@example.com',
-    avatar: '/src/assets/img/demo.jpg',
-    membershipLevel: 'Premium'
-  };
+  // Get actual user data from auth state
+  const { user, isAuthenticated, token, refreshUserProfile } = useAuth();
+
+  // Auto-fetch user profile if authenticated but user data is incomplete
+  useEffect(() => {
+    if (isAuthenticated && token && user && (!user.firstName && !user.FirstName)) {
+      refreshUserProfile();
+    }
+  }, [isAuthenticated, token, user, refreshUserProfile]);
 
   const defaultHeaderProps = {
     showAnimation: true,
@@ -37,7 +39,7 @@ const MainLayout = ({
     fixed: false,
     showCart: true,
     showNotifications: true,
-    user: currentUser,
+    user: isAuthenticated ? user : null,
     ...headerProps
   };
 

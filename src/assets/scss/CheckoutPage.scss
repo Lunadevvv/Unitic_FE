@@ -137,6 +137,116 @@
       }
     }
 
+    // New wallet payment styles
+    .wallet-payment-section {
+      .wallet-option-selected {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 20px;
+        background: linear-gradient(135deg, #1890ff 0%, #40a9ff 100%);
+        border-radius: 12px;
+        color: white;
+        margin-bottom: 20px;
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+          pointer-events: none;
+        }
+
+        .wallet-icon {
+          font-size: 32px;
+          color: white;
+          z-index: 1;
+        }
+
+        .wallet-details {
+          flex: 1;
+          z-index: 1;
+
+          .wallet-title {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+          }
+
+          .wallet-description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+          }
+        }
+
+        .check-icon {
+          font-size: 24px;
+          color: #52c41a;
+          z-index: 1;
+        }
+      }
+
+      .wallet-balance-info {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid #e9ecef;
+
+        .balance-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 12px;
+
+          &:last-child {
+            margin-bottom: 0;
+            padding-top: 12px;
+            border-top: 1px solid #e9ecef;
+          }
+
+          .balance-amount {
+            color: #1890ff;
+            font-size: 16px;
+            font-weight: 600;
+          }
+
+          .payment-amount {
+            color: #fa8c16;
+            font-size: 16px;
+            font-weight: 600;
+          }
+
+          .remaining-balance {
+            font-size: 16px;
+            font-weight: 600;
+
+            &.sufficient {
+              color: #52c41a;
+            }
+
+            &.insufficient {
+              color: #ff4d4f;
+            }
+          }
+        }
+      }
+
+      .insufficient-funds-warning {
+        margin-top: 15px;
+        padding: 12px;
+        background: #fff2f0;
+        border: 1px solid #ffccc7;
+        border-radius: 8px;
+        text-align: center;
+      }
+    }
+
     .card-form {
       margin-top: 20px;
       padding: 20px;
@@ -198,6 +308,34 @@
         transform: translateY(-2px);
         box-shadow: 0 6px 16px rgba(24, 144, 255, 0.3);
       }
+
+      &.wallet-payment-btn {
+        background: linear-gradient(135deg, #1890ff 0%, #40a9ff 100%);
+        border: none;
+        height: 55px;
+        font-size: 17px;
+        box-shadow: 0 4px 15px rgba(24, 144, 255, 0.3);
+
+        &:hover:not(:disabled) {
+          background: linear-gradient(135deg, #40a9ff 0%, #1890ff 100%);
+          transform: translateY(-3px);
+          box-shadow: 0 8px 25px rgba(24, 144, 255, 0.4);
+        }
+
+        &:disabled {
+          background: #d9d9d9;
+          color: #bfbfbf;
+          cursor: not-allowed;
+          transform: none;
+          box-shadow: none;
+
+          &:hover {
+            background: #d9d9d9;
+            transform: none;
+            box-shadow: none;
+          }
+        }
+      }
     }
   }
 
@@ -236,6 +374,28 @@
     .order-summary-card.sticky {
       position: relative;
       top: auto;
+    }
+
+    .checkout-content {
+      .wallet-payment-section {
+        .wallet-option-selected {
+          flex-direction: column;
+          text-align: center;
+          gap: 10px;
+
+          .wallet-details {
+            text-align: center;
+          }
+        }
+
+        .wallet-balance-info {
+          .balance-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+          }
+        }
+      }
     }
   }
 }

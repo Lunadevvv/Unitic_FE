@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import {
   Row, Col, Card, Typography, Tag, Button, Empty, Spin, 
   Input, Select, DatePicker, Space, Modal, QRCode, Tabs,
-  List, Avatar, Divider, Badge, Tooltip
+  List, Avatar, Divider, Badge, Tooltip, message
 } from 'antd';
 import {
   CalendarOutlined, EnvironmentOutlined, QrcodeOutlined,
@@ -14,6 +14,8 @@ import {
   EyeOutlined, PrinterOutlined
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
+import { useBooking } from '../../hooks/useBooking';
+import MainLayout from '../../components/layout/MainLayout';
 import '../../assets/scss/MyTicketsPage.scss';
 
 const { Title, Text, Paragraph } = Typography;
@@ -22,148 +24,100 @@ const { RangePicker } = DatePicker;
 const { TabPane } = Tabs;
 
 const MyTicketsPage = () => {
-  const [tickets, setTickets] = useState([]);
+  const { currentUserBookings, loading: bookingLoading, loadCurrentUserBookings } = useBooking();
   const [filteredTickets, setFilteredTickets] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [dateRange, setDateRange] = useState([]);
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [qrModalVisible, setQrModalVisible] = useState(false);
+  const [allTickets, setAllTickets] = useState([]);
 
   useEffect(() => {
-    // Mock data - trong thực tế sẽ fetch từ API
-    const mockTickets = [
-      {
-        id: 'TK001',
-        orderNumber: 'ORD1703080001',
-        eventId: '1',
-        eventTitle: 'Đêm nhạc acoustic với Chủ tịch TGB',
-        eventImage: '/src/assets/img/chutichTGB.jpg',
-        eventDate: '2024-01-15',
-        eventTime: '19:00',
-        eventLocation: 'Nhà hát Thành phố',
-        ticketType: 'VIP',
-        quantity: 2,
-        price: 500000,
-        totalAmount: 1000000,
-        status: 'active', // active, used, expired, cancelled
-        purchaseDate: '2024-01-01',
-        attendeeInfo: {
-          name: 'Nguyễn Văn A',
-          email: 'user@example.com',
-          phone: '0123456789'
-        },
-        qrCode: 'TK001-QR-CODE-DATA',
-        seat: 'A-12, A-13',
-        notes: 'Vé VIP bao gồm nước uống miễn phí'
-      },
-      {
-        id: 'TK002',
-        orderNumber: 'ORD1703080002',
-        eventId: '2',
-        eventTitle: 'Workshop "Điện gia hiệu PC"',
-        eventImage: '/src/assets/img/diengiaHieuPC.jpg',
-        eventDate: '2024-01-20',
-        eventTime: '14:00',
-        eventLocation: 'Trung tâm hội nghị FPT',
+    // Load user bookings when component mounts
+    loadCurrentUserBookings().catch((error) => {
+      message.error('Không thể tải danh sách vé: ' + error.message);
+    });
+  }, [loadCurrentUserBookings]);
+
+  useEffect(() => {
+    // Transform bookings to tickets format for existing UI
+    if (currentUserBookings) {
+      const tickets = currentUserBookings.map(booking => ({
+        id: booking.bookingID || booking.id,
+        orderNumber: `ORD${booking.bookingID || booking.id}`,
+        eventId: booking.eventID,
+        eventTitle: booking.eventName || booking.event?.name || 'Tên sự kiện không có',
+        eventImage: booking.event?.image || '/src/assets/img/event1.jpeg',
+        eventDate: booking.event?.date_Start || booking.eventDate,
+        eventTime: booking.event?.time || '19:00',
+        eventLocation: booking.event?.location || 'Địa điểm sẽ được thông báo',
         ticketType: 'Standard',
-        quantity: 1,
-        price: 200000,
-        totalAmount: 200000,
-        status: 'used',
-        purchaseDate: '2024-01-05',
+        quantity: booking.quantity || 1,
+        price: booking.price || booking.event?.price || 0,
+        totalAmount: (booking.quantity || 1) * (booking.price || booking.event?.price || 0),
+        status: booking.status === 1 ? 'active' : 'cancelled',
+        purchaseDate: booking.createdAt || booking.bookingDate || new Date().toISOString(),
+        qrCode: booking.qrCode || booking.bookingID || booking.id,
         attendeeInfo: {
           name: 'Nguyễn Văn A',
-          email: 'user@example.com',
+          email: 'user@example.com', 
           phone: '0123456789'
         },
-        qrCode: 'TK002-QR-CODE-DATA',
-        seat: 'B-25',
-        checkinTime: '2024-01-20 13:45'
-      },
-      {
-        id: 'TK003',
-        orderNumber: 'ORD1703080003',
-        eventId: '3',
-        eventTitle: 'Hội thảo khởi nghiệp 2024',
-        eventImage: '/src/assets/img/event1.jpeg',
-        eventDate: '2024-02-01',
-        eventTime: '09:00',
-        eventLocation: 'Đại học FPT TP.HCM',
-        ticketType: 'Early Bird',
-        quantity: 1,
-        price: 150000,
-        totalAmount: 150000,
-        status: 'active',
-        purchaseDate: '2024-01-10',
-        attendeeInfo: {
-          name: 'Nguyễn Văn A',
-          email: 'user@example.com',
-          phone: '0123456789'
-        },
-        qrCode: 'TK003-QR-CODE-DATA',
-        seat: 'C-40'
-      }
-    ];
+        seat: 'Chỗ ngồi tự do'
+      }));
+      setAllTickets(tickets);
+      setFilteredTickets(tickets);
+    }
+  }, [currentUserBookings]);
 
-    // Simulate API call
-    setTimeout(() => {
-      setTickets(mockTickets);
-      setFilteredTickets(mockTickets);
-      setLoading(false);
-    }, 1000);
-  }, []);
-
+  // Filter logic
   useEffect(() => {
-    const filterTickets = () => {
-      let filtered = tickets;
+    if (!allTickets.length) return;
 
-      // Filter by search term
-      if (searchTerm) {
-        filtered = filtered.filter(ticket =>
-          ticket.eventTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          ticket.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          ticket.id.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      }
+    let filtered = [...allTickets];
 
-      // Filter by status
-      if (statusFilter !== 'all') {
-        filtered = filtered.filter(ticket => ticket.status === statusFilter);
-      }
+    // Search filter
+    if (searchTerm) {
+      filtered = filtered.filter(ticket =>
+        ticket.eventTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        ticket.orderNumber.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
 
-      // Filter by date range
-      if (dateRange.length === 2) {
-        filtered = filtered.filter(ticket => {
-          const eventDate = dayjs(ticket.eventDate);
-          return eventDate.isAfter(dateRange[0]) && eventDate.isBefore(dateRange[1]);
-        });
-      }
+    // Status filter  
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(ticket => ticket.status === statusFilter);
+    }
 
-      setFilteredTickets(filtered);
-    };
+    // Date range filter
+    if (dateRange.length === 2) {
+      filtered = filtered.filter(ticket => {
+        const ticketDate = dayjs(ticket.eventDate);
+        return ticketDate.isAfter(dateRange[0]) && ticketDate.isBefore(dateRange[1]);
+      });
+    }
 
-    filterTickets();
-  }, [searchTerm, statusFilter, dateRange, tickets]);
+    setFilteredTickets(filtered);
+  }, [searchTerm, statusFilter, dateRange, allTickets]);
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'active': return 'success';
-      case 'used': return 'default';
-      case 'expired': return 'error';
-      case 'cancelled': return 'error';
+      case 'active': return 'green';
+      case 'used': return 'blue';
+      case 'expired': return 'red';
+      case 'cancelled': return 'red';
       default: return 'default';
     }
   };
 
   const getStatusText = (status) => {
     switch (status) {
-      case 'active': return 'Có hiệu lực';
+      case 'active': return 'Còn hiệu lực';
       case 'used': return 'Đã sử dụng';
       case 'expired': return 'Hết hạn';
       case 'cancelled': return 'Đã hủy';
-      default: return 'Không xác định';
+      default: return status;
     }
   };
 
@@ -308,9 +262,9 @@ const MyTicketsPage = () => {
   );
 
   const renderTicketStats = () => {
-    const activeTickets = tickets.filter(t => t.status === 'active').length;
-    const usedTickets = tickets.filter(t => t.status === 'used').length;
-    const totalValue = tickets.reduce((sum, t) => sum + t.totalAmount, 0);
+    const activeTickets = allTickets.filter(t => t.status === 'active').length;
+    const usedTickets = allTickets.filter(t => t.status === 'used').length;
+    const totalValue = allTickets.reduce((sum, t) => sum + t.totalAmount, 0);
 
     return (
       <Row gutter={16} className="ticket-stats">
@@ -357,21 +311,24 @@ const MyTicketsPage = () => {
     );
   };
 
-  if (loading) {
+  if (bookingLoading.getCurrentUserBookings) {
     return (
-      <div className="my-tickets-loading">
-        <Spin size="large" />
-        <p>Đang tải danh sách vé...</p>
-      </div>
+      <MainLayout>
+        <div className="my-tickets-loading">
+          <Spin size="large" />
+          <p>Đang tải danh sách vé...</p>
+        </div>
+      </MainLayout>
     );
   }
 
   return (
-    <div className="my-tickets-page">
-      <div className="page-header">
-        <Title level={2}>
-          <TagOutlined /> Vé của tôi
-        </Title>
+    <MainLayout>
+      <div className="my-tickets-page">
+        <div className="page-header">
+          <Title level={2}>
+            <TagOutlined /> Vé của tôi
+          </Title>
         <Paragraph>
           Quản lý và theo dõi tất cả các vé sự kiện bạn đã mua
         </Paragraph>
@@ -462,7 +419,8 @@ const MyTicketsPage = () => {
           </div>
         )}
       </Modal>
-    </div>
+      </div>
+    </MainLayout>
   );
 };
 

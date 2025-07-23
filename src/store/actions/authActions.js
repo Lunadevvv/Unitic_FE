@@ -22,7 +22,7 @@ export const loginUser = createAsyncThunk(
         const userProfile = profileResponse.data;
         localStorage.setItem("user", JSON.stringify(userProfile));
         return { token: data.token, message: data.message, user: userProfile };
-      } catch (_profileError) {
+      } catch {
         // If profile fetch fails, still return success with token
         return { token: data.token, message: data.message };
       }
@@ -39,13 +39,13 @@ export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await BASE_URL.post("UniTic/auth/register", {
+      const response = await BASE_URL.post("Unitic/Auth/register", {
         mssv: userData.mssv,
-        FirstName: userData.FirstName,
-        LastName: userData.LastName,
-        Email: userData.Email,
-        Password: userData.Password,
-        UniversityName: userData.UniversityName,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        password: userData.password,
+        universityName: userData.universityName,
       });
       const data = response.data;
       return data;
@@ -62,14 +62,14 @@ export const registerRole = createAsyncThunk(
   "auth/registerRole",
   async ({ role, userData }, { rejectWithValue }) => {
     try {
-      const response = await BASE_URL.post(`UniTic/auth/register/${role}`, {
+      const response = await BASE_URL.post(`Unitic/auth/register/${role}`, {
         mssv: userData.mssv,
-        FirstName: userData.FirstName,
-        LastName: userData.LastName,
-        Email: userData.Email,
-        Password: userData.Password,
-        UniversityName: userData.UniversityName,
-        PhoneNumber: userData.PhoneNumber,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        password: userData.password,
+        universityName: userData.universityName,
+        phoneNumber: userData.phoneNumber,
       });
       const data = response.data;
       return data;
@@ -84,11 +84,11 @@ export const registerRole = createAsyncThunk(
 // Logout user
 export const logoutUser = createAsyncThunk(
   "auth/logoutUser",
-  async (_, { getState }) => {
+  async () => {
     try {
       // Always try to call the logout API
       await BASE_URL.post("UniTic/auth/logout");
-    } catch (error) {
+    } catch {
       // Ignore API errors, proceed to clear local data
     }
     // Remove token from cookies and user from localStorage
@@ -210,6 +210,42 @@ export const changePassword = createAsyncThunk(
         error.response?.data?.message ||
         error.message ||
         "Password change failed";
+      return rejectWithValue(message);
+    }
+  }
+);
+
+// Fetch user profile
+export const fetchUserProfile = createAsyncThunk(
+  "auth/fetchUserProfile",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await BASE_URL.get("api/profile");
+      const userProfile = response.data;
+      localStorage.setItem("user", JSON.stringify(userProfile));
+      return userProfile;
+    } catch (error) {
+      let message =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to fetch user profile";
+      return rejectWithValue(message);
+    }
+  }
+);
+
+// Fetch universities
+export const fetchUniversities = createAsyncThunk(
+  "auth/fetchUniversities",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await BASE_URL.get("Unitic/University");
+      return response.data;
+    } catch (error) {
+      let message =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to fetch universities";
       return rejectWithValue(message);
     }
   }

@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import {
   Card, Form, Input, Button, Upload, Avatar, Row, Col, Typography,
   Tabs, List, Tag, Statistic, DatePicker, Select, Switch, 
-  message, Modal, Divider, Space, Badge, Alert
+  message, Modal, Divider, Space, Badge, Alert, Spin
 } from 'antd';
 import {
   UserOutlined, EditOutlined, CameraOutlined, MailOutlined,
@@ -12,9 +13,10 @@ import {
   DeleteOutlined, SafetyOutlined, HeartOutlined,
   TrophyOutlined, GiftOutlined, CrownOutlined
 } from '@ant-design/icons';
-import dayjs from 'dayjs';
 import { fetchUserProfile, updateUserProfile } from '../../store/actions/userActions';
 import { fetchUniversities } from '../../store/actions/universityActions';
+import { useAuth } from '../../hooks/useAuth';
+import MainLayout from '../../components/layout/MainLayout';
 import '../../assets/scss/UserProfilePage.scss';
 
 const { Title, Text, Paragraph } = Typography;
@@ -23,8 +25,10 @@ const { Option } = Select;
 
 const UserProfilePage = () => {
   const dispatch = useDispatch();
-  const { profile, loading: profileLoading } = useSelector(state => state.user);
+  const navigate = useNavigate();
+  const { profile } = useSelector(state => state.user);
   const { universities } = useSelector(state => state.university);
+  const { isAuthenticated } = useAuth();
   const [form] = Form.useForm();
   const [passwordForm] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -38,15 +42,18 @@ const UserProfilePage = () => {
     lastName: '',
     mssv: '',
     wallet: 0,
-    university: null
+    university: null,
+    achievements: [] // Add default achievements array
   });
 
-  const [stats] = useState({
-    upcomingEvents: 3,
-    completedEvents: 12,
-    favoriteEvents: 8,
-    totalSpent: 3500000
-  });
+  // Check authentication on mount
+  useEffect(() => {
+    if (!isAuthenticated) {
+      message.error('Vui lòng đăng nhập để xem trang này');
+      navigate('/signin');
+      return;
+    }
+  }, [isAuthenticated, navigate]);
 
   useEffect(() => {
     // Fetch user profile and universities on mount
@@ -57,7 +64,10 @@ const UserProfilePage = () => {
   useEffect(() => {
     // Update local state when profile is loaded
     if (profile) {
-      setUserProfile(profile);
+      setUserProfile({
+        ...profile,
+        achievements: profile.achievements || [] // Ensure achievements is always an array
+      });
       form.setFieldsValue({
         firstName: profile.firstName,
         lastName: profile.lastName,
@@ -347,7 +357,7 @@ const UserProfilePage = () => {
   const renderAchievements = () => (
     <Card title="Thành tựu">
       <Row gutter={[16, 16]}>
-        {userProfile.achievements.map(achievement => (
+        {(userProfile.achievements || []).map(achievement => (
           <Col xs={24} sm={12} md={8} key={achievement.id}>
             <Card 
               size="small" 
@@ -368,26 +378,38 @@ const UserProfilePage = () => {
     </Card>
   );
 
+  // Show loading while checking authentication or fetching data
+  if (!isAuthenticated || !userProfile.id) {
+    return (
+      <MainLayout>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+          <Spin size="large" />
+        </div>
+      </MainLayout>
+    );
+  }
+
   return (
-    <div className="user-profile-page">
-      <div className="profile-container">
-        {renderProfileHeader()}
-        
-        <Tabs defaultActiveKey="personal" className="profile-tabs">
-          <TabPane tab="Thông tin cá nhân" key="personal">
-            {renderPersonalInfo()}
-          </TabPane>
+    <MainLayout>
+      <div className="user-profile-page">
+        <div className="profile-container">
+          {renderProfileHeader()}
           
-          <TabPane tab="Bảo mật" key="security">
-            {renderSecurity()}
-          </TabPane>
-          
-          <TabPane tab="Tùy chọn" key="preferences">
-            {renderPreferences()}
-          </TabPane>
-          
-          <TabPane tab="Thành tựu" key="achievements">
-            {renderAchievements()}
+          <Tabs defaultActiveKey="personal" className="profile-tabs">
+            <TabPane tab="Thông tin cá nhân" key="personal">
+              {renderPersonalInfo()}
+            </TabPane>
+            
+            <TabPane tab="Bảo mật" key="security">
+              {renderSecurity()}
+            </TabPane>
+            
+            <TabPane tab="Tùy chọn" key="preferences">
+              {renderPreferences()}
+            </TabPane>
+            
+            <TabPane tab="Thành tựu" key="achievements">
+              {renderAchievements()}
           </TabPane>
         </Tabs>
       </div>
@@ -476,6 +498,7 @@ const UserProfilePage = () => {
         />
       </Modal>
     </div>
+    </MainLayout>
   );
 };
 

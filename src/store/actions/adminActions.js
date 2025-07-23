@@ -1,53 +1,59 @@
 // Admin API Actions
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import BASE_URL from '../../services/api';
 
 // Fetch dashboard data
 export const fetchDashboardData = createAsyncThunk(
   'admin/fetchDashboardData',
-  async (_, { rejectWithValue, getState }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const { auth } = getState();
-      const response = await fetch('/api/admin/dashboard', {
-        headers: {
-          'Authorization': `Bearer ${auth.token}`,
-        },
-      });
-      
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to fetch dashboard data');
-      }
-      
-      const data = await response.json();
-      return data;
+      const response = await BASE_URL.get('/api/admin/dashboard');
+      return response.data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      let message = error.response?.data?.message || error.message || 'Failed to fetch dashboard data';
+      return rejectWithValue(message);
     }
   }
 );
 
-// Fetch all users
-export const fetchAllUsers = createAsyncThunk(
-  'admin/fetchAllUsers',
-  async (params = {}, { rejectWithValue, getState }) => {
+// Fetch all accounts
+export const fetchAllAccounts = createAsyncThunk(
+  'admin/fetchAllAccounts',
+  async (_, { rejectWithValue }) => {
     try {
-      const { auth } = getState();
-      const queryParams = new URLSearchParams(params).toString();
-      const response = await fetch(`/api/admin/users?${queryParams}`, {
-        headers: {
-          'Authorization': `Bearer ${auth.token}`,
-        },
-      });
-      
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to fetch users');
-      }
-      
-      const data = await response.json();
-      return data;
+      const response = await BASE_URL.get('Unitic/account');
+      return response.data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      let message = error.response?.data?.message || error.message || 'Failed to fetch accounts';
+      return rejectWithValue(message);
+    }
+  }
+);
+
+// Fetch account by ID
+export const fetchAccountById = createAsyncThunk(
+  'admin/fetchAccountById',
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await BASE_URL.get(`Unitic/account/${userId}`);
+      return response.data;
+    } catch (error) {
+      let message = error.response?.data?.message || error.message || 'Failed to fetch account';
+      return rejectWithValue(message);
+    }
+  }
+);
+
+// Fetch all universities
+export const fetchUniversities = createAsyncThunk(
+  'admin/fetchUniversities',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await BASE_URL.get('Unitic/University');
+      return response.data;
+    } catch (error) {
+      let message = error.response?.data?.message || error.message || 'Failed to fetch universities';
+      return rejectWithValue(message);
     }
   }
 );

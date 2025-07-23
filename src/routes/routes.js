@@ -112,6 +112,10 @@ export const router = createBrowserRouter([
     Component: MyEventsPage
   },
   {
+    path: "/profile",
+    Component: UserProfilePage
+  },
+  {
     path: "/wallet",
     Component: UserWalletPage
   },

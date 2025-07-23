@@ -1,7 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {
   fetchDashboardData,
-  fetchAllUsers,
+  fetchAllAccounts,
+  fetchAccountById,
+  fetchUniversities,
   updateUserStatus,
   updateUserRole,
   deleteUser,
@@ -36,6 +38,27 @@ const initialState = {
       revenue: [],
       eventBookings: [],
     },
+  },
+  accounts: {
+    list: [],
+    total: 0,
+    selectedAccount: null,
+    filters: {
+      status: '',
+      role: '',
+      search: '',
+    },
+    pagination: {
+      current: 1,
+      pageSize: 10,
+    },
+    loading: false,
+    error: null,
+  },
+  universities: {
+    list: [],
+    loading: false,
+    error: null,
   },
   users: {
     list: [],
@@ -122,19 +145,45 @@ const adminSlice = createSlice({
         state.loading.dashboard = false;
         state.error = action.payload;
       })
-      // Users
-      .addCase(fetchAllUsers.pending, (state) => {
-        state.loading.users = true;
-        state.error = null;
+      // Accounts
+      .addCase(fetchAllAccounts.pending, (state) => {
+        state.accounts.loading = true;
+        state.accounts.error = null;
       })
-      .addCase(fetchAllUsers.fulfilled, (state, action) => {
-        state.loading.users = false;
-        state.users.list = action.payload.users || action.payload;
-        state.users.total = action.payload.total || action.payload.length;
+      .addCase(fetchAllAccounts.fulfilled, (state, action) => {
+        state.accounts.loading = false;
+        state.accounts.list = action.payload;
+        state.accounts.total = action.payload.length;
       })
-      .addCase(fetchAllUsers.rejected, (state, action) => {
-        state.loading.users = false;
-        state.error = action.payload;
+      .addCase(fetchAllAccounts.rejected, (state, action) => {
+        state.accounts.loading = false;
+        state.accounts.error = action.payload;
+      })
+      // Account by ID
+      .addCase(fetchAccountById.pending, (state) => {
+        state.accounts.loading = true;
+        state.accounts.error = null;
+      })
+      .addCase(fetchAccountById.fulfilled, (state, action) => {
+        state.accounts.loading = false;
+        state.accounts.selectedAccount = action.payload;
+      })
+      .addCase(fetchAccountById.rejected, (state, action) => {
+        state.accounts.loading = false;
+        state.accounts.error = action.payload;
+      })
+      // Universities
+      .addCase(fetchUniversities.pending, (state) => {
+        state.universities.loading = true;
+        state.universities.error = null;
+      })
+      .addCase(fetchUniversities.fulfilled, (state, action) => {
+        state.universities.loading = false;
+        state.universities.list = action.payload;
+      })
+      .addCase(fetchUniversities.rejected, (state, action) => {
+        state.universities.loading = false;
+        state.universities.error = action.payload;
       })
       .addCase(updateUserStatus.fulfilled, (state, action) => {
         const { userId, status } = action.payload;
