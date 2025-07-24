@@ -8,18 +8,20 @@ import {
 import {
   CalendarOutlined, EditOutlined, DeleteOutlined, PlusOutlined,
   SearchOutlined, ExportOutlined, UploadOutlined, EyeOutlined,
-  PlayCircleOutlined, PauseCircleOutlined, StopOutlined,
+  PlayCircleOutlined, PauseCircleOutlined, StopOutlined, CheckOutlined,
   FileImageOutlined, TeamOutlined, DollarOutlined, ClockCircleOutlined
 } from '@ant-design/icons';
+import dayjs from 'dayjs';
 import AdminLayout from '../../components/layout/AdminLayout';
+import { formatDateForAPI } from '../../utils/dateUtils';
 import { 
   fetchEvents, 
-  createEvent, 
-  updateEvent, 
-  updateEventStatus,
+  createEvent, // Giữ lại nếu bạn vẫn muốn tính năng tạo qua modal nếu cần sau này
   deleteEvent 
 } from '../../store/actions/eventsActions';
 import { fetchCategories } from '../../store/actions/categoryActions';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import Cookies from 'js-cookie';
 import '../../assets/scss/EventManagementPage.scss';
 
 const { Title, Text } = Typography;
@@ -29,6 +31,7 @@ const { TextArea } = Input;
 
 const EventManagementPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // Khởi tạo useNavigate
   const { events, loading, error } = useSelector(state => state.events);
   const { categories } = useSelector(state => state.category);
   
@@ -36,9 +39,9 @@ const EventManagementPage = () => {
   const [searchText, setSearchText] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterCategory, setFilterCategory] = useState('all');
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingEvent, setEditingEvent] = useState(null);
-  const [form] = Form.useForm();
+  const [isModalVisible, setIsModalVisible] = useState(false); // Có thể xóa nếu không dùng modal nữa
+  const [editingEvent, setEditingEvent] = useState(null); // Có thể xóa nếu không dùng modal nữa
+  const [form] = Form.useForm(); // Có thể xóa nếu không dùng modal nữa
 
   useEffect(() => {
     // Load events and categories when component mounts
@@ -54,17 +57,18 @@ const EventManagementPage = () => {
   }, [error]);
 
   const handleAddEvent = () => {
-    setEditingEvent(null);
-    form.resetFields();
-    setIsModalVisible(true);
+    navigate('/organization/events/register'); // Chuyển hướng đến trang đăng ký sự kiện
   };
+
 
   const handleEditEvent = (event) => {
     setEditingEvent(event);
     form.setFieldsValue({
       ...event,
-      dateRange: [event.startDate, event.endDate],
-      timeRange: [event.startTime, event.endTime]
+      dateRange: [
+        event.date_Start ? dayjs(event.date_Start) : null, 
+        event.date_End ? dayjs(event.date_End) : null
+      ]
     });
     setIsModalVisible(true);
   };
@@ -82,42 +86,73 @@ const EventManagementPage = () => {
     try {
       const eventData = {
         name: values.name,
+        image: values.image || "https://example.com/images/default_event.jpg",
         description: values.description,
-        date_Start: values.dateRange[0],
-        date_End: values.dateRange[1],
+        date_Start: formatDateForAPI(values.dateRange[0]),
+        date_End: formatDateForAPI(values.dateRange[1]),
         price: values.price,
-        categoryName: values.category,
-        slot: values.totalTickets
+        cateID: values.category,
+        slot: values.totalTickets,
+        location: values.location
       };
 
       if (editingEvent) {
-        await dispatch(updateEvent({ 
-          eventId: editingEvent.id, 
-          eventData 
-        })).unwrap();
-        message.success('Cập nhật sự kiện thành công');
+        // Update existing event: PUT /Unitic/Event/{eventId}
+        const response = await fetch(`https://localhost:7163/Unitic/Event/${editingEvent.eventID}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(eventData)
+        });
+        
+        if (response.ok) {
+          message.success('Cập nhật sự kiện thành công');
+        } else {
+          throw new Error('API call failed');
+        }
       } else {
+        // Create new event using Redux action
+        // Lưu ý: Nếu bạn chỉ muốn tạo sự kiện qua trang OrganizationRegisterEventPage,
+        // thì phần này (createEvent) có thể được xóa hoặc di chuyển.
         await dispatch(createEvent(eventData)).unwrap();
         message.success('Thêm sự kiện thành công');
       }
       
       setIsModalVisible(false);
       form.resetFields();
+      // Refresh events list
+      dispatch(fetchEvents());
     } catch (error) {
-      message.error('Lỗi khi lưu thông tin sự kiện: ' + error);
+      message.error('Lỗi khi lưu thông tin sự kiện: ' + (error.message || error));
     }
   };
 
   const handleStatusChange = async (eventId, newStatus) => {
     try {
-      await dispatch(updateEventStatus({ 
-        eventId, 
-        eventData: { status: newStatus },
-        status: newStatus 
-      })).unwrap();
-      message.success('Cập nhật trạng thái thành công');
+      // Call API directly for status update: PUT /Unitic/Event/status/{eventId}?status={status}
+      // Lấy token từ localStorage hoặc cookies
+      let token = localStorage.getItem('token');
+      if (!token) {
+        token = Cookies.get('ACCESS_TOKEN');
+      }
+      const response = await fetch(`https://localhost:7163/Unitic/Event/status/${eventId}?status=${newStatus}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        }
+      });
+      
+      if (response.ok) {
+        message.success('Cập nhật trạng thái thành công');
+        // Refresh events list
+        dispatch(fetchEvents());
+      } else {
+        throw new Error('API call failed');
+      }
     } catch (error) {
-      message.error('Lỗi khi cập nhật trạng thái: ' + error);
+      message.error('Lỗi khi cập nhật trạng thái: ' + error.message);
     }
   };
 
@@ -182,11 +217,11 @@ const EventManagementPage = () => {
       render: (_, record) => (
         <div>
           <div>
-            <Text strong>0</Text>
+            <Text strong>0</Text> {/* Sẽ cần cập nhật từ dữ liệu thực tế */}
             <Text type="secondary">/{record.slot}</Text>
           </div>
           <div style={{ fontSize: '12px', color: '#999' }}>
-            0%
+            0% {/* Sẽ cần cập nhật từ dữ liệu thực tế */}
           </div>
         </div>
       ),
@@ -208,41 +243,54 @@ const EventManagementPage = () => {
       key: 'status',
       render: (status, record) => {
         const statusConfig = {
-          active: { label: 'Đang bán', color: 'success', icon: <PlayCircleOutlined /> },
-          upcoming: { label: 'Sắp diễn ra', color: 'processing', icon: <ClockCircleOutlined /> },
-          paused: { label: 'Tạm dừng', color: 'warning', icon: <PauseCircleOutlined /> },
-          ended: { label: 'Đã kết thúc', color: 'default', icon: <StopOutlined /> }
+          1: { label: 'Riêng tư', color: 'default', icon: <ClockCircleOutlined /> },
+          2: { label: 'Đã xuất bản', color: 'success', icon: <PlayCircleOutlined /> },
+          3: { label: 'Đã hủy', color: 'error', icon: <StopOutlined /> },
+          4: { label: 'Đang diễn ra', color: 'processing', icon: <PlayCircleOutlined /> },
+          5: { label: 'Đã hoàn thành', color: 'default', icon: <CheckOutlined /> },
+          6: { label: 'Hết vé', color: 'warning', icon: <StopOutlined /> }
         };
-        const config = statusConfig[status] || statusConfig.upcoming;
+        const config = statusConfig[status] || statusConfig[1];
+        // All possible status transitions
+        const statusOptions = [
+          { value: 1, label: 'Riêng tư', icon: <ClockCircleOutlined /> },
+          { value: 2, label: 'Đã xuất bản', icon: <PlayCircleOutlined /> },
+          { value: 3, label: 'Đã hủy', icon: <StopOutlined /> },
+          { value: 4, label: 'Đang diễn ra', icon: <PlayCircleOutlined /> },
+          { value: 5, label: 'Đã hoàn thành', icon: <CheckOutlined /> },
+          { value: 6, label: 'Hết vé', icon: <StopOutlined /> },
+        ];
         return (
           <Space>
             <Tag color={config.color} icon={config.icon}>
               {config.label}
             </Tag>
-            {status === 'active' && (
-              <Button 
-                size="small" 
-                icon={<PauseCircleOutlined />}
-                onClick={() => handleStatusChange(record.id, 'paused')}
-                title="Tạm dừng"
-              />
-            )}
-            {status === 'paused' && (
-              <Button 
-                size="small" 
-                icon={<PlayCircleOutlined />}
-                onClick={() => handleStatusChange(record.id, 'active')}
-                title="Kích hoạt"
-              />
-            )}
+            <Select
+              size="small"
+              value={status}
+              style={{ minWidth: 120 }}
+              onChange={newStatus => handleStatusChange(record.eventID, newStatus)}
+              dropdownMatchSelectWidth={false}
+            >
+              {statusOptions.map(opt => (
+                <Select.Option key={opt.value} value={opt.value}>
+                  <Space>
+                    {opt.icon}
+                    {opt.label}
+                  </Space>
+                </Select.Option>
+              ))}
+            </Select>
           </Space>
         );
       },
       filters: [
-        { text: 'Đang bán', value: 'active' },
-        { text: 'Sắp diễn ra', value: 'upcoming' },
-        { text: 'Tạm dừng', value: 'paused' },
-        { text: 'Đã kết thúc', value: 'ended' }
+        { text: 'Riêng tư', value: 1 },
+        { text: 'Đã xuất bản', value: 2 },
+        { text: 'Đã hủy', value: 3 },
+        { text: 'Đang diễn ra', value: 4 },
+        { text: 'Đã hoàn thành', value: 5 },
+        { text: 'Hết vé', value: 6 }
       ],
       onFilter: (value, record) => record.status === value,
     },
@@ -282,9 +330,9 @@ const EventManagementPage = () => {
 
   const filteredEvents = events.filter(event => {
     const matchesSearch = event.name.toLowerCase().includes(searchText.toLowerCase()) ||
-                         event.organizer.toLowerCase().includes(searchText.toLowerCase());
-    const matchesStatus = filterStatus === 'all' || event.status === filterStatus;
-    const matchesCategory = filterCategory === 'all' || event.category === filterCategory;
+                          (event.organizer && event.organizer.toLowerCase().includes(searchText.toLowerCase()));
+    const matchesStatus = filterStatus === 'all' || event.status === parseInt(filterStatus);
+    const matchesCategory = filterCategory === 'all' || event.cateID === filterCategory;
     return matchesSearch && matchesStatus && matchesCategory;
   });
 
@@ -295,9 +343,9 @@ const EventManagementPage = () => {
 
   // Statistics
   const totalEvents = events.length;
-  const activeEvents = events.filter(e => e.status === 'active').length;
-  const totalRevenue = events.reduce((sum, e) => sum + e.revenue, 0);
-  const totalTicketsSold = events.reduce((sum, e) => sum + e.ticketsSold, 0);
+  const publishedEvents = events.filter(e => e.status === 2).length; // Published
+  const totalRevenue = events.reduce((sum, e) => sum + (e.revenue || 0), 0);
+  const totalTicketsSold = events.reduce((sum, e) => sum + (e.ticketsSold || 0), 0);
 
   return (
     <AdminLayout>
@@ -311,7 +359,11 @@ const EventManagementPage = () => {
           <Space>
             <Button icon={<ExportOutlined />}>Xuất Excel</Button>
             <Button icon={<UploadOutlined />}>Nhập Excel</Button>
-            <Button type="primary" icon={<PlusOutlined />} onClick={handleAddEvent}>
+            <Button 
+              type="primary" 
+              icon={<PlusOutlined />} 
+              onClick={handleAddEvent} // Gọi hàm chuyển hướng tại đây
+            >
               Tạo sự kiện mới
             </Button>
           </Space>
@@ -331,8 +383,8 @@ const EventManagementPage = () => {
           <Col xs={24} sm={12} lg={6}>
             <Card>
               <Statistic
-                title="Đang bán vé"
-                value={activeEvents}
+                title="Đã xuất bản"
+                value={publishedEvents}
                 prefix={<PlayCircleOutlined />}
                 valueStyle={{ color: '#52c41a' }}
               />
@@ -378,10 +430,12 @@ const EventManagementPage = () => {
               placeholder="Trạng thái"
             >
               <Option value="all">Tất cả trạng thái</Option>
-              <Option value="active">Đang bán</Option>
-              <Option value="upcoming">Sắp diễn ra</Option>
-              <Option value="paused">Tạm dừng</Option>
-              <Option value="ended">Đã kết thúc</Option>
+              <Option value="1">Riêng tư</Option>
+              <Option value="2">Đã xuất bản</Option>
+              <Option value="3">Đã hủy</Option>
+              <Option value="4">Đang diễn ra</Option>
+              <Option value="5">Đã hoàn thành</Option>
+              <Option value="6">Hết vé</Option>
             </Select>
             <Select
               value={filterCategory}
@@ -390,11 +444,9 @@ const EventManagementPage = () => {
               placeholder="Danh mục"
             >
               <Option value="all">Tất cả danh mục</Option>
-              <Option value="music">Âm nhạc</Option>
-              <Option value="education">Giáo dục</Option>
-              <Option value="art">Nghệ thuật</Option>
-              <Option value="sports">Thể thao</Option>
-              <Option value="technology">Công nghệ</Option>
+              {categories?.map(cat => (
+                <Option key={cat.cateID} value={cat.cateID}>{cat.name}</Option>
+              ))}
             </Select>
             <RangePicker placeholder={['Từ ngày', 'Đến ngày']} />
             {selectedRowKeys.length > 0 && (
@@ -423,7 +475,7 @@ const EventManagementPage = () => {
           />
         </Card>
 
-        {/* Add/Edit Modal */}
+        {/* Add/Edit Modal (Giữ lại nếu bạn vẫn muốn chức năng chỉnh sửa tại chỗ) */}
         <Modal
           title={editingEvent ? 'Chỉnh sửa sự kiện' : 'Tạo sự kiện mới'}
           open={isModalVisible}
@@ -454,20 +506,10 @@ const EventManagementPage = () => {
                 >
                   <Select placeholder="Chọn danh mục">
                     {categories?.map(cat => (
-                      <Option key={cat.id} value={cat.name}>
+                      <Option key={cat.cateID} value={cat.cateID}>
                         {cat.name}
                       </Option>
                     ))}
-                    {/* Fallback options nếu không có categories từ API */}
-                    {!categories?.length && (
-                      <>
-                        <Option value="music">Âm nhạc</Option>
-                        <Option value="education">Giáo dục</Option>
-                        <Option value="art">Nghệ thuật</Option>
-                        <Option value="sports">Thể thao</Option>
-                        <Option value="technology">Công nghệ</Option>
-                      </>
-                    )}
                   </Select>
                 </Form.Item>
               </Col>
@@ -503,33 +545,18 @@ const EventManagementPage = () => {
             </Row>
 
             <Row gutter={16}>
-              <Col span={12}>
+              <Col span={24}>
                 <Form.Item
                   name="dateRange"
                   label="Thời gian"
                   rules={[{ required: true, message: 'Vui lòng chọn thời gian!' }]}
                 >
-                  <RangePicker style={{ width: '100%' }} />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  name="timeRange"
-                  label="Giờ"
-                  rules={[{ required: true, message: 'Vui lòng chọn giờ!' }]}
-                >
-                  <Input.Group compact>
-                    <Input
-                      style={{ width: '50%' }}
-                      placeholder="08:00"
-                      addonBefore="Từ"
-                    />
-                    <Input
-                      style={{ width: '50%' }}
-                      placeholder="17:00"
-                      addonBefore="Đến"
-                    />
-                  </Input.Group>
+                  <RangePicker 
+                    style={{ width: '100%' }}
+                    showTime={{ format: 'HH:mm' }}
+                    format="YYYY-MM-DD HH:mm"
+                    placeholder={['Từ ngày', 'Đến ngày']}
+                  />
                 </Form.Item>
               </Col>
             </Row>
@@ -569,10 +596,12 @@ const EventManagementPage = () => {
                   rules={[{ required: true, message: 'Vui lòng chọn trạng thái!' }]}
                 >
                   <Select placeholder="Chọn trạng thái">
-                    <Option value="upcoming">Sắp diễn ra</Option>
-                    <Option value="active">Đang bán vé</Option>
-                    <Option value="paused">Tạm dừng</Option>
-                    <Option value="ended">Đã kết thúc</Option>
+                    <Option value={1}>Riêng tư</Option>
+                    <Option value={2}>Đã xuất bản</Option>
+                    <Option value={3}>Đã hủy</Option>
+                    <Option value={4}>Đang diễn ra</Option>
+                    <Option value={5}>Đã hoàn thành</Option>
+                    <Option value={6}>Hết vé</Option>
                   </Select>
                 </Form.Item>
               </Col>

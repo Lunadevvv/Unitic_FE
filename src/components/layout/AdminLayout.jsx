@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Layout, Menu, Avatar, Dropdown, Button, Badge, Space, Typography } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import {
   DashboardOutlined, UserOutlined, CalendarOutlined, ShoppingOutlined,
   BarChartOutlined, SettingOutlined, LogoutOutlined,
@@ -8,6 +9,8 @@ import {
   QuestionCircleOutlined, DownOutlined,
   TikTokFilled
 } from '@ant-design/icons';
+import RoleGuard from '../auth/RoleGuard';
+import { ROLES, hasPermission } from '../../utils/rolePermissions';
 import '../../assets/scss/AdminLayout.scss';
 
 const { Header, Sider, Content } = Layout;
@@ -18,6 +21,9 @@ const AdminLayout = ({ children }) => {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
+  
+  // Get user from Redux store
+  const { user, isAuthenticated } = useSelector(state => state.auth);
 
   // Update time every minute
   useEffect(() => {
@@ -27,58 +33,88 @@ const AdminLayout = ({ children }) => {
     return () => clearInterval(timer);
   }, []);
 
-  // Mock admin data
+  // Check if user has permission to access admin area
+  useEffect(() => {
+    if (!isAuthenticated || !user || user.role === ROLES.USER) {
+      navigate('/');
+      return;
+    }
+  }, [isAuthenticated, user, navigate]);
+
+  // If user doesn't have permission, don't render anything
+  if (!isAuthenticated || !user || user.role === ROLES.USER) {
+    return null;
+  }
+
+  // Admin user data (use actual user data only)
   const admin = {
-    name: 'Admin User',
-    email: 'admin@unitic.com',
-    avatar: '/src/assets/img/demo.jpg',
-    role: 'Super Admin'
+    name: user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email : '',
+    email: user?.email || '',
+    avatar: user?.avatar || '/src/assets/img/demo.jpg',
+    role: user?.role === ROLES.ADMIN ? 'Super Admin' : 
+          user?.role === ROLES.MODERATOR ? 'Moderator' : 
+          user?.role === ROLES.ORGANIZER ? 'Organizer' :
+          user?.role === ROLES.STAFF ? 'Staff' : ''
   };
 
-  const menuItems = [
+  // Menu items with role-based filtering
+  const allMenuItems = [
     {
       key: '/admin',
       icon: <DashboardOutlined />,
       label: 'Dashboard',
-      path: '/admin'
+      path: '/admin',
+      permission: 'canAccessDashboard'
     },
     {
       key: '/admin/users',
       icon: <UserOutlined />,
       label: 'Quản lý người dùng',
-      path: '/admin/users'
+      path: '/admin/users',
+      permission: 'canAccessUserManagement'
     },
     {
       key: '/admin/events',
       icon: <CalendarOutlined />,
       label: 'Quản lý sự kiện',
-      path: '/admin/events'
+      path: '/admin/events',
+      permission: 'canAccessEventManagement'
     },
     {
       key: '/admin/orders',
       icon: <ShoppingOutlined />,
       label: 'Quản lý đơn hàng',
-      path: '/admin/orders'
+      path: '/admin/orders',
+      permission: 'canAccessOrderManagement'
     },
     {
       key: '/admin/tickets',
       icon: <TikTokFilled/>,
       label: 'Quản lý vé',
-      path: '/admin/tickets'
+      path: '/admin/tickets',
+      permission: 'canAccessTicketManagement'
     },
     {
       key: '/admin/reports',
       icon: <BarChartOutlined />,
       label: 'Báo cáo & Thống kê',
-      path: '/admin/reports'
+      path: '/admin/reports',
+      permission: 'canAccessReports'
     },
     {
       key: '/admin/settings',
       icon: <SettingOutlined />,
       label: 'Cài đặt hệ thống',
-      path: '/admin/settings'
+      path: '/admin/settings',
+      permission: 'canAccessAdmin'
     }
   ];
+
+  // Filter menu items based on user role - only show items user has permission for
+  const menuItems = allMenuItems.filter(item => {
+    if (!user?.role || !item.permission) return false;
+    return hasPermission(user.role, item.permission);
+  });
 
   const userMenuItems = [
     {
@@ -104,7 +140,16 @@ const AdminLayout = ({ children }) => {
       key: 'logout',
       icon: <LogoutOutlined />,
       label: 'Đăng xuất',
-      onClick: () => navigate('/signin')
+      onClick: () => {
+        // Call logout action and redirect
+        import('../../store/actions/authActions').then(({ logoutUser }) => {
+          // Dispatch logoutUser action
+          const { dispatch } = require('react-redux');
+          dispatch(logoutUser()).then(() => {
+            navigate('/signin');
+          });
+        });
+      }
     }
   ];
 

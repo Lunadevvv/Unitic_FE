@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { Steps, Card, Button, message, Breadcrumb } from 'antd';
+import { Steps, Card, Button, message, Breadcrumb, Space } from 'antd';
 import { HomeOutlined, PlusOutlined, EyeOutlined, CheckOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import MainLayout from '../../components/layout/MainLayout';
 import OrganizationEventForm from '../../components/organization/OrganizationEventForm';
 import EventPreview from '../../components/organization/EventPreview';
-import { createEvent } from '../../store/actions/eventsActions';
+import { useOrganizationEvents } from '../../hooks/useOrganizationEvents';
 import '../../assets/scss/OrganizationRegisterEventPage.scss';
 
 const { Step } = Steps;
 
 const OrganizationRegisterEventPage = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const { createEvent } = useOrganizationEvents();
   const [currentStep, setCurrentStep] = useState(0);
   const [eventData, setEventData] = useState({});
   const [loading, setLoading] = useState(false);
@@ -44,14 +43,38 @@ const OrganizationRegisterEventPage = () => {
   const handlePreviewConfirm = async () => {
     setLoading(true);
     try {
-      await dispatch(createEvent(eventData));
-      
-      message.success('Đăng ký sự kiện thành công! Chờ admin duyệt.');
-      setCurrentStep(2);
-      
-      setTimeout(() => {
-        navigate('/organization/events');
-      }, 2000);
+      // Set price directly from eventData (no ticket type logic)
+      const apiEventData = {
+        name: eventData.name,
+        image: eventData.image || eventData.imageUrl || "https://example.com/images/default_event.jpg",
+        description: eventData.description,
+        date_Start: eventData.date_Start,
+        date_End: eventData.date_End,
+        price: typeof eventData.price === 'number' ? eventData.price : 0,
+        cateID: eventData.cateID, // strictly use cateID only
+        slot: eventData.slot, // strictly use slot only
+        location: eventData.location || "Chưa cập nhật",
+      };
+
+      // Validate required fields before sending
+      const requiredFields = ["name", "image", "description", "date_Start", "date_End", "cateID", "slot", "location"];
+      const missingFields = requiredFields.filter(field => !apiEventData[field] && apiEventData[field] !== 0);
+      if (missingFields.length > 0) {
+        message.error(`Vui lòng nhập đủ thông tin: ${missingFields.join(", ")}`);
+        setLoading(false);
+        return;
+      }
+
+      const result = await createEvent(apiEventData);
+      if (result.success) {
+        message.success('Đăng ký sự kiện thành công! Chờ admin duyệt.');
+        setCurrentStep(2);
+        setTimeout(() => {
+          navigate('/organization/events');
+        }, 2000);
+      } else {
+        message.error(result.error || 'Có lỗi xảy ra. Vui lòng thử lại!');
+      }
     } catch (error) {
       message.error('Có lỗi xảy ra. Vui lòng thử lại!');
       console.error('Error creating event:', error);
@@ -64,14 +87,19 @@ const OrganizationRegisterEventPage = () => {
     setCurrentStep(0);
   };
 
+
+
   const renderStepContent = () => {
     switch (currentStep) {
       case 0:
         return (
-          <OrganizationEventForm 
-            initialData={eventData}
-            onSubmit={handleFormSubmit}
-          />
+          <div>
+            
+            <OrganizationEventForm 
+              initialData={eventData}
+              onSubmit={handleFormSubmit}
+            />
+          </div>
         );
       case 1:
         return (
@@ -144,6 +172,9 @@ const OrganizationRegisterEventPage = () => {
       </div>
 
       <div className="container">
+        <Button onClick={() => navigate(-1)} style={{ marginBottom: 16 }}>
+          Quay về trang trước
+        </Button>
         <Card className="steps-card">
           <Steps 
             current={currentStep} 

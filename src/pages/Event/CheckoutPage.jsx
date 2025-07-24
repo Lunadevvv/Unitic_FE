@@ -1,9 +1,10 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
   Row, Col, Card, Form, Input, Button, Divider, Steps,
   Typography, message, Checkbox, InputNumber, Spin, Breadcrumb,
-  Avatar, List, Space
+  Avatar, List, Space, Modal
 } from 'antd';
 import {
   WalletOutlined, SafetyOutlined, CheckCircleOutlined, UserOutlined,
@@ -14,6 +15,7 @@ import {
 import { useEvents } from '../../hooks/useEvents';
 import { useCart } from '../../hooks/useCart';
 import { useBooking } from '../../hooks/useBooking';
+import { fetchUserProfile } from '../../store/actions/userActions';
 import MainLayout from '../../components/layout/MainLayout';
 import '../../assets/scss/CheckoutPage.scss';
 
@@ -29,6 +31,8 @@ const CheckoutPage = () => {
   const { getEventById } = useEvents();
   const { cartItems, clearCart, updateCartItem, removeFromCart } = useCart();
   const { purchaseTicket, loading: bookingLoading } = useBooking();
+  const { user } = useSelector(state => state.user);
+  const dispatch = useDispatch();
 
   const [event, setEvent] = useState(null);
   const [currentStep] = useState(0);
@@ -38,6 +42,23 @@ const CheckoutPage = () => {
     serviceFee: 0,
     total: 0
   });
+
+  // Fetch user profile on component mount
+  useEffect(() => {
+    if (!user) {
+      dispatch(fetchUserProfile());
+    } else {
+      console.log('Current user wallet:', user.wallet); // Debug log
+      // Set initial form values from user profile if available
+      form.setFieldsValue({
+        fullName: user.fullName || user.name,
+        email: user.email,
+        phone: user.phone || user.phoneNumber,
+        address: user.address,
+        age: user.age // Assuming user profile might have an age field
+      });
+    }
+  }, [dispatch, user, form]); // Add form to dependency array
 
   // Lấy thông tin từ state navigation hoặc cart
   const checkoutData = location.state?.checkoutData || null;
@@ -78,11 +99,6 @@ const CheckoutPage = () => {
   useEffect(() => {
     setOrderSummary(calculatedSummary);
   }, [calculatedSummary]);
-
-  // Memoize order number generation
-  const generateOrderNumber = useCallback(() => {
-    return `ORD${Date.now()}`;
-  }, []);
 
   const handlePayment = async (values) => {
     setLoading(true);
@@ -135,12 +151,50 @@ const CheckoutPage = () => {
       // Xử lý lỗi specific
       let errorMessage = 'Có lỗi xảy ra khi mua vé. Vui lòng thử lại!';
       
-      if (error.message?.includes('Insufficient funds')) {
-        errorMessage = 'Tài khoản của bạn không đủ số dư để mua vé. Vui lòng nạp thêm tiền vào ví.';
-      } else if (error.message?.includes('Event not found')) {
+      // Kiểm tra lỗi từ nhiều nguồn khác nhau   
+      const errorText = error.message || error.toString() || '';
+      console.log('Error text for checking:', errorText); // Debug log
+      
+      const isInsufficientFunds = errorText.includes('Insufficient funds') || 
+                                   errorText.includes('insufficient funds') ||
+                                   errorText.toLowerCase().includes('insufficient');
+      
+      if (isInsufficientFunds) {
+        const currentBalance = user?.wallet;
+        const requiredAmount = orderSummary.total;
+        const shortfall = requiredAmount - currentBalance;
+        
+        // Hiển thị modal chi tiết cho trường hợp số dư không đủ
+        Modal.error({
+          title: 'Số dư không đủ',
+          content: (
+            <div style={{ padding: '16px 0' }}>
+              <p><strong>Số dư hiện tại:</strong> {currentBalance.toLocaleString('vi-VN')} VNĐ</p>
+              <p><strong>Số tiền cần thanh toán:</strong> {requiredAmount.toLocaleString('vi-VN')} VNĐ</p>
+              <p style={{ color: '#ff4d4f', fontWeight: 'bold' }}>
+                <strong>Cần nạp thêm:</strong> {shortfall.toLocaleString('vi-VN')} VNĐ
+              </p>
+              <p style={{ marginTop: '16px', fontSize: '14px', color: '#666' }}>
+                Vui lòng nạp thêm tiền vào ví để hoàn tất giao dịch này.
+              </p>
+            </div>
+          ),
+          okText: 'Đã hiểu',
+          width: 400,
+        });
+        
+        errorMessage = `Tiền trong ví không đủ! Cần nạp thêm ${shortfall.toLocaleString('vi-VN')} VNĐ vào ví.`;
+      } else if (errorText.includes('Event not found') || errorText.includes('event not found')) {
         errorMessage = 'Sự kiện không tồn tại hoặc đã bị hủy.';
-      } else if (error.message?.includes('Event is full')) {
+      } else if (errorText.includes('Event is full') || errorText.includes('event is full')) {
         errorMessage = 'Sự kiện đã hết vé. Vui lòng chọn sự kiện khác.';
+      } else {
+        // Log chi tiết lỗi để debug
+        console.error('Unhandled error details:', {
+          message: error.message,
+          toString: error.toString(),
+          fullError: error
+        });
       }
       
       message.error(errorMessage);
@@ -217,99 +271,27 @@ const CheckoutPage = () => {
     );
   };
 
-const renderCustomerInfo = () => (
-    <Card title="Thông tin khách hàng" className="customer-info-card">
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={handlePayment}
-      >
-        <Row gutter={16}>
-          <Col xs={24} sm={12}>
-            <Form.Item
-              name="fullName"
-              label="Họ và tên"
-              rules={[{ required: true, message: 'Vui lòng nhập họ tên!' }]}
-            >
-              <Input prefix={<UserOutlined />} placeholder="Nguyễn Văn A" />
-            </Form.Item>
-          </Col>
-          <Col xs={24} sm={12}>
-            <Form.Item
-              name="email"
-              label="Email"
-              rules={[
-                { required: true, message: 'Vui lòng nhập email!' },
-                { type: 'email', message: 'Email không hợp lệ!' }
-              ]}
-            >
-              <Input prefix={<MailOutlined />} placeholder="example@email.com" />
-            </Form.Item>
-          </Col>
-        </Row>
-        
-        <Row gutter={16}>
-          <Col xs={24} sm={12}>
-            <Form.Item
-              name="phone"
-              label="Số điện thoại"
-              rules={[{ required: true, message: 'Vui lòng nhập số điện thoại!' }]}
-            >
-              <Input prefix={<PhoneOutlined />} placeholder="0123456789" />
-            </Form.Item>
-          </Col>
-          <Col xs={24} sm={12}>
-            <Form.Item
-              name="age"
-              label="Tuổi"
-              rules={[{ required: true, message: 'Vui lòng nhập tuổi!' }]}
-            >
-              <InputNumber
-                min={1}
-                max={100}
-                placeholder="25"
-                style={{ width: '100%' }}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-
-        <Form.Item
-          name="address"
-          label="Địa chỉ"
-          rules={[{ required: true, message: 'Vui lòng nhập địa chỉ!' }]}
-        >
-          <Input.TextArea
-            prefix={<EnvironmentOutlined />}
-            placeholder="123 Đường ABC, Quận XYZ, TP. HCM"
-            rows={3}
-          />
-        </Form.Item>
-
-        <Form.Item name="note" label="Ghi chú (không bắt buộc)">
-          <Input.TextArea placeholder="Yêu cầu đặc biệt..." rows={2} />
-        </Form.Item>
-      </Form>
-    </Card>
-  );
-const renderPaymentMethod = () => (
+  const renderPaymentMethod = () => (
     <Card title="Phương thức thanh toán" className="payment-method-card">
       <div className="wallet-payment-section">
         <div className="wallet-option-selected">
           <WalletOutlined className="wallet-icon" />
           <div className="wallet-details">
             <Text strong className="wallet-title">Thanh toán từ ví Unitic</Text>
+            <br></br>
             <Text type="secondary" className="wallet-description">
               Sử dụng số dư trong ví của bạn để thanh toán nhanh chóng và an toàn
             </Text>
           </div>
           <CheckCircleOutlined className="check-icon" />
         </div>
-        
+
         <div className="wallet-balance-info">
           <div className="balance-item">
             <Text type="secondary">Số dư hiện tại:</Text>
-            <Text strong className="balance-amount">2,500,000 VNĐ</Text>
+            <Text strong className="balance-amount">
+              {user?.wallet ? user.wallet.toLocaleString('vi-VN') : '0'} VNĐ
+            </Text>
           </div>
           <div className="balance-item">
             <Text type="secondary">Số tiền cần thanh toán:</Text>
@@ -318,20 +300,9 @@ const renderPaymentMethod = () => (
             </Text>
           </div>
           <div className="balance-item">
-            <Text type="secondary">Số dư sau thanh toán:</Text>
-            <Text strong className={`remaining-balance ${(2500000 - orderSummary.total) < 0 ? 'insufficient' : 'sufficient'}`}>
-              {(2500000 - orderSummary.total).toLocaleString('vi-VN')} VNĐ
-            </Text>
+            <Text type="secondary">Hệ thống sẽ tự động kiểm tra số dư khi thanh toán</Text>
           </div>
         </div>
-
-        {(2500000 - orderSummary.total) < 0 && (
-          <div className="insufficient-funds-warning">
-            <Text type="danger">
-              ⚠️ Số dư không đủ. Vui lòng nạp thêm {Math.abs(2500000 - orderSummary.total).toLocaleString('vi-VN')} VNĐ vào ví
-            </Text>
-          </div>
-        )}
       </div>
     </Card>
   );
@@ -359,24 +330,55 @@ const renderPaymentMethod = () => (
         <Text type="secondary">Giao dịch được bảo mật SSL</Text>
       </div>
 
-      <Form.Item name="terms" valuePropName="checked">
-        <Checkbox>
-          Tôi đồng ý với <a href="#" onClick={(e) => e.preventDefault()}>điều khoản dịch vụ</a> và <a href="#" onClick={(e) => e.preventDefault()}>chính sách bảo mật</a>
-        </Checkbox>
-      </Form.Item>
+      <Form form={form} onFinish={handlePayment} layout="vertical">
+        <Form.Item
+          name="fullName"
+          label="Họ và tên"
+          rules={[{ required: true, message: 'Vui lòng nhập họ tên!' }]}
+          initialValue={user?.fullName || user?.name} // Pre-fill from user state
+        >
+          <Input prefix={<UserOutlined />} placeholder="Nguyễn Văn A" />
+        </Form.Item>
+        <Form.Item
+          name="phone"
+          label="Số điện thoại"
+          rules={[{ required: true, message: 'Vui lòng nhập số điện thoại!' }]}
+          initialValue={user?.phone || user?.phoneNumber} // Pre-fill from user state
+        >
+          <Input prefix={<PhoneOutlined />} placeholder="0123456789" />
+        </Form.Item>
+        <Form.Item name="note" label="Ghi chú (không bắt buộc)">
+          <Input.TextArea placeholder="Yêu cầu đặc biệt..." rows={2} />
+        </Form.Item>
 
-      <Button
-        type="primary"
-        size="large"
-        block
-        loading={loading || bookingLoading?.buyTicket}
-        onClick={() => form.submit()}
-        className="checkout-button wallet-payment-btn"
-        disabled={(2500000 - orderSummary.total) < 0 || loading || bookingLoading?.buyTicket}
-      >
-        <WalletOutlined /> 
-        {loading || bookingLoading?.buyTicket ? 'Đang xử lý...' : `Thanh toán từ ví ${orderSummary.total.toLocaleString('vi-VN')} VNĐ`}
-      </Button>
+        <Form.Item
+          name="terms"
+          valuePropName="checked"
+          rules={[
+            {
+              validator: (_, value) =>
+                value ? Promise.resolve() : Promise.reject(new Error('Vui lòng đồng ý với các điều khoản để tiếp tục.')),
+            },
+          ]}
+        >
+          <Checkbox>
+            Tôi đồng ý với <a href="#" onClick={(e) => e.preventDefault()}>điều khoản dịch vụ</a> và <a href="#" onClick={(e) => e.preventDefault()}>chính sách bảo mật</a>
+          </Checkbox>
+        </Form.Item>
+
+        <Button
+          type="primary"
+          size="large"
+          block
+          htmlType="submit" // Use htmlType="submit" to trigger form submission
+          loading={loading || bookingLoading?.buyTicket}
+          className="checkout-button wallet-payment-btn"
+          disabled={loading || bookingLoading?.buyTicket}
+        >
+          <WalletOutlined /> 
+          {loading || bookingLoading?.buyTicket ? 'Đang xử lý...' : `Thanh toán từ ví ${orderSummary.total.toLocaleString('vi-VN')} VNĐ`}
+        </Button>
+      </Form>
     </Card>
   );
 
@@ -392,82 +394,82 @@ const renderPaymentMethod = () => (
   return (
     <MainLayout>
       <div className="checkout-page">
-      <div className="checkout-header">
-        <div className="container">
-          <Breadcrumb
-            items={[
-              {
-                title: (
-                  <a onClick={() => navigate('/')}>
-                    <HomeOutlined /> Trang chủ
-                  </a>
-                ),
-              },
-              {
-                title: (
-                  <a onClick={() => navigate('/events')}>Sự kiện</a>
-                ),
-              },
-              {
-                title: 'Thanh toán',
-              },
-            ]}
-          />
-          
-          <div className="checkout-title">
-            <Button
-              type="text"
-              icon={<ArrowLeftOutlined />}
-              onClick={() => navigate(-1)}
-              className="back-button"
-            >
-              Quay lại
-            </Button>
-            <Title level={2}>
-              <ShoppingCartOutlined /> Thanh toán
-            </Title>
+        <div className="checkout-header">
+          <div className="container">
+            <Breadcrumb
+              items={[
+                {
+                  title: (
+                    <a onClick={() => navigate('/')}>
+                      <HomeOutlined /> Trang chủ
+                    </a>
+                  ),
+                },
+                {
+                  title: (
+                    <a onClick={() => navigate('/events')}>Sự kiện</a>
+                  ),
+                },
+                {
+                  title: 'Thanh toán',
+                },
+              ]}
+            />
+            
+            <div className="checkout-title">
+              <Button
+                type="text"
+                icon={<ArrowLeftOutlined />}
+                onClick={() => navigate(-1)}
+                className="back-button"
+              >
+                Quay lại
+              </Button>
+              <Title level={2}>
+                <ShoppingCartOutlined /> Thanh toán
+              </Title>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="checkout-container">
-        <Row gutter={[24, 24]}>
-          <Col xs={24} lg={16}>
-            <div
-              style={{
-                opacity: 1,
-                transform: 'translateX(0)',
-                transition: 'all 0.5s ease'
-              }}
-            >
-              <Steps current={currentStep} className="checkout-steps">
-                <Step title="Thông tin vé" icon={<TagsOutlined />} />
-                <Step title="Thông tin khách hàng" icon={<UserOutlined />} />
-                <Step title="Thanh toán" icon={<WalletOutlined />} />
-              </Steps>
+        <div className="checkout-container">
+          <Row gutter={[24, 24]}>
+            <Col xs={24} lg={16}>
+              <div
+                style={{
+                  opacity: 1,
+                  transform: 'translateX(0)',
+                  transition: 'all 0.5s ease'
+                }}
+              >
+                <Steps current={currentStep} className="checkout-steps">
+                  <Step title="Thông tin vé" icon={<TagsOutlined />} />
+                  <Step title="Thông tin khách hàng" icon={<UserOutlined />} />
+                  <Step title="Thanh toán" icon={<WalletOutlined />} />
+                </Steps>
 
-              <div className="checkout-content">
-                {renderTicketSelection()}
-                {renderCustomerInfo()}
-                {renderPaymentMethod()}
+                <div className="checkout-content">
+                  {renderTicketSelection()}
+                  {/* renderCustomerInfo() đã được loại bỏ */}
+                  {renderPaymentMethod()}
+                </div>
               </div>
-            </div>
-          </Col>
+            </Col>
 
-          <Col xs={24} lg={8}>
-            <div
-              style={{
-                opacity: 1,
-                transform: 'translateX(0)',
-                transition: 'all 0.5s ease 0.2s'
-              }}
-            >
-              {renderOrderSummary()}
-            </div>
-          </Col>
-        </Row>
+            <Col xs={24} lg={8}>
+              <div
+                style={{
+                  opacity: 1,
+                  transform: 'translateX(0)',
+                  transition: 'all 0.5s ease 0.2s'
+                }}
+              >
+                {renderOrderSummary()}
+              </div>
+            </Col>
+          </Row>
+        </div>
       </div>
-    </div>
     </MainLayout>
   );
 };

@@ -9,6 +9,8 @@ import { motion, useInView } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../../hooks/useCart';
 import { useAuth } from '../../hooks/useAuth';
+import RoleGuard from '../auth/RoleGuard';
+import { ROLES } from '../../utils/rolePermissions';
 import '../../assets/scss/AppHeader.scss';
 
 const { Header } = Layout;
@@ -54,12 +56,17 @@ const   AppHeader = ({
   // Navigation items
   const navigationItems = [
     { path: '/', label: 'Trang chủ' },
-    { path: '/events', label: 'Sự kiện' },
-    { path: '/organization/events', label: 'Tổ chức sự kiện' },
-    { path: '/about', label: 'Về chúng tôi' }
+    { path: '/events', label: 'Sự kiện' }
   ];
 
-  // User dropdown menu
+  // Add organization navigation for allowed roles only
+  if (user?.role && [ROLES.ADMIN, ROLES.ORGANIZER].includes(user.role)) {
+    navigationItems.push({ path: '/organization/events', label: 'Tổ chức sự kiện' });
+  }
+
+  navigationItems.push({ path: '/about', label: 'Về chúng tôi' });
+
+  // User dropdown menu - built dynamically based on role
   const userMenuItems = [
     {
       key: 'profile',
@@ -68,17 +75,37 @@ const   AppHeader = ({
       onClick: () => navigate('/profile')
     },
     {
-      key: 'my-events',
-      label: 'Sự kiện của tôi',
+      key: 'my-tickets',
+      label: 'Vé của tôi',
       icon: <CalendarOutlined />,
-      onClick: () => navigate('/user/events')
-    },
-    {
+      onClick: () => navigate('/my-tickets')
+    }
+  ];
+
+  // Add organization menu for allowed roles only
+  if (user?.role && [ROLES.ADMIN, ROLES.ORGANIZER].includes(user.role)) {
+    userMenuItems.push({
       key: 'organization',
       label: 'Quản lý tổ chức',
       icon: <TeamOutlined />,
       onClick: () => navigate('/organization/events')
-    },
+    });
+  }
+
+  // Add admin menu for admin/moderator roles
+  if (user?.role && [ROLES.ADMIN, ROLES.MODERATOR].includes(user.role)) {
+    userMenuItems.push({
+      type: 'divider'
+    }, {
+      key: 'admin',
+      label: 'Quản trị hệ thống',
+      icon: <SettingOutlined />,
+      onClick: () => navigate('/admin')
+    });
+  }
+
+  // Add common menu items
+  userMenuItems.push(
     {
       type: 'divider'
     },
@@ -97,7 +124,7 @@ const   AppHeader = ({
         navigate('/');
       }
     }
-  ];
+  );
 
   const headerClassName = `app-header ${transparent ? 'transparent' : ''} ${fixed ? 'fixed' : ''}`;
   const headerStyle = fixed ? {
@@ -160,32 +187,7 @@ const   AppHeader = ({
 
         {/* Right side actions */}
         <div className="header-actions">
-          {/* Notifications */}
-          {showNotifications && (
-            <motion.div variants={itemVariant} className="action-item">
-              <Badge count={3} size="small">
-                <Button 
-                  type="text" 
-                  icon={<BellOutlined />} 
-                  className="action-button"
-                />
-              </Badge>
-            </motion.div>
-          )}
-
-          {/* Cart */}
-          {showCart && (
-            <motion.div variants={itemVariant} className="action-item">
-              <Badge count={totalItems} size="small">
-                <Button 
-                  type="text" 
-                  icon={<ShoppingCartOutlined />} 
-                  className="action-button"
-                  onClick={() => navigate('/cart')}
-                />
-              </Badge>
-            </motion.div>
-          )}
+    
 
           {/* User Menu or Login Button */}
           {user ? (

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchEvents } from '../store/actions/eventsActions';
+import { fetchEvents, createEvent } from '../store/actions/eventsActions';
 import mainEventImage from '../assets/img/main_event.jpeg';
 /**
  * Custom hook to fetch and manage events data
@@ -23,7 +23,8 @@ export const useEvents = (options = {}) => {
     eventID: apiEvent.eventID,
     title: apiEvent.name,
     name: apiEvent.name,
-    image: mainEventImage, // Use default image for now
+    image: mainEventImage,
+    location: apiEvent.location || "Chưa cập nhật",
     date: apiEvent.date_Start,
     startDate: apiEvent.date_Start,
     endDate: apiEvent.date_End,
@@ -42,8 +43,7 @@ export const useEvents = (options = {}) => {
     soldCount: 0, // Not provided by API
     isFeatured: false, // Not provided by API
     rating: 4.5, // Default rating
-    location: "Chưa cập nhật", // Not provided by API
-    address: "Chưa cập nhật", // Not provided by API
+    address: apiEvent.location || "Chưa cập nhật", // Use location field for address
     organizer: "Chưa cập nhật", // Not provided by API
     tickets: [
       { 
@@ -134,6 +134,26 @@ export const useEvents = (options = {}) => {
   }, [storeEvents, transformEvent]);
 
   /**
+   * Create a new event
+   * @param {Object} eventData - The event data to create
+   * @returns {Promise} Promise that resolves with the created event
+   */
+  const handleCreateEvent = useCallback(async (eventData) => {
+    try {
+      const result = await dispatch(createEvent(eventData));
+      if (createEvent.fulfilled.match(result)) {
+        // Refresh events list after successful creation
+        dispatch(fetchEvents());
+        return { success: true, data: result.payload };
+      } else {
+        return { success: false, error: result.payload || 'Failed to create event' };
+      }
+    } catch (error) {
+      return { success: false, error: error.message || 'Failed to create event' };
+    }
+  }, [dispatch]);
+
+  /**
    * Get related events for a given event
    * @param {number|string} eventId - The current event ID
    * @param {number} limit - Maximum number of related events to return
@@ -159,6 +179,7 @@ export const useEvents = (options = {}) => {
     error: storeError, 
     categories,
     getEventById,
-    getRelatedEvents
+    getRelatedEvents,
+    createEvent: handleCreateEvent
   };
 };

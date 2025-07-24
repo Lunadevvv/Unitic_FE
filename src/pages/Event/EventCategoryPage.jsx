@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { 
   Row, Col, Input, Button, Select, 
   Pagination, Empty, Spin, Breadcrumb, Divider, Tag
@@ -15,13 +16,16 @@ import EventCarousel from '../../components/event/EventCarousel';
 import CategoryTabs from '../../components/event/CategoryTabs';
 import EventFilter from '../../components/event/EventFilter';
 import MainLayout from '../../components/layout/MainLayout';
-import '../../assets/scss/EventPage.scss';
+import '../../assets/scss/EventCategoryPage.scss';
 import { useEvents } from '../../hooks/useEvents';
+import { fetchCategories } from '../../store/actions/categoryActions';
 
 const { Option } = Select;
 
 const EventsPage = () => {
-  const { events, loading, error, categories: apiCategories } = useEvents();
+  const dispatch = useDispatch();
+  const { events, loading, error } = useEvents();
+  const { categories: categoryList } = useSelector(state => state.category);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState('grid');
@@ -31,12 +35,23 @@ const EventsPage = () => {
   const [sortBy, setSortBy] = useState('newest');
   const pageSize = 9;
   
+  // Fetch categories when component mounts
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch]);
+  
+  // Function to get category name by ID
+  const getCategoryName = useCallback((cateID) => {
+    const category = categoryList?.find(cat => cat.cateID === cateID);
+    return category?.name || cateID;
+  }, [categoryList]);
+  
   useEffect(() => {
     if (events) {
       let filtered = [...events];
       
       if (activeCategory !== 'all') {
-        filtered = filtered.filter(event => event.category === activeCategory);
+        filtered = filtered.filter(event => getCategoryName(event.category) === activeCategory);
       }
       
       if (searchQuery) {
@@ -68,17 +83,11 @@ const EventsPage = () => {
       setFilteredEvents(filtered);
       setCurrentPage(1);
     }
-  }, [events, activeCategory, searchQuery, sortBy]);
+  }, [events, activeCategory, searchQuery, sortBy, categoryList, getCategoryName]);
   
   const featuredEvents = events?.filter(event => event.isFeatured) || [];
   
-  const upcomingEvents = events?.filter(event => {
-    const eventDate = new Date(event.date);
-    const now = new Date();
-    const nextWeek = new Date();
-    nextWeek.setDate(now.getDate() + 7);
-    return eventDate >= now && eventDate <= nextWeek;
-  }) || [];
+
   
   const paginatedEvents = filteredEvents.slice(
     (currentPage - 1) * pageSize,
@@ -92,7 +101,7 @@ const EventsPage = () => {
   
   const categories = [
     'all',
-    ...new Set(events?.map(event => event.category) || [])
+    ...new Set(events?.map(event => getCategoryName(event.category)) || [])
   ];
   
   const handleSortChange = (value) => {
@@ -116,72 +125,7 @@ const EventsPage = () => {
   
   return (
     <MainLayout>
-      <div className="events-page">
-      <div className="event-hero">
-        <div className="event-hero-content">
-          <motion.h1 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            Khám Phá Sự Kiện
-          </motion.h1>
-          
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            Trải nghiệm những sự kiện đặc sắc từ âm nhạc, nghệ thuật đến thể thao, công nghệ và giáo dục
-          </motion.p>
-          
-          <motion.div 
-            className="search-container"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-          >
-            <Input
-              placeholder="Tìm kiếm sự kiện theo tên, địa điểm..."
-              prefix={<SearchOutlined />}
-              size="large"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="hero-search-input"
-            />
-            <Button type="primary" icon={<SearchOutlined />} size="large">
-              Tìm Kiếm
-            </Button>
-          </motion.div>
-          
-          <motion.div 
-            className="hero-categories"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.6 }}
-          >
-            <span className="popular-text">Phổ biến:</span>
-            {categories.slice(1, 5).map((category, index) => (
-              <Tag 
-                key={index} 
-                className="hero-category-tag"
-                onClick={() => setActiveCategory(category)}
-              >
-                {category}
-              </Tag>
-            ))}
-          </motion.div>
-        </div>
-        <div className="hero-overlay"></div>
-        <div className="hero-background"></div>
-        <div className="hero-floating-elements">
-          <div className="floating-circle circle-1"></div>
-          <div className="floating-circle circle-2"></div>
-          <div className="floating-square"></div>
-          <div className="floating-circle circle-3"></div>
-        </div>
-      </div>
-      
+      <div className="events-page event-category-page">
       <div className="event-content-container">
         <Breadcrumb 
           className="event-breadcrumb"
@@ -216,39 +160,7 @@ const EventsPage = () => {
           </section>
         )}
         
-        {upcomingEvents.length > 0 && (
-          <section className="event-section upcoming-events-section">
-            <div className="section-header">
-              <h2 className="section-title">
-                <ThunderboltOutlined className="section-icon" />
-                Sắp diễn ra
-              </h2>
-              <Link to="/upcoming-events" className="view-all-link">
-                Xem tất cả <ArrowRightOutlined />
-              </Link>
-            </div>
-            
-            <div className="upcoming-events-grid">
-              <Row gutter={[24, 24]}>
-                {upcomingEvents.slice(0, 4).map(event => (
-                  <Col xs={24} sm={12} md={6} key={event.id}>
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.4 }}
-                      whileHover={{ y: -10 }}
-                    >
-                      <EventCard 
-                        event={event} 
-                        compact={true}
-                      />
-                    </motion.div>
-                  </Col>
-                ))}
-              </Row>
-            </div>
-          </section>
-        )}
+       
         
         <section className="event-section main-events-section">
           <div className="events-control-panel">
@@ -258,43 +170,98 @@ const EventsPage = () => {
               onChange={setActiveCategory}
             />
             
-            <div className="events-toolbar">
-              <div className="toolbar-left">
-                <Button 
-                  icon={<FilterOutlined />}
-                  onClick={() => setFilterVisible(!filterVisible)}
-                  className={`filter-button ${filterVisible ? 'active' : ''}`}
-                >
-                  Lọc
-                </Button>
-                
-                <Select 
-                  defaultValue="newest" 
-                  style={{ width: 150 }}
-                  onChange={handleSortChange}
-                  value={sortBy}
-                  className="sort-select"
-                >
-                  <Option value="newest">Mới nhất</Option>
-                  <Option value="price-low">Giá thấp - cao</Option>
-                  <Option value="price-high">Giá cao - thấp</Option>
-                  <Option value="popularity">Phổ biến nhất</Option>
-                </Select>
-              </div>
-              
-              <div className="toolbar-right">
-                <Button 
-                  icon={<AppstoreOutlined />} 
-                  className={viewMode === 'grid' ? 'active' : ''} 
-                  onClick={() => setViewMode('grid')}
-                />
-                <Button 
-                  icon={<BarsOutlined />} 
-                  className={viewMode === 'list' ? 'active' : ''} 
-                  onClick={() => setViewMode('list')}
-                />
-              </div>
-            </div>
+            <div className="events-toolbar" style={{
+  background: 'linear-gradient(67deg, #9c88ff 60%, #74b9ff 100%)',
+  borderRadius: '16px',
+  boxShadow: '0 4px 18px #9c88ff22',
+  padding: '12px 18px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: '18px',
+}}>
+  <div className="toolbar-left" style={{display: 'flex', alignItems: 'center', gap: '14px'}}>
+    <Button 
+      icon={<FilterOutlined style={{ fontSize: 20, color: '#fff' }}/>} 
+      onClick={() => setFilterVisible(!filterVisible)}
+      className={`filter-button ${filterVisible ? 'active' : ''}`}
+      style={{
+        background: filterVisible ? 'linear-gradient(90deg, #74b9ff 60%, #9c88ff 100%)' : 'rgba(255,255,255,0.22)',
+        color: filterVisible ? '#fff' : '#9c88ff',
+        border: 'none',
+        borderRadius: '12px',
+        fontWeight: 700,
+        boxShadow: filterVisible ? '0 0 12px #74b9ff99' : '0 2px 8px #9c88ff33',
+        padding: '0 18px',
+        height: 40,
+        transition: 'all 0.2s',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+      }}
+    >
+      Lọc
+    </Button>
+    <Select 
+      defaultValue="newest" 
+      style={{ 
+        width: 150, 
+        borderRadius: '12px',
+        background: 'rgba(255,255,255,0.22)',
+        fontWeight: 600,
+        color: '#222',
+        boxShadow: '0 2px 8px #74b9ff33',
+      }}
+      dropdownStyle={{ borderRadius: 12, background: '#f3f3ff' }}
+      onChange={handleSortChange}
+      value={sortBy}
+      className="sort-select"
+    >
+      <Option value="newest">Mới nhất</Option>
+      <Option value="price-low">Giá thấp - cao</Option>
+      <Option value="price-high">Giá cao - thấp</Option>
+      <Option value="popularity">Phổ biến nhất</Option>
+    </Select>
+  </div>
+  <div className="toolbar-right" style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
+    <Button 
+      icon={<AppstoreOutlined style={{ fontSize: 20, color: viewMode === 'grid' ? '#fff' : '#9c88ff' }}/>} 
+      className={viewMode === 'grid' ? 'active' : ''} 
+      onClick={() => setViewMode('grid')}
+      style={{
+        background: viewMode === 'grid' ? 'linear-gradient(90deg, #74b9ff 60%, #9c88ff 100%)' : 'rgba(255,255,255,0.22)',
+        color: viewMode === 'grid' ? '#fff' : '#9c88ff',
+        border: 'none',
+        borderRadius: '12px',
+        boxShadow: viewMode === 'grid' ? '0 0 12px #74b9ff99' : '0 2px 8px #9c88ff33',
+        height: 40,
+        width: 40,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        transition: 'all 0.2s',
+      }}
+    />
+    <Button 
+      icon={<BarsOutlined style={{ fontSize: 20, color: viewMode === 'list' ? '#fff' : '#9c88ff' }}/>} 
+      className={viewMode === 'list' ? 'active' : ''} 
+      onClick={() => setViewMode('list')}
+      style={{
+        background: viewMode === 'list' ? 'linear-gradient(90deg, #74b9ff 60%, #9c88ff 100%)' : 'rgba(255,255,255,0.22)',
+        color: viewMode === 'list' ? '#fff' : '#9c88ff',
+        border: 'none',
+        borderRadius: '12px',
+        boxShadow: viewMode === 'list' ? '0 0 12px #74b9ff99' : '0 2px 8px #9c88ff33',
+        height: 40,
+        width: 40,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        transition: 'all 0.2s',
+      }}
+    />
+  </div>
+</div>
           </div>
           
           <AnimatePresence>

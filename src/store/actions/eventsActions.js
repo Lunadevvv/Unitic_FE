@@ -61,11 +61,13 @@ export const createEvent = createAsyncThunk(
     try {
       const response = await BASE_URL.post("Unitic/Event", {
         name: eventData.name,
+        image: eventData.image || "https://example.com/images/default_event.jpg",
+        location: eventData.location , // Ensure location is set
         description: eventData.description,
         date_Start: eventData.date_Start,
         date_End: eventData.date_End,
         price: eventData.price,
-        CateId: eventData.CateId,
+        cateID: eventData.cateID,
         slot: eventData.slot,
       });
       const data = response.data;
@@ -171,17 +173,15 @@ export const fetchFeaturedEvents = createAsyncThunk(
   "events/fetchFeaturedEvents",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch("/api/events/featured");
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to fetch featured events");
-      }
-
-      const data = await response.json();
+      const response = await BASE_URL.get("Unitic/Event/featured");
+      const data = response.data;
       return data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      let message =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to fetch featured events";
+      return rejectWithValue(message);
     }
   }
 );

@@ -55,8 +55,38 @@ $neon-shadow-blue: 0 0 10px rgba(142, 202, 230, 0.5), 0 0 20px rgba(142, 202, 23
 $neon-shadow-purple: 0 0 10px rgba(212, 180, 131, 0.5), 0 0 20px rgba(212, 180, 131, 0.3), 0 0 30px rgba(212, 180, 131, 0.2);
 $neon-gradient-rainbow: linear-gradient(45deg, #f2d0a9, #d4b483, #c7b198, #8ecae6, #a9c5ba, #e8c8a9);
 $darker-bg: #33302e;
-$neon-pink: #f2a2c8; // Pink pastel color that fits the theme
 
+// Pastel Blue Theme
+$primary-color: #9c88ff; // A soft, light purple-blue
+$secondary-color: #74b9ff; // A clear, airy blue
+$accent-color-1: #c5a3db; // A muted lavender/pink
+$accent-color-2: #fab1a0; // A warm, soft peach
+$text-color: #4a4a4a; // Dark grey for good contrast
+$dark-bg: #2d3436; // A very dark, almost black, blue-grey for deep backgrounds
+$dark-light-bg: #34495e; // A slightly lighter dark blue-grey for sections
+
+$neon-blue: #48dbfb; // A vibrant, light blue for "neon" effects
+
+$gradient-text-neon: linear-gradient(45deg, $primary-color, $secondary-color);
+$gradient-primary-neon: linear-gradient(67deg, $primary-color, $secondary-color);
+$gradient-primary-neon-dark: linear-gradient(67deg, $primary-color, $secondary-color, $dark-light-bg); // Adjusted to fit theme
+$neon-text: $neon-blue;
+$light-text-color: #f5f5f5; // Off-white for light text
+$white-1: #ffffff;
+$white-blur: rgba(255, 255, 255, 0.7);
+
+$dark-blue-gradient: linear-gradient(45deg, $dark-bg, $dark-light-bg); // Adjusted
+$dark-background: #5f5da6; // A medium-dark purple-blue for overall background
+$card-background: #ffffff; // White for cards
+$border-radius: 10px;
+$transition-speed: 0.3s;
+$fast-transition: 0.2s;
+$font-family: "Work Sans", "Roboto", sans-serif;
+
+$neon-gradient-cyberpunk: linear-gradient(45deg, $primary-color, $secondary-color);
+$neon-shadow-blue: 0 0 10px rgba($neon-blue, 0.5), 0 0 20px rgba($neon-blue, 0.3), 0 0 30px rgba($neon-blue, 0.2);
+$neon-shadow-purple: 0 0 10px rgba($primary-color, 0.5), 0 0 20px rgba($primary-color, 0.3), 0 0 30px rgba($primary-color, 0.2);
+$neon-gradient-rainbow: linear-gradient(45deg, #a29bfe, $primary-color, $accent-color-1, $secondary-color, $neon-blue, #81ecec); // Broader pastel range
 // Admin specific colors
 $admin-dark-bg: #2c1810;           // Dark brown for admin sidebar
 $admin-dark-light: #3d2518;       // Lighter brown for hover states

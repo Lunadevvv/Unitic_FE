@@ -13,6 +13,7 @@ import { motion } from 'framer-motion';
 import { Badge, Progress, Tooltip } from 'antd';
 import '../../assets/scss/EventCard.scss';
 import eventPlaceholder from '../../assets/img/event1.jpeg';
+import { useSelector } from 'react-redux';
 const EventCard = ({ 
   event, 
   horizontal = false, 
@@ -26,29 +27,31 @@ const EventCard = ({
     eventID: id,
     name: title,
     description,
+    location,
     date_Start: startDate,
     date_End: endDate,
     price,
     cateID: categoryId,
     slot: capacity,
+    image,
     status
   } = event;
   
+    const { categories: categoryList } = useSelector(state => state.category);
+
+  // Function to get category name by ID
+  const getCategoryName = (cateID) => {
+    const category = categoryList?.find(cat => cat.cateID === cateID);
+    return category?.name || cateID;
+  };
+
+  const category = getCategoryName(categoryId);
   // Default values for fields not in API
-  const image = eventPlaceholder;
-  const location = 'Địa điểm sẽ được thông báo';
-  const category = categoryId; // You might want to map this to category name
+  const eventLocation = location || 'Địa điểm sẽ được thông báo';
   const isFeatured = status === 1;
   const soldCount = 0; // Not provided by API
   const rating = 4.5; // Not provided by API
   const isLiked = false; // Not provided by API
-  
-  // Format date
-  const formatDate = (dateString) => {
-    if (!dateString) return 'Ngày chưa xác định';
-    const options = { day: 'numeric', month: 'short', year: 'numeric' };
-    return new Date(dateString).toLocaleDateString('vi-VN', options);
-  };
   
   // Format time
   const formatTime = (dateString) => {
@@ -59,24 +62,7 @@ const EventCard = ({
     });
   };
 
-  // Calculate progress based on dates
-  const calculateProgress = () => {
-    if (!startDate || !endDate) return 0;
-    const now = new Date();
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    
-    if (now < start) return 0;
-    if (now > end) return 100;
-    
-    const total = end.getTime() - start.getTime();
-    const current = now.getTime() - start.getTime();
-    return Math.round((current / total) * 100);
-  };
 
-  const progress = calculateProgress();
-  const eventDate = new Date(startDate);
-  
   // Format price
   const formatPrice = (priceValue) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(priceValue);
@@ -84,7 +70,7 @@ const EventCard = ({
   
   // Calculate event status
   const getEventStatus = () => {
-    if (!startDate) return { text: 'Chưa có thông tin', class: 'pending' };
+    if (!startDate) return { text: 'Bấm vào để xem chi tiết', class: 'pending' };
     
     const eventStartDate = new Date(startDate);
     const now = new Date();
@@ -123,15 +109,21 @@ const EventCard = ({
         onClick={handleCardClick}
       >
         <div className="event-card__image">
-          <img src={image || eventPlaceholder} alt={title} />
-          <div className="event-card__date">
-            <CalendarOutlined className="icon" /> {formatDate(startDate)}
-          </div>
+          <img src={image} alt={title} />
+          
           {isFeatured && <div className="event-card__featured">Hot</div>}
         </div>
         
         <div className="event-card__content">
-          <h3 className="event-card__title">{title}</h3>
+          <h3 className="event-card__title" style={{
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  fontWeight: 700,
+  fontSize: '1.08em',
+  letterSpacing: '0.2px',
+  marginBottom: 6,
+}}>{title}</h3>
           
           <div className="event-card__footer">
             <div className="event-card__price">{formatPrice(price)}</div>
@@ -161,10 +153,17 @@ const EventCard = ({
         </div>
         
         <div className="event-card__content">
-          <h3 className="event-card__title">{title}</h3>
+          <h3 className="event-card__title" style={{
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  fontWeight: 700,
+  fontSize: '1.08em',
+  letterSpacing: '0.2px',
+  marginBottom: 6,
+}}>{title}</h3>
           
           <div className="event-card__meta">
-            <div className="event-card__category">{category}</div>
             <div className="event-card__rating">
               <StarOutlined /> {rating}
             </div>
@@ -172,16 +171,16 @@ const EventCard = ({
           
           <div className="event-card__details">
             <div className="event-card__detail">
-              <CalendarOutlined className="icon" /> {formatDate(startDate)}
+             
             </div>
             <div className="event-card__detail">
               <ClockCircleOutlined className="icon" /> {formatTime(startDate)}
             </div>
             <div className="event-card__detail">
-              <EnvironmentOutlined className="icon" /> {location}
+              <EnvironmentOutlined className="icon" /> {eventLocation}
             </div>
             <div className="event-card__detail">
-              <TeamOutlined className="icon" /> {soldCount}/{capacity} đã bán
+              <TeamOutlined className="icon" /> {capacity} cồn lại
             </div>
           </div>
           
@@ -219,7 +218,7 @@ const EventCard = ({
         <img src={image || eventPlaceholder} alt={title} />
         
         <div className="event-card__date">
-          <CalendarOutlined className="icon" /> {formatDate(startDate)}
+          
         </div>
         
         <div className="event-card__like">
@@ -236,10 +235,9 @@ const EventCard = ({
         <div className="event-card__featured">Hot</div>
       )}
       
-      <div className="event-card__category">{category}</div>
       
       <div className="event-card__status">
-        <span className={`status-badge ${eventStatus.class}`}>{eventStatus.text}</span>
+      
       </div>
       
       <div className="event-card__content">
@@ -248,7 +246,7 @@ const EventCard = ({
             <StarOutlined /> {rating}
           </div>
           <div className="event-card__capacity">
-            <Tooltip title={`${soldCount}/${capacity} đã bán`}>
+            <Tooltip title={`${capacity}`}>
               <Progress 
                 percent={soldPercentage} 
                 size="small" 
@@ -262,10 +260,18 @@ const EventCard = ({
           </div>
         </div>
         
-        <h3 className="event-card__title">{title}</h3>
+        <h3 className="event-card__title" style={{
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  fontWeight: 700,
+  fontSize: '1.08em',
+  letterSpacing: '0.2px',
+  marginBottom: 6,
+}}>{title}</h3>
         
         <div className="event-card__location">
-          <EnvironmentOutlined className="icon" /> {location}
+          <EnvironmentOutlined className="icon" /> {eventLocation}
         </div>
         
         <p className="event-card__description">{description}</p>

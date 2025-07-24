@@ -7,13 +7,13 @@
   .active-filters {
     margin-bottom: 20px;
     padding: 15px 20px;
-    background-color: rgba(base.$darker-bg, 0.6);
-    border-radius: base.$border-radius;
-    border: 1px solid rgba(base.$neon-blue, 0.15);
+    background-color: #fff;
+    border-radius: 8px;
+    border: 1.5px solid #d1d5db;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: none;
     
     .chips-label {
       font-weight: 500;
@@ -28,29 +28,27 @@
       align-items: center;
       
       .filter-chip {
-        background: base.$neon-gradient-cyberpunk;
-        color: base.$white-1;
-        border: none;
+        background: #f3f3f3;
+        color: #222;
+        border: 1.5px solid #d1d5db;
         padding: 5px 10px;
         border-radius: 20px;
         font-size: 0.9em;
         display: flex;
         align-items: center;
-        transition: all 0.3s ease;
+        transition: background 0.2s, border-color 0.2s;
         animation: fadeIn 0.3s ease;
-        
         .anticon-close {
-          color: rgba(base.$white-1, 0.8);
+          color: #888;
           margin-left: 5px;
-          
           &:hover {
-            color: base.$white-1;
+            color: #4b4bff;
           }
         }
-        
         &:hover {
-          box-shadow: base.$neon-shadow-blue;
-          transform: translateY(-2px);
+          background: #fff;
+          border-color: #4b4bff;
+          color: #4b4bff;
         }
       }
       
@@ -67,10 +65,10 @@
   }
   
   .filter-card {
-    background-color: rgba(base.$darker-bg, 0.7);
-    border-radius: base.$border-radius;
-    border: 1px solid rgba(base.$neon-blue, 0.15);
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    background-color: #fff;
+    border-radius: 8px;
+    border: 1.5px solid #d1d5db;
+    box-shadow: none;
     overflow: hidden;
     
     .ant-card-body {
@@ -79,17 +77,15 @@
     
     .filter-section {
       margin-bottom: 15px;
-      
       .filter-title {
-        color: base.$light-text-color;
+        color: #222;
         font-size: 1.1em;
         margin-bottom: 12px;
         display: flex;
         align-items: center;
         gap: 8px;
-        
         .filter-icon {
-          color: base.$primary-color;
+          color: #4b4bff;
         }
       }
       
@@ -133,16 +129,14 @@
       
       .location-select, .category-select {
         .ant-select-selector {
-          background-color: rgba(base.$dark-bg, 0.3) !important;
-          border-color: rgba(base.$primary-color, 0.3) !important;
+          background-color: #fff !important;
+          border-color: #d1d5db !important;
         }
-        
         .ant-select-selection-item {
-          color: base.$light-text-color;
+          color: #222;
         }
-        
         .ant-select-selection-placeholder {
-          color: rgba(base.$light-text-color, 0.5);
+          color: #888;
         }
       }
     }
@@ -151,18 +145,15 @@
       display: flex;
       flex-wrap: wrap;
       gap: 20px;
-      
       .filter-checkbox {
-        color: base.$light-text-color;
-        
+        color: #222;
         .ant-checkbox-inner {
-          background-color: rgba(base.$dark-bg, 0.5);
-          border-color: rgba(base.$primary-color, 0.5);
+          background-color: #fff;
+          border-color: #d1d5db;
         }
-        
         .ant-checkbox-checked .ant-checkbox-inner {
-          background-color: base.$primary-color;
-          border-color: base.$primary-color;
+          background-color: #4b4bff;
+          border-color: #4b4bff;
         }
       }
     }
@@ -172,26 +163,20 @@
       justify-content: flex-end;
       gap: 15px;
       margin-top: 20px;
-      
       button {
         border-radius: 8px;
         font-weight: 500;
-        background: base.$gradient-primary-neon !important; 
-        &[type="primary"] {
-          background: base.$gradient-primary-neon ; 
-          border: none;
-          transition: all base.$fast-transition ease;
-          
-          &:hover {
-            box-shadow: base.$neon-shadow-purple;
-            background-color: base.$gradient-primary-neon-dark;
-            transform: translateY(-2px);
-          }
-          
-          &:active {
-            background-color: base.$gradient-primary-neon-dark;
-            transform: translateY(0);
-          }
+        background: #4b4bff !important;
+        color: #fff !important;
+        border: none;
+        transition: background 0.2s;
+        &:hover {
+          background: #222 !important;
+          color: #fff !important;
+        }
+        &:active {
+          background: #222 !important;
+          color: #fff !important;
         }
       }
     }

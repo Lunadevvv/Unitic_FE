@@ -1,27 +1,25 @@
 import { useState, useEffect } from 'react';
 import {
   Table, Card, Button, Input, Select, Tag, Space, Modal, 
-  Typography, Row, Col, Statistic, Avatar, message, 
-  DatePicker, Descriptions, Steps, Timeline, Divider
+  Typography, Row, Col, Statistic, message, 
+  DatePicker, Descriptions, Timeline, Divider
 } from 'antd';
 import {
   ShoppingOutlined, EyeOutlined, PrinterOutlined, MailOutlined,
-  SearchOutlined, FilterOutlined, ExportOutlined, DollarOutlined,
-  CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined,
-  SyncOutlined, UserOutlined, CalendarOutlined, CreditCardOutlined
+  SearchOutlined, ExportOutlined, DollarOutlined,
+  CheckCircleOutlined, ClockCircleOutlined
 } from '@ant-design/icons';
 import AdminLayout from '../../components/layout/AdminLayout';
-import { useBooking } from '../../hooks/useBooking';
 import '../../assets/scss/OrderManagementPage.scss';
+import axios from 'axios';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
-const { Step } = Steps;
 
 const OrderManagementPage = () => {
-  const { bookings, loading, getAllBookings } = useBooking();
   const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterPaymentStatus, setFilterPaymentStatus] = useState('all');
@@ -29,42 +27,68 @@ const OrderManagementPage = () => {
   const [viewingOrder, setViewingOrder] = useState(null);
 
   useEffect(() => {
-    const loadData = async () => {
+    const fetchOrders = async () => {
+      setLoading(true);
       try {
-        await getAllBookings();
-      } catch (error) {
-        message.error('Lỗi khi tải danh sách đơn hàng: ' + error.message);
+        // Get token from localStorage or other source
+        const token = localStorage.getItem('token');
+        const authHeader = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+
+        // Fetch bookings
+        const bookingsRes = await axios.get('https://localhost:7163/api/Booking', authHeader);
+        const bookings = bookingsRes.data;
+
+        // Fetch feedbacks
+        const feedbackRes = await axios.get('https://localhost:7163/api/Feedback', authHeader);
+        const feedbacks = feedbackRes.data;
+
+        // For each booking, fetch user and event
+        const ordersData = await Promise.all(bookings.map(async (booking) => {
+          // User
+          let user = null;
+          try {
+            const userRes = await axios.get(`https://localhost:7163/Unitic/account/${booking.accountId}`, authHeader);
+            user = userRes.data;
+          } catch {}
+
+          // Event
+          let event = null;
+          try {
+            const eventRes = await axios.get(`https://localhost:7163/Unitic/Event/${booking.eventId}`, authHeader);
+            event = eventRes.data;
+          } catch {}
+
+          // Feedback
+          const orderFeedbacks = feedbacks.filter(fb => fb.bookingId === booking.bookingId);
+
+          return {
+            id: booking.bookingId,
+            orderNumber: `ORD${booking.bookingId}`,
+            customerName: user ? `${user.lastName} ${user.firstName}` : 'Khách hàng',
+            customerEmail: user?.email || 'N/A',
+            customerPhone: user?.mssv || 'N/A',
+            eventName: event?.name || 'Sự kiện không xác định',
+            eventDate: event?.date_Start || '',
+            ticketType: 'Standard',
+            quantity: 1,
+            unitPrice: event?.price || 0,
+            totalAmount: event?.price || 0,
+            status: booking.status === 'Paid' ? 'completed' : 'cancelled',
+            paymentMethod: 'wallet',
+            paymentStatus: booking.status === 'Paid' ? 'paid' : 'failed',
+            orderDate: booking.createdDate,
+            paymentDate: booking.updateDate,
+            notes: orderFeedbacks.length > 0 ? orderFeedbacks.map(fb => fb.content).join('\n') : ''
+          };
+        }));
+        setOrders(ordersData);
+      } catch (err) {
+        message.error('Lỗi khi tải danh sách đơn hàng');
       }
+      setLoading(false);
     };
-
-    loadData();
-  }, [getAllBookings]);
-
-  useEffect(() => {
-    // Transform bookings to orders format
-    if (bookings) {
-      const transformedOrders = bookings.map(booking => ({
-        id: booking.bookingID || booking.id,
-        orderNumber: `ORD${booking.bookingID || booking.id}`,
-        customerName: booking.userName || booking.user?.name || 'Khách hàng',
-        customerEmail: booking.userEmail || booking.user?.email || 'N/A',
-        customerPhone: booking.userPhone || booking.user?.phone || 'N/A', 
-        eventName: booking.eventName || booking.event?.name || 'Sự kiện không xác định',
-        eventDate: booking.event?.date_Start || booking.eventDate,
-        ticketType: 'Standard',
-        quantity: booking.quantity || 1,
-        unitPrice: booking.price || booking.event?.price || 0,
-        totalAmount: (booking.quantity || 1) * (booking.price || booking.event?.price || 0),
-        status: booking.status === 1 ? 'completed' : 'cancelled',
-        paymentMethod: 'wallet',
-        paymentStatus: booking.status === 1 ? 'paid' : 'failed',
-        orderDate: booking.createdAt || booking.bookingDate || new Date().toISOString(),
-        paymentDate: booking.updatedAt || booking.createdAt || new Date().toISOString(),
-        notes: booking.notes || ''
-      }));
-      setOrders(transformedOrders);
-    }
-  }, [bookings]);
+    fetchOrders();
+  }, []);
 
   const handleViewOrder = (order) => {
     setViewingOrder(order);
@@ -135,7 +159,8 @@ const OrderManagementPage = () => {
       credit_card: 'Thẻ tín dụng',
       bank_transfer: 'Chuyển khoản',
       e_wallet: 'Ví điện tử',
-      cash: 'Tiền mặt'
+      cash: 'Tiền mặt',
+      wallet: 'Ví UniTic'
     };
     return methods[method] || method;
   };
@@ -171,7 +196,7 @@ const OrderManagementPage = () => {
         <Space direction="vertical" size="small">
           <Text strong>{record.eventName}</Text>
           <Text type="secondary" style={{ fontSize: '12px' }}>
-            {new Date(record.eventDate).toLocaleDateString('vi-VN')}
+            {record.eventDate ? new Date(record.eventDate).toLocaleDateString('vi-VN') : ''}
           </Text>
           <Tag size="small">{record.ticketType}</Tag>
         </Space>
@@ -235,7 +260,7 @@ const OrderManagementPage = () => {
       key: 'orderDate',
       render: (date) => (
         <Text type="secondary">
-          {new Date(date).toLocaleDateString('vi-VN')}
+          {date ? new Date(date).toLocaleDateString('vi-VN') : ''}
         </Text>
       ),
       sorter: (a, b) => new Date(a.orderDate) - new Date(b.orderDate),
@@ -300,7 +325,7 @@ const OrderManagementPage = () => {
           <div>
             <Text strong>Đơn hàng được tạo</Text>
             <br />
-            <Text type="secondary">{new Date(order.orderDate).toLocaleString('vi-VN')}</Text>
+            <Text type="secondary">{order.orderDate ? new Date(order.orderDate).toLocaleString('vi-VN') : ''}</Text>
           </div>
         )
       }
@@ -315,7 +340,7 @@ const OrderManagementPage = () => {
               {order.paymentStatus === 'paid' ? 'Thanh toán thành công' : 'Thanh toán thất bại'}
             </Text>
             <br />
-            <Text type="secondary">{new Date(order.paymentDate).toLocaleString('vi-VN')}</Text>
+            <Text type="secondary">{order.paymentDate ? new Date(order.paymentDate).toLocaleString('vi-VN') : ''}</Text>
           </div>
         )
       });
@@ -490,7 +515,7 @@ const OrderManagementPage = () => {
                         <Text strong style={{ color: '#1890ff' }}>{viewingOrder.id}</Text>
                       </Descriptions.Item>
                       <Descriptions.Item label="Ngày đặt">
-                        {new Date(viewingOrder.orderDate).toLocaleString('vi-VN')}
+                        {viewingOrder.orderDate ? new Date(viewingOrder.orderDate).toLocaleString('vi-VN') : ''}
                       </Descriptions.Item>
                       <Descriptions.Item label="Trạng thái">
                         <Tag color={getStatusColor(viewingOrder.status)}>
@@ -503,7 +528,6 @@ const OrderManagementPage = () => {
                     </Descriptions>
                   </Card>
                 </Col>
-                
                 <Col span={12}>
                   <Card title="Thông tin khách hàng" size="small">
                     <Descriptions column={1} size="small">
@@ -520,7 +544,6 @@ const OrderManagementPage = () => {
                   </Card>
                 </Col>
               </Row>
-
               <Row gutter={[24, 24]} style={{ marginTop: 16 }}>
                 <Col span={12}>
                   <Card title="Thông tin sự kiện" size="small">
@@ -529,7 +552,7 @@ const OrderManagementPage = () => {
                         {viewingOrder.eventName}
                       </Descriptions.Item>
                       <Descriptions.Item label="Ngày diễn ra">
-                        {new Date(viewingOrder.eventDate).toLocaleDateString('vi-VN')}
+                        {viewingOrder.eventDate ? new Date(viewingOrder.eventDate).toLocaleDateString('vi-VN') : ''}
                       </Descriptions.Item>
                       <Descriptions.Item label="Loại vé">
                         <Tag>{viewingOrder.ticketType}</Tag>
@@ -540,7 +563,6 @@ const OrderManagementPage = () => {
                     </Descriptions>
                   </Card>
                 </Col>
-                
                 <Col span={12}>
                   <Card title="Thông tin thanh toán" size="small">
                     <Descriptions column={1} size="small">
@@ -564,9 +586,7 @@ const OrderManagementPage = () => {
                   </Card>
                 </Col>
               </Row>
-
               <Divider />
-
               <Card title="Lịch sử xử lý" size="small">
                 <Timeline items={getOrderTimeline(viewingOrder)} />
               </Card>

@@ -10,6 +10,7 @@ import {
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { fetchCategories } from '../../store/actions/categoryActions';
+import { formatDateForAPI } from '../../utils/dateUtils';
 import EventUploadImage from './EventUploadImage';
 import EventTicketTypeForm from './EventTicketTypeForm';
 
@@ -28,36 +29,28 @@ const OrganizationEventForm = ({ initialData = {}, onSubmit }) => {
     dispatch(fetchCategories());
   }, [dispatch]);
 
-  const eventTypes = [
-    { value: 'meeting', label: 'Meeting', description: 'Cuộc họp nội bộ' },
-    { value: 'seminar', label: 'Seminar', description: 'Hội thảo, workshop' },
-    { value: 'conference', label: 'Conference', description: 'Hội nghị lớn' },
-    { value: 'training', label: 'Training', description: 'Khóa đào tạo' },
-    { value: 'networking', label: 'Networking', description: 'Sự kiện kết nối' }
-  ];
 
   const handleFormSubmit = (values) => {
+    // Always use price from form input
     const formData = {
       name: values.title,
+      image: imageUrl || "https://example.com/images/default_event.jpg",
       description: values.description,
-      date_Start: values.startDate?.toISOString(),
-      date_End: values.endDate?.toISOString(),
-      price: values.price || 0,
-      CateId: values.category,
+      date_Start: formatDateForAPI(values.startDate),
+      date_End: formatDateForAPI(values.endDate),
+      price: values.price || 0, // Ensure price is a number
+      cateID: values.category,
       slot: values.maxAttendees || 0,
+      location: values.location,
       hasTickets,
       ticketTypes: hasTickets ? ticketTypes : [],
       imageUrl,
       createdAt: new Date().toISOString(),
       status: 'pending'
     };
-    
     onSubmit(formData);
   };
 
-  const handleTicketTypesChange = (newTicketTypes) => {
-    setTicketTypes(newTicketTypes);
-  };
 
   // Set initial form values
   React.useEffect(() => {
@@ -103,24 +96,6 @@ const OrganizationEventForm = ({ initialData = {}, onSubmit }) => {
                   showCount
                   maxLength={100}
                 />
-              </Form.Item>
-            </Col>
-            <Col xs={24} lg={12}>
-              <Form.Item
-                name="type"
-                label="Loại sự kiện"
-                rules={[{ required: true, message: 'Vui lòng chọn loại sự kiện!' }]}
-              >
-                <Select placeholder="Chọn loại sự kiện">
-                  {eventTypes.map(type => (
-                    <Option key={type.value} value={type.value}>
-                      <div>
-                        <div>{type.label}</div>
-                        <small style={{ color: '#666' }}>{type.description}</small>
-                      </div>
-                    </Option>
-                  ))}
-                </Select>
               </Form.Item>
             </Col>
           </Row>
@@ -259,23 +234,18 @@ const OrganizationEventForm = ({ initialData = {}, onSubmit }) => {
 
         <Card title="Cài đặt bán vé" className="form-section">
           <Form.Item
-            name="hasTickets"
-            label="Sự kiện có bán vé"
-            valuePropName="checked"
+            name="price"
+            label="Giá vé (VNĐ)"
+            rules={[{ required: true, message: 'Vui lòng nhập giá vé!' }]}
           >
-            <Switch 
-              onChange={setHasTickets}
-              checkedChildren="Có bán vé"
-              unCheckedChildren="Miễn phí"
+            <InputNumber
+              style={{ width: '100%' }}
+              min={0}
+              placeholder="Nhập giá vé, 0 nếu miễn phí"
+              formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              parser={value => value.replace(/\$\s?|,*/g, '')}
             />
           </Form.Item>
-
-          {hasTickets && (
-            <EventTicketTypeForm
-              ticketTypes={ticketTypes}
-              onChange={handleTicketTypesChange}
-            />
-          )}
         </Card>
 
         <Card title="Cài đặt khác" className="form-section">

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Layout, Carousel, Row, Col, Card, Flex, Button } from 'antd';
 import { FacebookOutlined, YoutubeOutlined, ArrowRightOutlined } from '@ant-design/icons';
@@ -6,30 +6,93 @@ import { motion, useInView } from 'framer-motion';
 import MainLayout from '../components/layout/MainLayout';
 import { fetchEvents } from '../store/actions/eventsActions';
 import '../assets/scss/HomePage.scss';
+import { Input, Select, Pagination, Empty, Spin, Tag } from 'antd';
+import { SearchOutlined, FireOutlined, ThunderboltOutlined } from '@ant-design/icons';
+import { useEvents } from '../hooks/useEvents';
+import { fetchCategories } from '../store/actions/categoryActions';
+import EventCard from '../components/event/EventCard';
+import CategoryTabs from '../components/event/CategoryTabs';
 
 const { Content } = Layout;
+const { Option } = Select;
 
 const HomePage = () => {
   const [scrollPosition, setScrollPosition] = useState(0);
   const dispatch = useDispatch();
-  
-  const { events, loading } = useSelector(state => state.events);
-  
+
+  // --- Event logic from EventCategoryPage ---
+  const { events, loading, error } = useEvents(); // Assuming useEvents handles fetching or gets from Redux
+  const { categories: categoryList } = useSelector(state => state.category);
+  const [filteredEvents, setFilteredEvents] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState('newest');
+  const pageSize = 3; // Fewer for homepage
+
+  useEffect(() => {
+    dispatch(fetchCategories());
+    dispatch(fetchEvents()); // Ensure events are fetched for the homepage
+  }, [dispatch]);
+
+  const getCategoryName = useCallback((cateID) => {
+    const category = categoryList?.find(cat => cat.cateID === cateID);
+    return category?.name || cateID;
+  }, [categoryList]);
+
+  useEffect(() => {
+    if (events) {
+      let filtered = [...events];
+      if (activeCategory !== 'all') {
+        filtered = filtered.filter(event => getCategoryName(event.category) === activeCategory);
+      }
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        filtered = filtered.filter(event =>
+          event.title.toLowerCase().includes(query) ||
+          event.description.toLowerCase().includes(query) ||
+          event.location.toLowerCase().includes(query)
+        );
+      }
+      switch (sortBy) {
+        case 'newest':
+          filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+          break;
+        case 'popularity':
+          filtered.sort((a, b) => b.soldCount - a.soldCount);
+          break;
+        default:
+          break;
+      }
+      setFilteredEvents(filtered);
+      setCurrentPage(1);
+    }
+  }, [events, activeCategory, searchQuery, sortBy, categoryList, getCategoryName]);
+
+  const paginatedEvents = filteredEvents.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
+  const categories = [
+    'all',
+    ...new Set(events?.map(event => getCategoryName(event.category)) || [])
+  ];
+  // --- End event logic ---
+
+
   const handleScroll = () => {
     const position = window.pageYOffset;
     setScrollPosition(position);
   };
-  
+
   useEffect(() => {
-    // Fetch events when component mounts
-    dispatch(fetchEvents());
-    
     window.addEventListener('scroll', handleScroll);
-    
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [dispatch]);
+  }, []);
 
   const parallaxStyle = {
     transform: `translateY(${scrollPosition * 0.3}px)`,
@@ -40,7 +103,7 @@ const HomePage = () => {
   const expertSectionRef = useRef(null);
   const sponsorSectionRef = useRef(null);
   const introSectionRef = useRef(null);
-  
+
   const carouselInView = useInView(carouselRef, { once: false, amount: 0.3 });
   const eventSectionInView = useInView(eventSectionRef, { once: false, amount: 0.3 });
   const expertSectionInView = useInView(expertSectionRef, { once: false, amount: 0.3 });
@@ -50,7 +113,7 @@ const HomePage = () => {
   const renderFloatingElements = () => {
     return (
       <div className="floating-elements">
-        <motion.div 
+        <motion.div
           className="floating-circle circle-1"
           animate={{
             y: [0, -30, 20, 10, 0],
@@ -63,7 +126,7 @@ const HomePage = () => {
             repeatType: "loop"
           }}
         />
-        <motion.div 
+        <motion.div
           className="floating-circle circle-2"
           animate={{
             y: [0, 30, -15, 5, 0],
@@ -77,7 +140,7 @@ const HomePage = () => {
             delay: 1
           }}
         />
-        <motion.div 
+        <motion.div
           className="floating-circle circle-3"
           animate={{
             y: [0, -20, 15, -10, 0],
@@ -91,7 +154,7 @@ const HomePage = () => {
             delay: 2
           }}
         />
-        <motion.div 
+        <motion.div
           className="floating-square square-1"
           animate={{
             rotate: [0, 360],
@@ -104,7 +167,7 @@ const HomePage = () => {
             repeatType: "loop"
           }}
         />
-        <motion.div 
+        <motion.div
           className="floating-square square-2"
           animate={{
             rotate: [0, -360],
@@ -143,7 +206,7 @@ const HomePage = () => {
   };
 
   return (
-    <MainLayout 
+    <MainLayout
       headerProps={{
         showAnimation: true,
         transparent: true,
@@ -156,16 +219,16 @@ const HomePage = () => {
     >
       <div className="homepage_body">
         {renderFloatingElements()}
-        
-         <motion.div 
-          className="homepage_carousel parallax-container" 
+
+        <motion.div
+          className="homepage_carousel parallax-container"
           ref={carouselRef}
           variants={fadeInVariant}
           initial="hidden"
           animate={carouselInView ? "visible" : "hidden"}
         >
-          <Carousel 
-            autoplay 
+          <Carousel
+            autoplay
             effect="fade"
             dots={{ className: "custom-carousel-dots" }}
           >
@@ -182,7 +245,7 @@ const HomePage = () => {
                       Gặp Gỡ Chuyên Gia Tại Đại Học FPT 2025
                     </h2>
                   </motion.div>
-                  <motion.p 
+                  <motion.p
                     className="carousel-description"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -197,7 +260,7 @@ const HomePage = () => {
                     whileHover={{ scale: 1.03, y: -3 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    <Button 
+                    <Button
                       className="call-to-action-button modern-button"
                       type="primary"
                       size="large"
@@ -222,7 +285,7 @@ const HomePage = () => {
                       CONGRATULATIONS ON GRADUATION!
                     </h2>
                   </motion.div>
-                  <motion.p 
+                  <motion.p
                     className="carousel-description"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -235,8 +298,10 @@ const HomePage = () => {
             </div>
           </Carousel>
         </motion.div>
+
+        ---
         <div ref={eventSectionRef}>
-          <motion.h3 
+          <motion.h3
             className="section-title reveal-title"
             variants={{
               hidden: { opacity: 0 },
@@ -245,16 +310,16 @@ const HomePage = () => {
             initial="hidden"
             animate={eventSectionInView ? "visible" : "hidden"}
           >
-            <motion.span 
+            <motion.span
               className="title-text"
               variants={{
                 hidden: { y: 50, opacity: 0 },
                 visible: { y: 0, opacity: 1, transition: { duration: 0.5 } }
               }}
             >
-              Các sự kiện, buổi hội thảo hấp dẫn, hữu ích
+              Một số sự kiện nổi bật
             </motion.span>
-            <motion.span 
+            <motion.span
               className="title-decoration"
               variants={{
                 hidden: { scaleX: 0 },
@@ -264,113 +329,29 @@ const HomePage = () => {
           </motion.h3>
 
           <div className="event_block">
-            <motion.div 
-              className="left_event_block"
-              variants={staggerContainerVariant}
-              initial="hidden"
-              animate={eventSectionInView ? "visible" : "hidden"}
-            >
-              <motion.div variants={itemVariant} whileHover={{ y: -8, scale: 1.02 }}>
-                <Card className="event-card hover-scale">
-                  <div className="event-thumbnail event-bg-1">
-                    <div className="event-date shine-effect">15 <span>Tháng 5</span></div>
-                    <div className="hover-overlay"></div>
-                  </div>
-                  <div className="event-details">
-                    <h4 className="event-title">Giải trí đông sông Cửu Long "tết mood tuổi trẻ, cháy cùng đam mê" tại FPTU Fest</h4>
-                    <p><i className="location-icon pulse-dot"></i> Sân vận động trường Đại học FPT TP.HCM</p>
-                  </div>
-                </Card>
-              </motion.div>
-              <motion.div variants={itemVariant} whileHover={{ y: -8, scale: 1.02 }}>
-                <Card className="event-card hover-scale">
-                  <div className="event-thumbnail event-bg-2">
-                    <div className="event-date shine-effect">20 <span>Tháng 5</span></div>
-                    <div className="hover-overlay"></div>
-                  </div>
-                  <div className="event-details">
-                    <h4 className="event-title">3 'Anh trai Duy' góp mặt tại FPTU Game mùa 3</h4>
-                    <p><i className="location-icon pulse-dot"></i> Sân vận động trường Đại học FPT TP.HCM</p>
-                  </div>
-                </Card>
-              </motion.div>
-              <motion.div variants={itemVariant} whileHover={{ y: -8, scale: 1.02 }}>
-                <Card className="event-card hover-scale">
-                  <div className="event-thumbnail event-bg-3">
-                    <div className="event-date shine-effect">25 <span>Tháng 5</span></div>
-                    <div className="hover-overlay"></div>
-                  </div>
-                  <div className="event-details">
-                    <h4 className="event-title">FPT AI-Cons 2025: Sân chơi sáng tạo nội dung bằng AI cho học sinh sinh viên FPT</h4>
-                    <p><i className="location-icon pulse-dot"></i> Phòng hội thảo trường Đại học FPT TP.HCM</p>
-                  </div>
-                </Card>
-              </motion.div>
-              <motion.div variants={itemVariant} whileHover={{ y: -8, scale: 1.02 }}>
-                <Card className="event-card hover-scale">
-                  <div className="event-thumbnail event-bg-3">
-                    <div className="event-date shine-effect">25 <span>Tháng 5</span></div>
-                    <div className="hover-overlay"></div>
-                  </div>
-                  <div className="event-details">
-                    <h4 className="event-title">FPT AI-Cons 2025: Sân chơi sáng tạo nội dung bằng AI cho học sinh sinh viên FPT</h4>
-                    <p><i className="location-icon pulse-dot"></i> Phòng hội thảo trường Đại học FPT TP.HCM</p>
-                  </div>
-                </Card>
-              </motion.div>
-               <motion.div variants={itemVariant} whileHover={{ y: -8, scale: 1.02 }}>
-                <Card className="event-card hover-scale">
-                  <div className="event-thumbnail event-bg-3">
-                    <div className="event-date shine-effect">25 <span>Tháng 5</span></div>
-                    <div className="hover-overlay"></div>
-                  </div>
-                  <div className="event-details">
-                    <h4 className="event-title">FPT AI-Cons 2025: Sân chơi sáng tạo nội dung bằng AI cho học sinh sinh viên FPT</h4>
-                    <p><i className="location-icon pulse-dot"></i> Phòng hội thảo trường Đại học FPT TP.HCM</p>
-                  </div>
-                </Card>
-              </motion.div>
-               <motion.div variants={itemVariant} whileHover={{ y: -8, scale: 1.02 }}>
-                <Card className="event-card hover-scale">
-                  <div className="event-thumbnail event-bg-3">
-                    <div className="event-date shine-effect">25 <span>Tháng 5</span></div>
-                    <div className="hover-overlay"></div>
-                  </div>
-                  <div className="event-details">
-                    <h4 className="event-title">FPT AI-Cons 2025: Sân chơi sáng tạo nội dung bằng AI cho học sinh sinh viên FPT</h4>
-                    <p><i className="location-icon pulse-dot"></i> Phòng hội thảo trường Đại học FPT TP.HCM</p>
-                  </div>
-                </Card>
-              </motion.div>
-            </motion.div>
-            <motion.div 
-              className="right_event_block"
-              variants={fadeInVariant}
-              initial="hidden"
-              animate={eventSectionInView ? "visible" : "hidden"}
-              transition={{ delay: 0.3 }}
-              whileHover={{ y: -10, rotateX: 2, rotateY: -2 }}
-            >
-              <Card className="main-event-card tilt-effect">
-                <div className="main-event-image main-event-bg">
-                  <div className="featured-badge flash-animation">Nổi bật</div>
-                  <div className="hover-overlay"></div>
-                </div>
-                <h3 className="main-event-title">Giải trí đông sông Cửu Long "tết mood tuổi trẻ, cháy cùng đam mê" tại FPTU Fest</h3>
-                <p className="main-event-description">Sự kiện lớn nhất năm của FPTU Fest sẽ diễn ra vào ngày 15/05/2025 với nhiều hoạt động hấp dẫn và các nghệ sĩ nổi tiếng.</p>
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button type="primary" className="view-details-btn">
-                    <span>Xem chi tiết</span>
-                    <span className="btn-hover-effect"></span>
-                  </Button>
-                </motion.div>
-              </Card>
-            </motion.div>
+            {loading ? (
+              <Spin size="large" />
+            ) : error ? (
+              <Empty description="Có lỗi xảy ra khi tải dữ liệu" />
+            ) : paginatedEvents.length === 0 ? (
+              <Empty description="Không tìm thấy sự kiện phù hợp" />
+            ) : (
+              <Row gutter={[24, 24]}>
+                {paginatedEvents.map(event => (
+                  <Col xs={24} sm={12} md={8} key={event.id}>
+                    <EventCard event={event} />
+                  </Col>
+                ))}
+              </Row>
+            )}
+
+           
           </div>
         </div>
 
+        ---
         <div ref={expertSectionRef}>
-          <motion.h3 
+          <motion.h3
             className="section-title reveal-title"
             variants={{
               hidden: { opacity: 0 },
@@ -379,7 +360,7 @@ const HomePage = () => {
             initial="hidden"
             animate={expertSectionInView ? "visible" : "hidden"}
           >
-            <motion.span 
+            <motion.span
               className="title-text"
               variants={{
                 hidden: { y: 50, opacity: 0 },
@@ -388,7 +369,7 @@ const HomePage = () => {
             >
               Có sự góp mặt của các chuyên gia hàng đầu lĩnh vực
             </motion.span>
-            <motion.span 
+            <motion.span
               className="title-decoration"
               variants={{
                 hidden: { scaleX: 0 },
@@ -404,10 +385,10 @@ const HomePage = () => {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={expertSectionInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
                   transition={{ duration: 0.5, delay: 0.1 }}
-                  whileHover={{ 
-                    scale: 1.05, 
-                    rotateY: 5, 
-                    rotateX: 5, 
+                  whileHover={{
+                    scale: 1.05,
+                    rotateY: 5,
+                    rotateX: 5,
                     y: -10,
                     transition: { duration: 0.3 }
                   }}
@@ -432,10 +413,10 @@ const HomePage = () => {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={expertSectionInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
-                  whileHover={{ 
-                    scale: 1.05, 
-                    rotateY: 5, 
-                    rotateX: 5, 
+                  whileHover={{
+                    scale: 1.05,
+                    rotateY: 5,
+                    rotateX: 5,
                     y: -10,
                     transition: { duration: 0.3 }
                   }}
@@ -460,10 +441,10 @@ const HomePage = () => {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={expertSectionInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
                   transition={{ duration: 0.5, delay: 0.3 }}
-                  whileHover={{ 
-                    scale: 1.05, 
-                    rotateY: 5, 
-                    rotateX: 5, 
+                  whileHover={{
+                    scale: 1.05,
+                    rotateY: 5,
+                    rotateX: 5,
                     y: -10,
                     transition: { duration: 0.3 }
                   }}
@@ -487,8 +468,9 @@ const HomePage = () => {
           </div>
         </div>
 
+        ---
         <div ref={sponsorSectionRef}>
-          <motion.h3 
+          <motion.h3
             className="section-title reveal-title"
             variants={{
               hidden: { opacity: 0 },
@@ -497,7 +479,7 @@ const HomePage = () => {
             initial="hidden"
             animate={sponsorSectionInView ? "visible" : "hidden"}
           >
-            <motion.span 
+            <motion.span
               className="title-text"
               variants={{
                 hidden: { y: 50, opacity: 0 },
@@ -506,7 +488,7 @@ const HomePage = () => {
             >
               Các nhà tài trợ nổi tiếng
             </motion.span>
-            <motion.span 
+            <motion.span
               className="title-decoration"
               variants={{
                 hidden: { scaleX: 0 },
@@ -517,7 +499,7 @@ const HomePage = () => {
 
           <div className="brand_banner">
             <Flex gap={24} justify="center" align="center" wrap="wrap">
-              <motion.div 
+              <motion.div
                 className="sponsor-logo sponsor-1 reveal-sponsor"
                 initial={{ opacity: 0, rotateY: 90 }}
                 animate={sponsorSectionInView ? { opacity: 1, rotateY: 0 } : { opacity: 0, rotateY: 90 }}
@@ -527,7 +509,7 @@ const HomePage = () => {
                 <span className="logo-text">Nestle</span>
                 <div className="logo-glow"></div>
               </motion.div>
-              <motion.div 
+              <motion.div
                 className="sponsor-logo sponsor-2 reveal-sponsor"
                 initial={{ opacity: 0, rotateY: 90 }}
                 animate={sponsorSectionInView ? { opacity: 1, rotateY: 0 } : { opacity: 0, rotateY: 90 }}
@@ -537,7 +519,7 @@ const HomePage = () => {
                 <span className="logo-text">TPBank</span>
                 <div className="logo-glow"></div>
               </motion.div>
-              <motion.div 
+              <motion.div
                 className="sponsor-logo sponsor-3 reveal-sponsor"
                 initial={{ opacity: 0, rotateY: 90 }}
                 animate={sponsorSectionInView ? { opacity: 1, rotateY: 0 } : { opacity: 0, rotateY: 90 }}
@@ -547,7 +529,7 @@ const HomePage = () => {
                 <span className="logo-text">Toshiba</span>
                 <div className="logo-glow"></div>
               </motion.div>
-              <motion.div 
+              <motion.div
                 className="sponsor-logo sponsor-4 reveal-sponsor"
                 initial={{ opacity: 0, rotateY: 90 }}
                 animate={sponsorSectionInView ? { opacity: 1, rotateY: 0 } : { opacity: 0, rotateY: 90 }}
@@ -561,19 +543,20 @@ const HomePage = () => {
           </div>
         </div>
 
-        <motion.div 
-          className="introduction parallax-section" 
+        ---
+        <motion.div
+          className="introduction parallax-section"
           ref={introSectionRef}
           initial={{ opacity: 0 }}
           animate={introSectionInView ? { opacity: 1 } : { opacity: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <motion.div 
-            className="parallax-bg-intro" 
-            style={{transform: `translateY(${scrollPosition * 0.2}px)`}}
+          <motion.div
+            className="parallax-bg-intro"
+            style={{ transform: `translateY(${scrollPosition * 0.2}px)` }}
           ></motion.div>
           <div className="intro-content">
-            <motion.h2 
+            <motion.h2
               className="intro-title animate-gradient"
               initial={{ opacity: 0, y: 30 }}
               animate={introSectionInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
@@ -581,7 +564,7 @@ const HomePage = () => {
             >
               UniTic
             </motion.h2>
-            <motion.p 
+            <motion.p
               className="intro-description slide-up-text"
               initial={{ opacity: 0, y: 30 }}
               animate={introSectionInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}

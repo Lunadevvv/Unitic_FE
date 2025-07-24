@@ -1,6 +1,6 @@
 
 import { Button, Form, Input, Typography, Divider, message, Select } from "antd";
-import styles from "./signUp.module.css";
+// import styles from "./signUp.module.css";
 import GoogleIcon from "../../components/ui/GoogleIcon";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,18 +19,18 @@ function SignUp() {
   }, [dispatch]);
 
   const handleSubmit = (values) => {
-    // Map form values to API keys
+    // Map form values to API keys (all lowercase, match backend)
     const payload = {
       mssv: values.studentId,
-      FirstName: values.firstName,
-      LastName: values.lastName,
-      Email: values.email,
-      Password: values.password,
-      UniversityName: values.university,
+      firstName: values.firstName,
+      lastName: values.lastName,
+      email: values.email,
+      password: values.password,
+      universityName: values.university,
     };
     dispatch(registerUser(payload)).unwrap()
       .then(() => {
-        message.success("Đăng ký thành công!");
+        message.success("Đăng ký thành công! Vui lòng đăng nhập.");
         navigate("/signin");
       })
       .catch((err) => {
@@ -39,41 +39,66 @@ function SignUp() {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.formWrapper}>
-        <Typography strong className={styles.back}
-          onClick={() => navigate("/")}>
-          {'< '}Quay về trang chủ
-        </Typography>
-        <Typography className={styles.brand}>UniTic</Typography>
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #2196f3 0%, #8ecae6 100%)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 0
+    }}>
+      <div style={{
+        background: '#fff',
+        borderRadius: 16,
+        boxShadow: '0 8px 32px rgba(33, 150, 243, 0.15)',
+        padding: 40,
+        minWidth: 350,
+        maxWidth: 500,
+        width: '100%'
+      }}>
+        <Typography style={{ color: '#2196f3', cursor: 'pointer', marginBottom: 16 }} strong onClick={() => navigate("/")}>{'< '}Quay về trang chủ</Typography>
+        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+          <span style={{
+            fontWeight: 700,
+            fontSize: 28,
+            color: '#2196f3',
+            letterSpacing: 1
+          }}>
+            UniTic
+          </span>
+          <div style={{ color: '#666', fontSize: 16, marginTop: 8 }}>
+            Đăng ký tài khoản mới
+          </div>
+        </div>
         <Form layout="vertical" form={form} onFinish={handleSubmit}>
-          <div className={styles.row}>
-            <Form.Item name="lastName" rules={[{ required: true, message: "Vui lòng nhập họ!" }]}> 
-              <Input placeholder="Họ" className={styles.mainInput} />
+          <div style={{ display: 'flex', gap: 12, marginBottom: 0 }}>
+            <Form.Item name="lastName" rules={[{ required: true, message: "Vui lòng nhập họ!" }]} style={{ flex: 1 }}>
+              <Input placeholder="Họ" size="large" style={{ borderRadius: 8, borderColor: '#2196f3' }} />
             </Form.Item>
-            <Form.Item name="firstName" rules={[{ required: true, message: "Vui lòng nhập tên!" }]}> 
-              <Input placeholder="Tên" className={styles.mainInput} />
+            <Form.Item name="firstName" rules={[{ required: true, message: "Vui lòng nhập tên!" }]} style={{ flex: 1 }}>
+              <Input placeholder="Tên" size="large" style={{ borderRadius: 8, borderColor: '#2196f3' }} />
             </Form.Item>
-            <Form.Item name="studentId" rules={[{ required: true, message: "Vui lòng nhập MSSV!" }]}> 
-              <Input placeholder="MSSV" className={styles.mainInput} />
-            </Form.Item>
-          </div>
-          <div className={styles.row}>
-            <Form.Item name="email" rules={[{ required: true, message: "Vui lòng nhập email!" }, { type: "email", message: "Email không hợp lệ!" }]}> 
-              <Input placeholder="Email" className={styles.mainInput} />
-            </Form.Item>
-            <Form.Item name="phone"> 
-              <Input placeholder="Số điện thoại" className={styles.mainInput} />
+            <Form.Item name="studentId" rules={[{ required: true, message: "Vui lòng nhập MSSV!" }]} style={{ flex: 1 }}>
+              <Input placeholder="MSSV" size="large" style={{ borderRadius: 8, borderColor: '#2196f3' }} />
             </Form.Item>
           </div>
-          <div className={styles.row}>
-            <Form.Item name="password" rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}> 
-              <Input.Password placeholder="Mật khẩu" className={styles.mainInput} />
+          <div style={{ display: 'flex', gap: 12, marginBottom: 0 }}>
+            <Form.Item name="email" rules={[{ required: true, message: "Vui lòng nhập email!" }, { type: "email", message: "Email không hợp lệ!" }]} style={{ flex: 1 }}>
+              <Input placeholder="Email" size="large" style={{ borderRadius: 8, borderColor: '#2196f3' }} />
             </Form.Item>
-            <Form.Item name="university" rules={[{ required: true, message: "Vui lòng chọn đại học!" }]}> 
-              <Select 
+            <Form.Item name="phone" style={{ flex: 1 }}>
+              <Input placeholder="Số điện thoại" size="large" style={{ borderRadius: 8, borderColor: '#2196f3' }} />
+            </Form.Item>
+          </div>
+          <div style={{ display: 'flex', gap: 12, marginBottom: 0 }}>
+            <Form.Item name="password" rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]} style={{ flex: 1 }}>
+              <Input.Password placeholder="Mật khẩu" size="large" style={{ borderRadius: 8, borderColor: '#2196f3' }} />
+            </Form.Item>
+            <Form.Item name="university" rules={[{ required: true, message: "Vui lòng chọn đại học!" }]} style={{ flex: 1 }}>
+              <Select
                 placeholder="Chọn đại học"
-                className={styles.mainInput}
+                size="large"
+                style={{ borderRadius: 8, borderColor: '#2196f3' }}
                 loading={universitiesLoading}
                 showSearch
                 filterOption={(input, option) =>
@@ -92,28 +117,29 @@ function SignUp() {
             type="primary"
             htmlType="submit"
             block
-            className={styles.registerBtn}
+            size="large"
+            style={{
+              background: 'linear-gradient(90deg, #2196f3 0%, #8ecae6 100%)',
+              border: 'none',
+              borderRadius: 8,
+              fontWeight: 600,
+              marginTop: 8
+            }}
           >
             Đăng ký
           </Button>
           <Divider plain>
-            <span className={styles.divider}>HOẶC</span>
+            <span style={{ color: '#2196f3' }}>HOẶC</span>
           </Divider>
-          <Button type="default" block className={styles.ssoBtn}>
-            <span
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
+          <Button type="default" block size="large" style={{ borderRadius: 8, borderColor: '#2196f3', color: '#2196f3', fontWeight: 600 }}>
+            <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <GoogleIcon style={{ marginRight: 8 }} />
               Sign in as @fpt.edu.vn
             </span>
           </Button>
-          <div className={styles.loginRow}>
+          <div style={{ textAlign: 'center', marginTop: 24 }}>
             <span>Bạn đã có tài khoản?</span>
-            <a onClick={() => navigate('/signin')} className={styles.loginLink}>
+            <a onClick={() => navigate('/signin')} style={{ color: '#2196f3', marginLeft: 8, fontWeight: 600, cursor: 'pointer' }}>
               Đăng nhập
             </a>
           </div>

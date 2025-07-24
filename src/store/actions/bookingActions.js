@@ -6,7 +6,7 @@ export const buyTicket = createAsyncThunk(
   "booking/buyTicket",
   async ({ eventID, quantity }, { rejectWithValue }) => {
     try {
-      const response = await BASE_URL.post("api/Booking/buy-ticket", {
+      const response = await BASE_URL.post("/api/Booking/buy-ticket", {
         eventID,
         quantity
       });
@@ -26,7 +26,7 @@ export const getAllBookings = createAsyncThunk(
   "booking/getAllBookings",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await BASE_URL.get("api/Booking");
+      const response = await BASE_URL.get("/api/Booking");
       return response.data;
     } catch (error) {
       let message =
@@ -43,7 +43,7 @@ export const getBookingsByUserId = createAsyncThunk(
   "booking/getBookingsByUserId",
   async (userId, { rejectWithValue }) => {
     try {
-      const response = await BASE_URL.get(`api/Booking/All/${userId}`);
+      const response = await BASE_URL.get(`/api/Booking/All/${userId}`);
       return response.data;
     } catch (error) {
       let message =
@@ -60,16 +60,41 @@ export const getCurrentUserBookings = createAsyncThunk(
   "booking/getCurrentUserBookings",
   async (_, { rejectWithValue, getState }) => {
     try {
-      const { auth } = getState();
-      const userId = auth.user?.id;
+      const state = getState();
+      
+      // Try multiple state paths to find user ID
+      let userId = null;
+      
+      // Check auth state first
+      if (state.auth?.user?.id) {
+        userId = state.auth.user.id;
+      }
+      // Check user state as fallback
+      else if (state.user?.user?.id) {
+        userId = state.user.user.id;
+      }
+      // Check localStorage as last resort
+      else {
+        const tokenUser = localStorage.getItem('user');
+        if (tokenUser) {
+          const parsedUser = JSON.parse(tokenUser);
+          userId = parsedUser?.id;
+        }
+      }
+      
+      console.log('Auth state:', state.auth); // Debug log
+      console.log('User state:', state.user); // Debug log
+      console.log('Getting bookings for user ID:', userId); // Debug log
       
       if (!userId) {
-        return rejectWithValue("User not authenticated");
+        return rejectWithValue("User not authenticated - no user ID found");
       }
 
-      const response = await BASE_URL.get(`api/Booking/All/${userId}`);
+      const response = await BASE_URL.get(`/api/Booking/All/${userId}`);
+      console.log('User bookings response:', response.data); // Debug log
       return response.data;
     } catch (error) {
+      console.error('Error fetching user bookings:', error); // Debug log
       let message =
         error.response?.data?.message ||
         error.message ||

@@ -3,38 +3,30 @@
 
 .event-card {
   position: relative;
-  background-color: rgba(base.$white-1, 0.8);
-  border-radius: base.$border-radius;
+  background-color: #fff;
+  border-radius: 12px;
   overflow: hidden;
-  transition: all base.$transition-speed ease;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.2s;
+  box-shadow: none;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  border: 1px solid rgba(base.$neon-blue, 0.1);
+  height: 400px;
+  border: 1.5px solid #d1d5db;
   cursor: pointer;
   
   &__image {
     position: relative;
     height: 180px;
     overflow: hidden;
-    
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform base.$transition-speed ease;
+      transition: transform 0.2s;
+      border-bottom: 1.5px solid #d1d5db;
     }
-    
     &::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 50%;
-      background: linear-gradient(to top, rgba(base.$darker-bg, 0.8), transparent);
-      z-index: 1;
+      display: none;
     }
   }
   
@@ -42,17 +34,15 @@
     position: absolute;
     bottom: 10px;
     left: 10px;
-    background-color: rgba(base.$darker-bg, 0.7);
-    color: base.$light-text-color;
+    background-color: #fff;
+    color: #222;
     padding: 5px 10px;
-    border-radius: 15px;
+    border-radius: 8px;
     font-size: 0.85em;
     z-index: 2;
-    --backdrop-filter: blur(4px);
-    border: 1px solid rgba(base.$primary-color, 0.3);
-    
+    border: 1.5px solid #d1d5db;
     .icon {
-      color: base.$primary-color;
+      color: #4b4bff;
       margin-right: 5px;
     }
   }
@@ -94,14 +84,14 @@
     position: absolute;
     top: 10px;
     left: 10px;
-    background: base.$neon-gradient-cyberpunk;
-    color: base.$white-1;
+    background: #4b4bff;
+    color: #fff;
     padding: 5px 15px;
-    border-radius: 15px;
+    border-radius: 8px;
     font-size: 0.85em;
     font-weight: 700;
     z-index: 2;
-    box-shadow: base.$neon-shadow-blue;
+    box-shadow: none;
     text-transform: uppercase;
     letter-spacing: 1px;
   }
@@ -111,13 +101,14 @@
     top: 180px;
     left: 10px;
     transform: translateY(-50%);
-    background-color: base.$primary-color;
-    color: base.$white-1;
+    background-color: #fff;
+    color: #4b4bff;
     padding: 5px 15px;
-    border-radius: 15px;
+    border-radius: 8px;
     font-size: 0.85em;
     z-index: 3;
-    box-shadow: 0 2px 8px rgba(base.$primary-color, 0.4);
+    border: 1.5px solid #4b4bff;
+    box-shadow: none;
   }
   
   &__status {
@@ -126,32 +117,28 @@
     right: 10px;
     transform: translateY(-50%);
     z-index: 3;
-    
     .status-badge {
       display: inline-block;
       padding: 5px 15px;
-      border-radius: 15px;
+      border-radius: 8px;
       font-size: 0.85em;
       font-weight: 600;
-      
+      border: 1.5px solid #d1d5db;
       &.available {
-        background-color: rgba(#4CAF50, 0.9);
-        color: base.$white-1;
+        background-color: #eafbe7;
+        color: #4CAF50;
       }
-      
       &.soon {
-        background-color: rgba(#FFC107, 0.9);
-        color: base.$darker-bg;
+        background-color: #fffbe7;
+        color: #FFC107;
       }
-      
       &.sold-out {
-        background-color: rgba(#F44336, 0.9);
-        color: base.$white-1;
+        background-color: #fde7e7;
+        color: #F44336;
       }
-      
       &.ended {
-        background-color: rgba(base.$darker-bg, 0.8);
-        color: base.$light-text-color;
+        background-color: #f3f3f3;
+        color: #888;
       }
     }
   }
@@ -194,31 +181,27 @@
     font-size: 1.3em;
     font-weight: 700;
     margin-bottom: 10px;
-    color: base.$dark-background;
-    @include base.text-truncate(2);
-    transition: color base.$fast-transition ease;
+    color: #222;
+    transition: color 0.2s;
   }
   
   &__location {
     display: flex;
     align-items: center;
-    color: base.$text-color;
+    color: #888;
     font-size: 0.9em;
     margin-bottom: 12px;
-    @include base.text-truncate(1);
-    
     .icon {
-      color: base.$primary-color;
+      color: #4b4bff;
       margin-right: 5px;
     }
   }
   
   &__description {
-    color: rgba(base.$text-color, 0.9);
+    color: #555;
     font-size: 0.9em;
     line-height: 1.5;
     margin-bottom: 15px;
-    @include base.text-truncate(3);
     flex-grow: 1;
   }
   
@@ -232,7 +215,7 @@
   &__price {
     font-size: 1.2em;
     font-weight: 700;
-    color: base.$primary-color;
+    color: #4b4bff;
   }
   
   &__cta {
@@ -337,8 +320,8 @@
       }
       
       .event-card__category {
-        top: 180px;
-        left: 10px;
+        top: 130px;
+        left: 242px;
         transform: translateY(-50%);
       }
       

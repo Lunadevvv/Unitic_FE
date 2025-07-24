@@ -16,20 +16,20 @@ const AppFooter = ({ className = '' }) => {
     services: [
       { label: 'Sự kiện', path: '/events' },
       { label: 'Tổ chức sự kiện', path: '/organization/events' },
-      { label: 'Quản lý vé', path: '/tickets' },
-      { label: 'Báo cáo & Thống kê', path: '/reports' }
+      { label: 'Quản lý vé', path: '/' },
+      { label: 'Báo cáo & Thống kê', path: '/' }
     ],
     company: [
       { label: 'Về chúng tôi', path: '/about' },
       { label: 'Liên hệ', path: '/contact' },
-      { label: 'Tuyển dụng', path: '/careers' },
-      { label: 'Tin tức', path: '/news' }
+      { label: 'Tuyển dụng', path: '/' },
+      { label: 'Tin tức', path: '/' }
     ],
     support: [
       { label: 'Trung tâm trợ giúp', path: '/help' },
-      { label: 'Chính sách bảo mật', path: '/privacy' },
-      { label: 'Điều khoản sử dụng', path: '/terms' },
-      { label: 'FAQ', path: '/faq' }
+      { label: 'Chính sách bảo mật', path: '/' },
+      { label: 'Điều khoản sử dụng', path: '/' },
+      { label: 'FAQ', path: '/' }
     ],
     contact: [
       { 

@@ -1,3 +1,5 @@
+import { ROLES, ROLE_NAMES } from './rolePermissions';
+
 // Utility functions for user data handling
 
 /**
@@ -80,19 +82,19 @@ export const formatUserData = (user) => {
 };
 
 /**
- * Role mapping for display
+ * Role mapping for display (legacy support)
  */
 export const ROLE_MAPPING = {
-  1: 'Admin',
-  2: 'Moderator',
-  3: 'Teacher',
-  4: 'Student',
-  5: 'User',
-  'admin': 'Admin',
-  'moderator': 'Moderator',
-  'teacher': 'Teacher',
-  'student': 'Student',
-  'user': 'User'
+  1: ROLE_NAMES[ROLES.ADMIN],
+  2: ROLE_NAMES[ROLES.MODERATOR],
+  3: ROLE_NAMES[ROLES.ORGANIZER],
+  4: ROLE_NAMES[ROLES.STAFF],
+  5: ROLE_NAMES[ROLES.USER],
+  'admin': ROLE_NAMES[ROLES.ADMIN],
+  'moderator': ROLE_NAMES[ROLES.MODERATOR],
+  'organizer': ROLE_NAMES[ROLES.ORGANIZER],
+  'staff': ROLE_NAMES[ROLES.STAFF],
+  'user': ROLE_NAMES[ROLES.USER]
 };
 
 /**
@@ -101,5 +103,5 @@ export const ROLE_MAPPING = {
  * @returns {string} - Role display name
  */
 export const getRoleDisplayName = (role) => {
-  return ROLE_MAPPING[role] || 'Unknown';
+  return ROLE_NAMES[role] || ROLE_MAPPING[role] || 'Unknown';
 };

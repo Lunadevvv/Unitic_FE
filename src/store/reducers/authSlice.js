@@ -17,11 +17,11 @@ import {
 // Initial state
 const initialState = {
   user: JSON.parse(localStorage.getItem('user')) || null,
-  token: localStorage.getItem('token') || null,
-  isAuthenticated: !!localStorage.getItem('token'),
+  token: Cookies.get('ACCESS_TOKEN') || null,
+  isAuthenticated: !!Cookies.get('ACCESS_TOKEN'),
   loading: false,
   error: null,
-  role: JSON.parse(localStorage.getItem('user'))?.role || 'guest',
+  role: JSON.parse(localStorage.getItem('user'))?.role || null,
   universities: [],
   universitiesLoading: false,
 };
@@ -46,7 +46,6 @@ const authSlice = createSlice({
       state.role = user.role;
       
       // Save to both localStorage and cookies
-      localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
       Cookies.set('ACCESS_TOKEN', token, { expires: 7 }); // Expires in 7 days
     },
@@ -63,11 +62,10 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.isAuthenticated = true;
-        state.role = action.payload.user.role;
+        state.role = action.payload.user?.role;
         state.error = null;
         
         // Save to both localStorage and cookies
-        localStorage.setItem('token', action.payload.token);
         localStorage.setItem('user', JSON.stringify(action.payload.user));
         Cookies.set('ACCESS_TOKEN', action.payload.token, { expires: 7 });
       })
@@ -77,7 +75,7 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
         state.user = null;
         state.token = null;
-        state.role = 'guest';
+        state.role = null;
       })
       // Register
       .addCase(registerUser.pending, (state) => {
@@ -110,12 +108,12 @@ const authSlice = createSlice({
         state.user = null;
         state.token = null;
         state.isAuthenticated = false;
-        state.role = 'guest';
+        state.role = null;
         state.loading = false;
         state.error = null;
         // Clear both localStorage and cookies
         localStorage.removeItem('user');
-        localStorage.removeItem('token');
+             localStorage.removeItem('token');
         Cookies.remove('ACCESS_TOKEN');
       })
       // Change password

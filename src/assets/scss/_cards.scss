@@ -3,7 +3,7 @@
 .event-card {
     border-radius: base.$border-radius;
     overflow: hidden;
-    background-color: base.$darker-bg;
+    background-color: rgba(255, 255, 255, 0.388);
     border: 1px solid rgba(base.$neon-blue, 0.2);
     position: relative;
     transition: transform base.$transition-speed ease, box-shadow base.$transition-speed ease, border-color base.$transition-speed ease;

@@ -13,6 +13,7 @@ import {
 import AdminLayout from '../../components/layout/AdminLayout';
 import useAccounts from '../../hooks/useAccounts';
 import { getUserDisplayName, getRoleDisplayName } from '../../utils/userUtils';
+import { ROLES, ROLE_NAMES } from '../../utils/rolePermissions';
 import '../../assets/scss/UserManagementPage.scss';
 
 const { Title, Text } = Typography;
@@ -44,7 +45,7 @@ const UserManagementPage = () => {
   useEffect(() => {
     loadAccounts();
     loadUniversities();
-  }, [loadAccounts, loadUniversities]);
+  }, []);
 
   // Show error if there's any
   useEffect(() => {
@@ -171,11 +172,11 @@ const UserManagementPage = () => {
         return <Tag color={colors[role]}>{getRoleDisplayName(role)}</Tag>;
       },
       filters: [
-        { text: 'Admin', value: '1' },
-        { text: 'Moderator', value: '2' },
-        { text: 'Teacher', value: '3' },
-        { text: 'Student', value: '4' },
-        { text: 'User', value: '5' }
+        { text: ROLE_NAMES[ROLES.ADMIN], value: ROLES.ADMIN.toString() },
+        { text: ROLE_NAMES[ROLES.MODERATOR], value: ROLES.MODERATOR.toString() },
+        { text: ROLE_NAMES[ROLES.ORGANIZER], value: ROLES.ORGANIZER.toString() },
+        { text: ROLE_NAMES[ROLES.STAFF], value: ROLES.STAFF.toString() },
+        { text: ROLE_NAMES[ROLES.USER], value: ROLES.USER.toString() }
       ],
       onFilter: (value, record) => record.role.toString() === value,
     },
@@ -334,9 +335,11 @@ const UserManagementPage = () => {
               placeholder="Vai trò"
             >
               <Option value="all">Tất cả vai trò</Option>
-              <Option value="user">Người dùng</Option>
-              <Option value="moderator">Kiểm duyệt viên</Option>
-              <Option value="admin">Quản trị viên</Option>
+              <Option value={ROLES.ADMIN.toString()}>{ROLE_NAMES[ROLES.ADMIN]}</Option>
+              <Option value={ROLES.MODERATOR.toString()}>{ROLE_NAMES[ROLES.MODERATOR]}</Option>
+              <Option value={ROLES.ORGANIZER.toString()}>{ROLE_NAMES[ROLES.ORGANIZER]}</Option>
+              <Option value={ROLES.STAFF.toString()}>{ROLE_NAMES[ROLES.STAFF]}</Option>
+              <Option value={ROLES.USER.toString()}>{ROLE_NAMES[ROLES.USER]}</Option>
             </Select>
             <RangePicker placeholder={['Từ ngày', 'Đến ngày']} />
             {selectedRowKeys.length > 0 && (
@@ -451,11 +454,11 @@ const UserManagementPage = () => {
                   rules={[{ required: true, message: 'Vui lòng chọn vai trò!' }]}
                 >
                   <Select>
-                    <Option value={1}>Admin</Option>
-                    <Option value={2}>Moderator</Option>
-                    <Option value={3}>Teacher</Option>
-                    <Option value={4}>Student</Option>
-                    <Option value={5}>User</Option>
+                    <Option value={ROLES.ADMIN}>{ROLE_NAMES[ROLES.ADMIN]}</Option>
+                    <Option value={ROLES.MODERATOR}>{ROLE_NAMES[ROLES.MODERATOR]}</Option>
+                    <Option value={ROLES.ORGANIZER}>{ROLE_NAMES[ROLES.ORGANIZER]}</Option>
+                    <Option value={ROLES.STAFF}>{ROLE_NAMES[ROLES.STAFF]}</Option>
+                    <Option value={ROLES.USER}>{ROLE_NAMES[ROLES.USER]}</Option>
                   </Select>
                 </Form.Item>
               </Col>

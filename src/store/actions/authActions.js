@@ -13,8 +13,9 @@ export const loginUser = createAsyncThunk(
         Password: credentials.Password,
       });
       const data = response.data;
-      // Store token in cookies
+      // Store token in cookies and localStorage
       Cookies.set("ACCESS_TOKEN", data.token);
+      localStorage.setItem("token", data.token);
       
       // Fetch user profile after successful login
       try {
