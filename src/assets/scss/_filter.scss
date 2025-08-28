@@ -1,0 +1,198 @@
+@use 'base';
+
+.event-filter {
+  margin-bottom: 25px;
+  
+  .basic-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+    
+    .ant-select {
+      .ant-select-selector {
+        background-color: rgba(base.$darker-bg, 0.8);
+        border: 1px solid rgba(base.$neon-blue, 0.3);
+        border-radius: 8px;
+        
+        &:hover {
+          border-color: base.$neon-blue;
+        }
+      }
+      
+      &.ant-select-focused .ant-select-selector {
+        border-color: base.$neon-blue;
+        box-shadow: base.$neon-shadow-blue;
+      }
+    }
+    
+    .ant-btn {
+      border-radius: 8px;
+      border: 1px solid rgba(base.$neon-blue, 0.3);
+      color: base.$light-text-color;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      
+      &:hover {
+        border-color: base.$neon-blue;
+        color: base.$neon-blue;
+        box-shadow: base.$neon-shadow-blue;
+      }
+      
+      &.ant-btn-primary {
+        background: rgba(base.$neon-blue, 0.1);
+        border-color: base.$neon-blue;
+        color: base.$neon-blue;
+      }
+    }
+  }
+  
+  .advanced-filters {
+    overflow: hidden;
+    margin-bottom: 20px;
+    
+    .filter-panel {
+      background-color: rgba(base.$darker-bg, 0.8);
+      border: 1px solid rgba(base.$neon-blue, 0.3);
+      border-radius: base.$border-radius;
+      padding: 20px;
+      box-shadow: base.$neon-shadow-blue;
+      
+      .filter-section {
+        margin-bottom: 25px;
+        
+        &:last-child {
+          margin-bottom: 0;
+        }
+        
+        .filter-title {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 1.1em;
+          font-weight: 600;
+          margin-bottom: 15px;
+          color: base.$light-text-color;
+          
+          .anticon {
+            color: base.$neon-blue;
+          }
+        }
+        
+        .ant-slider {
+          margin: 15px 10px 25px;
+          
+          .ant-slider-track {
+            background-color: base.$neon-blue;
+          }
+          
+          .ant-slider-handle {
+            border-color: base.$neon-blue;
+            
+            &:focus {
+              box-shadow: 0 0 0 5px rgba(base.$neon-blue, 0.2);
+            }
+          }
+        }
+        
+        .price-range-display {
+          display: flex;
+          justify-content: space-between;
+          color: rgba(base.$light-text-color, 0.8);
+          font-size: 0.9em;
+        }
+        
+        .filter-checkbox-group {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+          gap: 10px;
+          
+          .ant-checkbox-wrapper {
+            color: rgba(base.$light-text-color, 0.8);
+            
+            &:hover {
+              color: base.$neon-blue;
+            }
+            
+            .ant-checkbox-checked .ant-checkbox-inner {
+              background-color: base.$neon-blue;
+              border-color: base.$neon-blue;
+            }
+          }
+        }
+        
+        .event-type-tags {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          
+          .ant-radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+          }
+          
+          .ant-radio-button-wrapper {
+            border-radius: 20px;
+            border: 1px solid rgba(base.$neon-blue, 0.3);
+            background: transparent;
+            color: rgba(base.$light-text-color, 0.8);
+            margin-right: 0;
+            
+            &:not(:first-child)::before {
+              display: none;
+            }
+            
+            &:hover {
+              color: base.$neon-blue;
+              border-color: base.$neon-blue;
+            }
+            
+            &.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+              background: rgba(base.$neon-blue, 0.1);
+              border-color: base.$neon-blue;
+              color: base.$neon-blue;
+              box-shadow: -1px 0 0 0 base.$neon-blue;
+              
+              &::before {
+                background-color: base.$neon-blue;
+              }
+            }
+          }
+        }
+      }
+      
+      .filter-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+        
+        .ant-btn-primary {
+          background: base.$neon-gradient-cyberpunk;
+          border: none;
+          color: base.$white-1;
+          font-weight: 500;
+          
+          &:hover {
+            box-shadow: base.$neon-shadow-purple;
+            transform: translateY(-2px);
+          }
+        }
+      }
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .advanced-filters {
+      .filter-panel {
+        .filter-section {
+          .filter-checkbox-group {
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,188 @@
+@use 'base';
+
+.homepage_carousel {
+  position: relative;
+  height: 100vh;
+  margin-bottom: 60px;
+  overflow: hidden;
+  border-radius: base.$border-radius;
+  box-shadow: base.$neon-shadow-blue;
+  border: 1px solid rgba(base.$neon-blue, 0.3);
+
+  .carousel-item {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: base.$light-text-color;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    background-color: base.$darker-bg;
+
+    &.gradient-primary {
+      background: base.$neon-gradient-cyberpunk;
+    }
+
+    &.gradient-secondary {
+      background: linear-gradient(45deg, base.$accent-color-1, base.$accent-color-2);
+    }
+
+    .parallax-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 150%;
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.6) saturate(1.5) contrast(1.2);
+      z-index: 1;
+      will-change: transform;
+      opacity: 0.7;
+
+      &.carousel-bg-1 {
+       
+      }
+      &.carousel-bg-2 {
+       
+      }
+    }
+
+    .carousel-content {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+      padding: 0 30px;
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.5);
+      
+      .carousel-title {
+        font-size: 4.5em;
+        font-weight: 800;
+        margin-bottom: 25px;
+        line-height: 1.1;
+        @include base.neon-text(base.$white-1);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        filter: drop-shadow(base.$neon-shadow-blue);
+      }
+
+      .carousel-description {
+        font-size: 1.4em;
+        margin-bottom: 40px;
+        line-height: 1.6;
+        color: rgba(base.$light-text-color, 0.9);
+        text-shadow: 0 0 8px rgba(0, 0, 0, 0.7);
+      }
+
+      .call-to-action-button {
+        background: base.$neon-gradient-cyberpunk;
+        border: none;
+        color: base.$white-1;
+        padding: 18px 40px;
+        border-radius: 50px;
+        font-weight: bold;
+        font-size: 1.2em;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: all base.$transition-speed ease;
+        box-shadow: base.$neon-shadow-blue;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+
+        .button-text {
+          position: relative;
+          z-index: 2;
+        }
+
+        .anticon {
+          margin-left: 10px;
+          filter: drop-shadow(0 0 5px base.$neon-blue);
+        }
+
+        .hover-slide {
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: rgba(base.$white-1, 0.2);
+          transition: left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        &:hover {
+          color: base.$white-1;
+          transform: translateY(-5px) scale(1.05);
+          box-shadow: base.$neon-shadow-purple;
+          background: linear-gradient(45deg, base.$secondary-color, base.$primary-color);
+        }
+
+        &:hover .hover-slide {
+          left: 0;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 992px) {
+    height: 75vh;
+    .carousel-item {
+      height: 75vh;
+      .carousel-content {
+        .carousel-title {
+          font-size: 3em;
+        }
+        .carousel-description {
+          font-size: 1.2em;
+        }
+        .call-to-action-button {
+          padding: 14px 30px;
+          font-size: 1em;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    height: 60vh;
+    .carousel-item {
+      height: 60vh;
+      .carousel-content {
+        .carousel-title {
+          font-size: 2.2em;
+          letter-spacing: 1px;
+        }
+        .carousel-description {
+          font-size: 1em;
+          margin-bottom: 25px;
+        }
+        .call-to-action-button {
+          padding: 10px 25px;
+          font-size: 0.9em;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    height: 50vh;
+    .carousel-item {
+      height: 50vh;
+      .carousel-content {
+        .carousel-title {
+          font-size: 1.8em;
+          margin-bottom: 15px;
+        }
+        .carousel-description {
+          font-size: 0.9em;
+          margin-bottom: 20px;
+        }
+        .call-to-action-button {
+          padding: 8px 20px;
+          font-size: 0.8em;
+        }
+      }
+    }
+  }
+}

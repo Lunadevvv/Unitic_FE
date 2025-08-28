@@ -1,0 +1,214 @@
+@forward 'fonts';
+@use "sass:color";
+// tont xanh dịu pastel
+// $primary-color: #9c88ff;
+// $secondary-color: #74b9ff;
+// $accent-color-1: #c5a3db;
+// $accent-color-2: #fab1a0;
+// $text-color: #4a4a4a;
+// $dark-bg: #2d3436;
+// $neon-blue: #48dbfb;
+// $gradient-text-neon: linear-gradient(45deg, #9c88ff, #74b9ff);
+// $gradient-primary-neon: linear-gradient(67deg, #9c88ff, #74b9ff);
+// $neon-text: #48dbfb;
+// $light-text-color: #f5f5f5;
+// $white-1: #ffffff;
+// $white-blur: rgba(255, 255, 255, 0.7);
+// $dark-blue-gradient: linear-gradient(45deg, #2d3436, #34495e);
+// $dark-background: #5f5da6;
+// $card-background: #ffffff;
+// $border-radius: 10px;
+// $transition-speed: 0.3s;
+// $fast-transition: 0.2s;
+// $neon-gradient-cyberpunk: linear-gradient(45deg, #9c88ff, #74b9ff);
+// $neon-shadow-blue: 0 0 10px rgba(72, 219, 251, 0.5), 0 0 20px rgba(72, 219, 251, 0.3), 0 0 30px rgba(72, 219, 251, 0.2);
+// $neon-shadow-purple: 0 0 10px rgba(156, 136, 255, 0.5), 0 0 20px rgba(156, 136, 255, 0.3), 0 0 30px rgba(156, 136, 255, 0.2);
+// $neon-gradient-rainbow: linear-gradient(45deg, #a29bfe, #9c88ff, #c5a3db, #74b9ff, #48dbfb, #81ecec);
+
+// tont nâu vàng nhẹ pastel
+$darker-bg: #2d3436;
+$primary-color: #d4b483;      
+$secondary-color: #c7b198;   
+$accent-color-1: #f2d0a9;   
+$accent-color-2: #e8c8a9;   
+$text-color: #5c4d3c;        
+$dark-bg: #3a3238; 
+$dark-light-bg: #564d4aa6;          
+$neon-blue: #8ecae6;  
+      
+$gradient-text-neon: linear-gradient(45deg, #d4b483, #c7b198);
+$gradient-primary-neon: linear-gradient(67deg, #d4b483, #c7b198);
+$gradient-primary-neon-dark: linear-gradient(67deg, #d4b483, #c7b198, #8ecae6);
+$neon-text: #8ecae6;        
+$light-text-color: #f8f5f1;  
+$white-1: #ffffff;
+$white-blur: rgba(255, 255, 255, 0.7);
+$dark-blue-gradient: linear-gradient(45deg, #3a3238, #564d4a);
+$dark-background: #786452;   
+$card-background: #ffffff;
+$border-radius: 10px;
+$transition-speed: 0.3s;
+$fast-transition: 0.2s;
+$font-family: "Work Sans", "Roboto", sans-serif;
+$neon-gradient-cyberpunk: linear-gradient(45deg, #d4b483, #c7b198);
+$neon-shadow-blue: 0 0 10px rgba(142, 202, 230, 0.5), 0 0 20px rgba(142, 202, 230, 0.3), 0 0 30px rgba(142, 202, 230, 0.2);
+$neon-shadow-purple: 0 0 10px rgba(212, 180, 131, 0.5), 0 0 20px rgba(212, 180, 131, 0.3), 0 0 30px rgba(212, 180, 131, 0.2);
+$neon-gradient-rainbow: linear-gradient(45deg, #f2d0a9, #d4b483, #c7b198, #8ecae6, #a9c5ba, #e8c8a9);
+$darker-bg: #33302e;
+
+// Pastel Blue Theme
+$primary-color: #9c88ff; // A soft, light purple-blue
+$secondary-color: #74b9ff; // A clear, airy blue
+$accent-color-1: #c5a3db; // A muted lavender/pink
+$accent-color-2: #fab1a0; // A warm, soft peach
+$text-color: #4a4a4a; // Dark grey for good contrast
+$dark-bg: #2d3436; // A very dark, almost black, blue-grey for deep backgrounds
+$dark-light-bg: #34495e; // A slightly lighter dark blue-grey for sections
+
+$neon-blue: #48dbfb; // A vibrant, light blue for "neon" effects
+
+$gradient-text-neon: linear-gradient(45deg, $primary-color, $secondary-color);
+$gradient-primary-neon: linear-gradient(67deg, $primary-color, $secondary-color);
+$gradient-primary-neon-dark: linear-gradient(67deg, $primary-color, $secondary-color, $dark-light-bg); // Adjusted to fit theme
+$neon-text: $neon-blue;
+$light-text-color: #f5f5f5; // Off-white for light text
+$white-1: #ffffff;
+$white-blur: rgba(255, 255, 255, 0.7);
+
+$dark-blue-gradient: linear-gradient(45deg, $dark-bg, $dark-light-bg); // Adjusted
+$dark-background: #5f5da6; // A medium-dark purple-blue for overall background
+$card-background: #ffffff; // White for cards
+$border-radius: 10px;
+$transition-speed: 0.3s;
+$fast-transition: 0.2s;
+$font-family: "Work Sans", "Roboto", sans-serif;
+
+$neon-gradient-cyberpunk: linear-gradient(45deg, $primary-color, $secondary-color);
+$neon-shadow-blue: 0 0 10px rgba($neon-blue, 0.5), 0 0 20px rgba($neon-blue, 0.3), 0 0 30px rgba($neon-blue, 0.2);
+$neon-shadow-purple: 0 0 10px rgba($primary-color, 0.5), 0 0 20px rgba($primary-color, 0.3), 0 0 30px rgba($primary-color, 0.2);
+$neon-gradient-rainbow: linear-gradient(45deg, #a29bfe, $primary-color, $accent-color-1, $secondary-color, $neon-blue, #81ecec); // Broader pastel range
+// Admin specific colors
+$admin-dark-bg: #2c1810;           // Dark brown for admin sidebar
+$admin-dark-light: #3d2518;       // Lighter brown for hover states
+$admin-card-bg: #faf7f2;          // Very light cream for cards
+$admin-border: rgba(212, 180, 131, 0.2); // Border using primary color
+$admin-selected: rgba(212, 180, 131, 0.15); // Selected state background
+$admin-hover: rgba(212, 180, 131, 0.08);    // Hover state background
+$admin-success: #6c9f7f;                   // Success color in brown theme
+$admin-warning: #d4a574;                   // Warning color in brown theme  
+$admin-error: #c07a7a;                     // Error color in brown theme
+$admin-info: #8ecae6;                      // Info color (same as neon-blue)
+
+// Status colors for tickets, events, etc.
+$status-active: #52c41a;                   // Active/Success green
+$status-pending: #faad14;                  // Pending/Warning yellow  
+$status-used: #1890ff;                     // Used/Info blue
+$status-expired: #ff4d4f;                  // Expired/Error red
+$status-cancelled: #f5222d;                // Cancelled red
+
+// Gradient backgrounds
+$gradient-purple-blue: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+$gradient-green: linear-gradient(135deg, #52c41a, #73d13d);
+$gradient-yellow: linear-gradient(135deg, #faad14, #ffc53d);
+$gradient-blue: linear-gradient(135deg, #1890ff, #40a9ff);
+
+// Additional utility colors
+$success-light: #f6ffed;                   // Light green background
+$info-light: #f0f7ff;                      // Light blue background  
+$background-light: #fafafa;                // Light gray background
+$text-muted: #999;                         // Muted text color
+$text-secondary: #666;                     // Secondary text color
+
+// Light backgrounds  
+$border-light: #f0f0f0;                    // Light border color
+$warning-light: #fff7e6;                   // Light warning background
+$warning-text: #d48806;                    // Warning text color
+
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin gradient-bg($start-color, $end-color) {
+  background: linear-gradient(to right, $start-color, $end-color);
+}
+
+@mixin card-shadow {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+@mixin hover-scale($scale: 1.05) {
+  transition: transform $transition-speed ease-in-out;
+  &:hover {
+    transform: scale($scale);
+  }
+}
+
+@mixin neon-text($color) {
+  color: $color;
+  text-shadow: 0 0 5px $color, 
+               0 0 10px rgba(color.mix($color, white, 70%), 0.7), 
+               0 0 15px rgba(color.mix($color, white, 50%), 0.5), 
+               0 0 20px rgba(color.mix($color, white, 30%), 0.3);
+  transition: color $fast-transition ease, text-shadow $fast-transition ease;
+}
+
+@mixin text-truncate($lines: 1) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+body {
+  font-family: "Work Sans", "Roboto", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  color: $text-color;
+  background-color: #f8f8f8;
+  line-height: 1.6;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Montserrat", sans-serif;
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  color: $dark-background;
+  font-weight: 600;
+}
+
+p {
+  margin-bottom: 1em;
+}
+
+.ant-carousel .slick-dots li button {
+  background-color: rgba($light-text-color, 0.5) !important;
+  opacity: 1 !important;
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 50% !important;
+  transition: all $fast-transition ease !important;
+}
+
+.ant-carousel .slick-dots li.slick-active button {
+  background-color: $light-text-color !important;
+  width: 25px !important;
+  border-radius: 5px !important;
+}
+

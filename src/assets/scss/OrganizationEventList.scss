@@ -1,0 +1,231 @@
+@use 'base';
+
+.organization-event-list {
+  min-height: 100vh;
+  background: linear-gradient(135deg, base.$accent-color-2, base.$card-background);
+
+  .page-content {
+    padding: 0;
+  }
+
+  .page-header {
+    background: base.$gradient-primary-neon;
+    padding: 40px 0;
+    box-shadow: 0 4px 20px rgba(base.$primary-color, 0.15);
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .ant-breadcrumb {
+      margin-bottom: 20px;
+      
+      .ant-breadcrumb-link {
+        color: base.$white-1;
+        opacity: 0.8;
+        
+        &:hover {
+          opacity: 1;
+          color: base.$white-1;
+        }
+      }
+      
+      .ant-breadcrumb-separator {
+        color: base.$white-1;
+        opacity: 0.6;
+      }
+    }
+
+    .page-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 20px;
+
+      .title-section {
+        h1 {
+          color: base.$white-1;
+          font-size: 2.5rem;
+          font-weight: 700;
+          margin-bottom: 8px;
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        p {
+          color: base.$white-1;
+          opacity: 0.9;
+          font-size: 1.1rem;
+          margin: 0;
+        }
+      }
+
+      .create-button {
+        background: base.$white-1;
+        color: base.$primary-color;
+        border: none;
+        border-radius: 8px;
+        height: 48px;
+        font-weight: 600;
+        
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(base.$white-1, 0.3);
+          background: base.$white-1;
+          color: base.$primary-color;
+        }
+      }
+    }
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+
+  .events-table-card {
+    background: base.$card-background;
+    border-radius: base.$border-radius;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: none;
+
+    .ant-card-body {
+      padding: 32px;
+    }
+
+    .events-table {
+      .ant-table-thead > tr > th {
+        background: base.$accent-color-1;
+        color: base.$text-color;
+        font-weight: 600;
+        border: none;
+        
+        &:first-child {
+          border-top-left-radius: 8px;
+        }
+        
+        &:last-child {
+          border-top-right-radius: 8px;
+        }
+      }
+
+      .ant-table-tbody > tr {
+        &:hover > td {
+          background: rgba(base.$accent-color-1, 0.3);
+        }
+
+        > td {
+          border-bottom: 1px solid rgba(base.$accent-color-1, 0.2);
+          padding: 16px;
+        }
+      }
+
+      .event-title {
+        .title {
+          font-weight: 600;
+          color: base.$text-color;
+          margin-bottom: 8px;
+        }
+
+        .meta {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          flex-wrap: wrap;
+
+          .date {
+            color: base.$text-color;
+            opacity: 0.7;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+          }
+        }
+      }
+
+      .attendees-info {
+        color: base.$text-color;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .ant-btn {
+        border-radius: 6px;
+        
+        &.ant-btn-text {
+          &:hover {
+            background: rgba(base.$primary-color, 0.1);
+            color: base.$primary-color;
+          }
+          
+          &.ant-btn-dangerous:hover {
+            background: rgba(#ff4d4f, 0.1);
+            color: #ff4d4f;
+          }
+        }
+      }
+
+      .ant-tag {
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        border: none;
+      }
+    }
+
+    .ant-pagination {
+      margin-top: 24px;
+      text-align: center;
+
+      .ant-pagination-item {
+        border-radius: 6px;
+        
+        &.ant-pagination-item-active {
+          background: base.$primary-color;
+          border-color: base.$primary-color;
+          
+          a {
+            color: base.$white-1;
+          }
+        }
+      }
+
+      .ant-pagination-prev,
+      .ant-pagination-next {
+        border-radius: 6px;
+        
+        &:hover {
+          border-color: base.$primary-color;
+          color: base.$primary-color;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .page-header {
+      .page-title {
+        flex-direction: column;
+        align-items: flex-start;
+        
+        .create-button {
+          width: 100%;
+        }
+      }
+    }
+
+    .events-table-card {
+      .ant-table {
+        .ant-table-content {
+          overflow-x: auto;
+        }
+      }
+    }
+  }
+}

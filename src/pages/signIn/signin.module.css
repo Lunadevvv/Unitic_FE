@@ -1,0 +1,174 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
+
+html,
+body {
+  font-family: "Sigmar", sans-serif;
+  font-size: 16px;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+.container {
+  font-family: "Inter", sans-serif;
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background: #fcd97b;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 1.5rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.leftSection {
+  flex: 1.2;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 5.625rem;
+}
+
+.welcome {
+  font-size: 3.75rem;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 0;
+}
+
+.brand {
+  font-size: 7.5rem;
+  font-weight: bold;
+  color: #222;
+}
+
+.rightSection {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-right: 3.125rem;
+}
+
+.formWrapper {
+  background: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.125rem 1rem rgba(0, 0, 0, 0.08);
+  padding: 3.75rem 3.75rem 1rem 3.75rem;
+  max-width: 56.25rem;
+  width: 100%;
+  height: auto;
+}
+
+.back {
+  margin-bottom: 1.875rem;
+  font-size: 1rem;
+}
+
+.back:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.mainInput {
+  font-size: 1rem;
+  height: 3.125rem;
+  margin-bottom: 1.4375rem;
+}
+
+.optionsRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.625rem;
+}
+
+.remember {
+  font-size: 1rem;
+  color: #888;
+}
+
+.forgot {
+  font-size: 1rem;
+  color: #888;
+  text-decoration: underline;
+}
+
+.loginBtn {
+  background: #fbc02d !important;
+  border: none;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  height: 3.125rem;
+  font-weight: 500;
+}
+
+.divider {
+  font-size: 1rem;
+}
+
+.ssoBtn {
+  background: #1890ff !important;
+  color: #fff !important;
+  border: none;
+  margin-top: 0.5rem;
+  margin-bottom: 1.4375rem;
+  font-size: 1.1rem;
+  height: 3.125rem;
+}
+
+.loginBtn:hover,
+.ssoBtn:hover {
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.signupRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+}
+
+.signupLink {
+  color: #1890ff;
+  font-weight: 500;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.leftSection,
+.rightSection,
+.formWrapper,
+.welcome,
+.brand,
+.optionsRow,
+.forgot,
+.loginBtn,
+.ssoBtn,
+.signupRow,
+.signupLink {
+  font-family: "Inter", sans-serif;
+}
+
+.formItem {
+  font-size: 1rem;
+}
+
+.formItem :global(.ant-form-item-label > label) {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.input {
+  font-size: 1rem;
+}
+
+.checkbox {
+  font-size: 0.875rem;
+}

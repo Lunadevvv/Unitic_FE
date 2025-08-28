@@ -1,0 +1,105 @@
+@use 'base';
+
+.user-wallet-page {
+  .ant-card {
+    border-radius: base.$border-radius;
+    box-shadow: 0 4px 20px rgba(base.$text-color, 0.08);
+    border: 1px solid rgba(base.$primary-color, 0.2);
+    margin-bottom: 24px;
+
+    .ant-card-head {
+      background: base.$gradient-primary-neon;
+      border-bottom: none;
+
+      .ant-card-head-title {
+        color: base.$white-1;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+    }
+  }
+
+  .ant-statistic {
+    .ant-statistic-title {
+      color: base.$text-color;
+      font-weight: 500;
+      font-size: 1rem;
+    }
+
+    .ant-statistic-content {
+      font-weight: 700;
+    }
+  }
+
+  .ant-table {
+    .ant-table-thead > tr > th {
+      background: base.$admin-card-bg;
+      color: base.$text-color;
+      font-weight: 600;
+      border-bottom: 2px solid rgba(base.$primary-color, 0.1);
+    }
+
+    .ant-table-tbody > tr {
+      transition: all base.$transition-speed ease;
+
+      &:hover > td {
+        background: rgba(base.$primary-color, 0.05);
+      }
+    }
+  }
+
+  .ant-btn-primary {
+    background: base.$gradient-primary-neon;
+    border: none;
+    font-weight: 600;
+    transition: all base.$transition-speed ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(base.$primary-color, 0.3);
+    }
+  }
+
+  .ant-modal {
+    .ant-modal-header {
+      background: base.$admin-card-bg;
+      border-bottom: 1px solid rgba(base.$primary-color, 0.1);
+
+      .ant-modal-title {
+        color: base.$text-color;
+        font-weight: 600;
+      }
+    }
+
+    .ant-modal-content {
+      border-radius: base.$border-radius;
+    }
+  }
+
+  .ant-form-item-label > label {
+    color: base.$text-color;
+    font-weight: 500;
+  }
+
+  .ant-input {
+    border-color: rgba(base.$primary-color, 0.3);
+
+    &:focus {
+      border-color: base.$primary-color;
+      box-shadow: 0 0 0 2px rgba(base.$primary-color, 0.2);
+    }
+  }
+
+  .ant-select {
+    .ant-select-selector {
+      border-color: rgba(base.$primary-color, 0.3);
+
+      &:focus {
+        border-color: base.$primary-color;
+        box-shadow: 0 0 0 2px rgba(base.$primary-color, 0.2);
+      }
+    }
+  }
+}

@@ -1,0 +1,379 @@
+@use 'base';
+
+// CheckoutPage Styles
+.checkout-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, base.$admin-card-bg 0%, base.$secondary-color 100%);
+
+  .checkout-header {
+    background: base.$white-1;
+    padding: 20px 0;
+    box-shadow: 0 2px 8px rgba(base.$text-color, 0.1);
+    margin-bottom: 30px;
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .checkout-title {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-top: 15px;
+
+      .back-button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+        
+        &:hover {
+          color: #1890ff;
+        }
+      }
+
+      h2 {
+        margin: 0;
+        color: #1890ff;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+    }
+  }
+
+  .checkout-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px 50px;
+  }
+
+  .checkout-steps {
+    margin-bottom: 30px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .checkout-content {
+    .ticket-selection-card,
+    .cart-items-card,
+    .customer-info-card,
+    .payment-method-card {
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      border: none;
+
+      .ant-card-head {
+        border-bottom: 2px solid #f0f0f0;
+        
+        .ant-card-head-title {
+          font-size: 18px;
+          font-weight: 600;
+          color: #262626;
+        }
+      }
+    }
+
+    .selected-ticket {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+
+      .ticket-info {
+        flex: 1;
+
+        .ticket-details {
+          margin-top: 10px;
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+
+          .ticket-price {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1890ff;
+          }
+        }
+      }
+    }
+
+    .payment-methods {
+      .payment-option {
+        width: 100%;
+        margin-bottom: 15px;
+        padding: 15px;
+        border: 2px solid #f0f0f0;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+
+        &:hover,
+        &.ant-radio-wrapper-checked {
+          border-color: #1890ff;
+          background: #f6ffff;
+        }
+
+        .payment-option-content {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          width: 100%;
+
+          .payment-icon {
+            font-size: 24px;
+            color: #1890ff;
+          }
+
+          .payment-details {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+          }
+        }
+      }
+    }
+
+    // New wallet payment styles
+    .wallet-payment-section {
+      .wallet-option-selected {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 20px;
+        background: linear-gradient(135deg, #1890ff 0%, #40a9ff 100%);
+        border-radius: 12px;
+        color: white;
+        margin-bottom: 20px;
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+          pointer-events: none;
+        }
+
+        .wallet-icon {
+          font-size: 32px;
+          color: white;
+          z-index: 1;
+        }
+
+        .wallet-details {
+          flex: 1;
+          z-index: 1;
+
+          .wallet-title {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+          }
+
+          .wallet-description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+          }
+        }
+
+        .check-icon {
+          font-size: 24px;
+          color: #52c41a;
+          z-index: 1;
+        }
+      }
+
+      .wallet-balance-info {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid #e9ecef;
+
+        .balance-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 12px;
+
+          &:last-child {
+            margin-bottom: 0;
+            padding-top: 12px;
+            border-top: 1px solid #e9ecef;
+          }
+
+          .balance-amount {
+            color: #1890ff;
+            font-size: 16px;
+            font-weight: 600;
+          }
+
+          .payment-amount {
+            color: #fa8c16;
+            font-size: 16px;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+
+    .card-form {
+      margin-top: 20px;
+      padding: 20px;
+      background: #fafafa;
+      border-radius: 8px;
+    }
+  }
+
+  .order-summary-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: none;
+
+    &.sticky {
+      position: sticky;
+      top: 20px;
+    }
+
+    .summary-line {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .summary-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+
+      .total-amount {
+        font-size: 20px;
+        color: #1890ff;
+      }
+    }
+
+    .security-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 15px 0;
+      padding: 10px;
+      background: #f6ffed;
+      border-radius: 6px;
+
+      .security-icon {
+        color: #52c41a;
+      }
+    }
+
+    .checkout-button {
+      height: 50px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 8px;
+      margin-top: 15px;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(24, 144, 255, 0.3);
+      }
+
+      &.wallet-payment-btn {
+        background: linear-gradient(135deg, #1890ff 0%, #40a9ff 100%);
+        border: none;
+        height: 55px;
+        font-size: 17px;
+        box-shadow: 0 4px 15px rgba(24, 144, 255, 0.3);
+
+        &:hover:not(:disabled) {
+          background: linear-gradient(135deg, #40a9ff 0%, #1890ff 100%);
+          transform: translateY(-3px);
+          box-shadow: 0 8px 25px rgba(24, 144, 255, 0.4);
+        }
+
+        &:disabled {
+          background: #d9d9d9;
+          color: #bfbfbf;
+          cursor: not-allowed;
+          transform: none;
+          box-shadow: none;
+
+          &:hover {
+            background: #d9d9d9;
+            transform: none;
+            box-shadow: none;
+          }
+        }
+      }
+    }
+  }
+
+  .checkout-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    gap: 20px;
+
+    p {
+      font-size: 16px;
+      color: #666;
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .checkout-page {
+    .checkout-header {
+      .checkout-title {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+    }
+
+    .checkout-steps {
+      .ant-steps-item-title {
+        font-size: 12px;
+      }
+    }
+
+    .order-summary-card.sticky {
+      position: relative;
+      top: auto;
+    }
+
+    .checkout-content {
+      .wallet-payment-section {
+        .wallet-option-selected {
+          flex-direction: column;
+          text-align: center;
+          gap: 10px;
+
+          .wallet-details {
+            text-align: center;
+          }
+        }
+
+        .wallet-balance-info {
+          .balance-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+          }
+        }
+      }
+    }
+  }
+}

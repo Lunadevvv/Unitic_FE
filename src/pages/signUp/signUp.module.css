@@ -1,0 +1,109 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
+
+html {
+  font-size: 16px;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+.container {
+  font-family: "Inter", sans-serif;
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background: #fcd97b;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 1.5rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.formWrapper {
+  background: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.125rem 1rem rgba(0, 0, 0, 0.08);
+  padding: 3.75rem 3.75rem 1rem 3.75rem;
+  max-width: 56.25rem; /* 900px */
+  width: 70%;
+  min-width: 21.875rem; /* 350px */
+}
+
+.back {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.back:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.brand {
+  font-size: 7.5rem; /* 120px */
+  font-weight: bold;
+  color: #222;
+  text-align: center;
+  width: 100%;
+  /* margin-bottom: 2rem; */
+}
+
+.row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.mainInput {
+  font-size: 1rem;
+  height: 3.125rem;
+  flex: 1;
+}
+
+.registerBtn {
+  background: #fbc02d !important;
+  border: none;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  height: 3.125rem;
+  font-weight: 500;
+}
+
+.divider {
+  font-size: 1rem;
+}
+
+.ssoBtn {
+  background: #1890ff !important;
+  color: #fff !important; 
+  border: none;
+  margin-top: 0.5rem;
+  margin-bottom: 1.4375rem;
+  font-size: 1.1rem;
+  height: 3.125rem;
+}
+
+.registerBtn:hover, .ssoBtn:hover {
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+
+.loginRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+}
+
+.loginLink {
+  color: #1890ff;
+  font-weight: 500;
+  text-decoration: underline;
+  cursor: pointer;
+}

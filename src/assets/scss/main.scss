@@ -1,0 +1,92 @@
+// Main SCSS file - imports all component styles
+@use 'base';
+@use 'fonts';
+@use 'layout';
+@use 'header';
+@use 'carousel';
+@use 'sections';
+@use 'cards';
+@use 'animations';
+@use 'filter';
+
+// Admin styles
+@use 'AdminLayout';
+@use 'DashboardPage';
+@use 'UserManagementPage';
+@use 'EventManagementPage';
+@use 'OrderManagementPage';
+@use 'TicketManagementPage';
+@use 'ReportsPage';
+
+// Page styles that exist
+@use 'HomePage';
+@use 'EventPage';
+@use 'EventCard';
+@use 'EventCarousel';
+@use 'EventDetail';
+@use 'EventFilter';
+@use 'CheckoutPage';
+@use 'Cart';
+@use 'CategoryTabs';
+@use 'ContactPage';
+@use 'AboutPage';
+@use 'SettingsPage';
+@use 'HelpPage';
+@use 'MyEventsPage';
+@use 'MyTicketsPage';
+@use 'UserProfilePage';
+@use 'MainLayout';
+
+// Global styles
+body {
+  font-family: base.$font-family;
+  background-color: #f8f8f8;
+  color: base.$text-color;
+}
+
+.ant-layout {
+  background-color: #f8f8f8;
+}
+
+.ant-card {
+  border-radius: base.$border-radius;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.ant-btn-primary {
+  background: base.$gradient-primary-neon;
+  border: none;
+  border-radius: 8px;
+  
+  &:hover {
+    background: base.$gradient-primary-neon-dark;
+    transform: translateY(-1px);
+  }
+}
+
+.ant-input {
+  border-radius: 8px;
+  
+  &:focus {
+    border-color: base.$primary-color;
+    box-shadow: 0 0 0 2px rgba(base.$primary-color, 0.2);
+  }
+}
+
+.ant-table {
+  .ant-table-thead > tr > th {
+    background: base.$accent-color-1;
+    color: base.$white-1;
+    border-bottom: 2px solid base.$secondary-color;
+  }
+}
+
+.ant-menu {
+  &.ant-menu-dark {
+    background: base.$dark-bg;
+    
+    .ant-menu-item-selected {
+      background: base.$primary-color;
+    }
+  }
+}

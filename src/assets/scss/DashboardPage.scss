@@ -1,0 +1,158 @@
+@use 'base';
+
+// DashboardPage Styles
+.dashboard-page {
+  .dashboard-cards {
+    margin-bottom: 24px;
+
+    .ant-col {
+      margin-bottom: 16px;
+    }
+  }
+
+  .stat-card {
+    .ant-card {
+      border-radius: base.$border-radius;
+      @include base.card-shadow;
+      border: 1px solid base.$admin-border;
+      transition: all base.$transition-speed ease;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(base.$primary-color, 0.15);
+      }
+
+      .ant-card-body {
+        padding: 20px;
+      }
+    }
+
+    .stat-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .stat-info {
+        h3 {
+          margin: 0 0 8px 0;
+          color: base.$text-color;
+          font-size: 14px;
+          font-weight: 500;
+        }
+
+        .stat-value {
+          font-size: 24px;
+          font-weight: 700;
+          color: base.$primary-color;
+          margin: 0;
+        }
+
+        .stat-change {
+          font-size: 12px;
+          margin-top: 4px;
+
+          &.positive {
+            color: base.$status-active;
+          }
+
+          &.negative {
+            color: base.$status-expired;
+          }
+        }
+      }
+
+      .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        @include base.flex-center;
+        font-size: 20px;
+        color: base.$white-1;
+
+        &.users {
+          background: base.$gradient-blue;
+        }
+
+        &.events {
+          background: base.$gradient-green;
+        }
+
+        &.revenue {
+          background: base.$gradient-yellow;
+        }
+
+        &.orders {
+          background: linear-gradient(135deg, base.$primary-color, base.$secondary-color);
+        }
+      }
+    }
+  }
+
+  .chart-cards {
+    .ant-card {
+      border-radius: base.$border-radius;
+      @include base.card-shadow;
+      border: 1px solid base.$admin-border;
+
+      .ant-card-head {
+        background: base.$admin-card-bg;
+        border-bottom: 1px solid base.$admin-border;
+
+        .ant-card-head-title {
+          color: base.$text-color;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+
+  .recent-activities {
+    .activity-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid base.$border-light;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .activity-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        @include base.flex-center;
+        margin-right: 12px;
+        font-size: 14px;
+        color: base.$white-1;
+
+        &.user {
+          background: base.$gradient-blue;
+        }
+
+        &.event {
+          background: base.$gradient-green;
+        }
+
+        &.order {
+          background: base.$gradient-yellow;
+        }
+      }
+
+      .activity-content {
+        flex: 1;
+
+        .activity-title {
+          font-weight: 500;
+          color: base.$text-color;
+          margin: 0 0 2px 0;
+        }
+
+        .activity-time {
+          font-size: 12px;
+          color: base.$text-secondary;
+        }
+      }
+    }
+  }
+}

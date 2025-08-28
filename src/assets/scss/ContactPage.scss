@@ -1,0 +1,431 @@
+@use 'base';
+
+.contact-page {
+  .contact-hero {
+    background: base.$gradient-primary-neon;
+    padding: 80px 0;
+    text-align: center;
+    color: base.$white-1;
+
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 20px;
+
+      h1 {
+        color: base.$white-1 !important;
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(base.$darker-bg, 0.3);
+      }
+
+      .hero-description {
+        font-size: 1.2rem;
+        line-height: 1.8;
+        color: rgba(base.$white-1, 0.9) !important;
+      }
+    }
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .contact-info-section {
+    padding: 80px 0;
+    background: base.$white-1;
+
+    .contact-info-card {
+      text-align: center;
+      padding: 30px 20px;
+      border-radius: base.$border-radius;
+      border: none;
+      height: 100%;
+      transition: all base.$transition-speed ease;
+      box-shadow: 0 4px 20px rgba(base.$text-color, 0.08);
+
+      &:hover {
+        box-shadow: 0 12px 40px rgba(base.$text-color, 0.15);
+      }
+
+      .info-icon {
+        font-size: 3rem;
+        color: base.$primary-color;
+        margin-bottom: 20px;
+        display: block;
+      }
+
+      h4 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: base.$text-color;
+      }
+
+      .info-content {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: base.$primary-color !important;
+        margin-bottom: 8px;
+      }
+
+      .info-description {
+        color: base.$light-text-color !important;
+        font-size: 14px;
+        margin: 0;
+      }
+    }
+  }
+
+  .contact-form-section {
+    padding: 80px 0;
+    background: base.$admin-card-bg;
+
+    .contact-form-card {
+      border-radius: base.$border-radius;
+      border: none;
+      box-shadow: 0 8px 30px rgba(base.$text-color, 0.1);
+
+      .ant-card-head {
+        border-bottom: 2px solid rgba(base.$primary-color, 0.1);
+        border-radius: base.$border-radius base.$border-radius 0 0;
+
+        .ant-card-head-title {
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: base.$text-color;
+        }
+      }
+
+      .contact-form {
+        .ant-form-item-label > label {
+          font-weight: 600;
+          color: base.$text-color;
+        }
+
+        .ant-input,
+        .ant-input-affix-wrapper {
+          border-radius: base.$border-radius;
+          border: 2px solid rgba(base.$primary-color, 0.2);
+          padding: 12px 15px;
+          font-size: 15px;
+
+          &:hover {
+            border-color: base.$primary-color;
+          }
+
+          &:focus,
+          &.ant-input-affix-wrapper-focused {
+            border-color: base.$primary-color;
+            box-shadow: 0 0 0 3px rgba(base.$primary-color, 0.1);
+          }
+        }
+
+        .ant-input {
+          height: 45px;
+        }
+
+        .ant-btn {
+          height: 50px;
+          font-size: 16px;
+          font-weight: 600;
+          border-radius: base.$border-radius;
+          background: base.$gradient-primary-neon;
+          border: none;
+          transition: all base.$transition-speed ease;
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(base.$primary-color, 0.3);
+          }
+        }
+      }
+    }
+
+    .map-card {
+      border-radius: base.$border-radius;
+      border: none;
+      box-shadow: 0 8px 30px rgba(base.$text-color, 0.1);
+
+      .ant-card-head {
+        border-bottom: 2px solid rgba(base.$primary-color, 0.1);
+        border-radius: base.$border-radius base.$border-radius 0 0;
+
+        .ant-card-head-title {
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: base.$text-color;
+        }
+      }
+
+      .map-container {
+        margin-bottom: 20px;
+        border-radius: base.$border-radius;
+        overflow: hidden;
+      }
+
+      .map-info {
+        h5 {
+          font-size: 1.2rem;
+          font-weight: 600;
+          margin-bottom: 12px;
+          color: base.$text-color;
+        }
+
+        .ant-typography {
+          color: base.$light-text-color;
+          margin-bottom: 8px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          .anticon {
+            color: base.$primary-color;
+          }
+        }
+      }
+    }
+  }
+
+  .faq-section {
+    padding: 80px 0;
+    background: base.$white-1;
+
+    .section-title {
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 50px;
+      color: base.$text-color;
+    }
+
+    .faq-card {
+      border-radius: base.$border-radius;
+      border: none;
+      box-shadow: 0 4px 20px rgba(base.$text-color, 0.08);
+      transition: all base.$transition-speed ease;
+
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(base.$text-color, 0.12);
+      }
+
+      .faq-question {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: base.$text-color;
+        margin-bottom: 12px;
+      }
+
+      .faq-answer {
+        color: base.$light-text-color;
+        line-height: 1.6;
+        margin: 0;
+      }
+    }
+  }
+
+  .cta-section {
+    padding: 60px 0;
+    background: base.$admin-card-bg;
+
+    .cta-card {
+      text-align: center;
+      padding: 50px 30px;
+      border-radius: 20px;
+      border: none;
+      background: base.$gradient-primary-neon;
+      color: base.$white-1;
+      box-shadow: 0 12px 40px rgba(base.$text-color, 0.15);
+
+      h3 {
+        color: base.$white-1 !important;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+      }
+
+      .ant-typography {
+        color: rgba(base.$white-1, 0.9) !important;
+        font-size: 1.1rem;
+        margin-bottom: 30px;
+      }
+
+      .ant-btn {
+        height: 50px;
+        padding: 0 30px;
+        font-size: 16px;
+        font-weight: 600;
+        border-radius: 25px;
+        border: 2px solid base.$white-1;
+        transition: all base.$transition-speed ease;
+
+        &.ant-btn-primary {
+          background: base.$white-1;
+          color: base.$primary-color;
+
+          &:hover {
+            background: transparent;
+            color: base.$white-1;
+            transform: translateY(-2px);
+          }
+        }
+
+        &:not(.ant-btn-primary) {
+          background: transparent;
+          color: base.$white-1;
+
+          &:hover {
+            background: base.$white-1;
+            color: base.$primary-color;
+            transform: translateY(-2px);
+          }
+        }
+      }
+    }
+  }
+
+  // Antd components customization
+  .ant-card {
+    border-radius: base.$border-radius;
+    box-shadow: 0 4px 20px rgba(base.$text-color, 0.08);
+    border: 1px solid rgba(base.$primary-color, 0.2);
+
+    .ant-card-head {
+      background: base.$gradient-primary-neon;
+      border-bottom: none;
+
+      .ant-card-head-title {
+        color: base.$white-1;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .ant-form-item-label > label {
+    color: base.$text-color;
+    font-weight: 500;
+  }
+
+  .ant-input {
+    border-color: rgba(base.$primary-color, 0.3);
+    transition: all base.$transition-speed ease;
+
+    &:focus {
+      border-color: base.$primary-color;
+      box-shadow: 0 0 0 2px rgba(base.$primary-color, 0.2);
+    }
+  }
+
+  .ant-btn-primary {
+    background: base.$gradient-primary-neon;
+    border: none;
+    font-weight: 600;
+    transition: all base.$transition-speed ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(base.$primary-color, 0.3);
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .contact-page {
+    .contact-hero {
+      padding: 60px 0;
+
+      .hero-content {
+        h1 {
+          font-size: 2.5rem;
+        }
+
+        .hero-description {
+          font-size: 1.1rem;
+        }
+      }
+    }
+
+    .contact-info-section,
+    .contact-form-section,
+    .faq-section {
+      padding: 60px 0;
+    }
+
+    .section-title {
+      font-size: 2rem !important;
+    }
+
+    .contact-info-card {
+      margin-bottom: 20px;
+    }
+
+    .cta-section {
+      padding: 40px 0;
+
+      .cta-card {
+        padding: 40px 20px;
+
+        h3 {
+          font-size: 1.5rem !important;
+        }
+
+        .ant-space {
+          flex-direction: column;
+          width: 100%;
+
+          .ant-btn {
+            width: 100%;
+            margin-bottom: 15px;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-page {
+    .contact-hero {
+      padding: 40px 0;
+
+      .hero-content {
+        h1 {
+          font-size: 2rem;
+        }
+
+        .hero-description {
+          font-size: 1rem;
+        }
+      }
+    }
+
+    .container {
+      padding: 0 15px;
+    }
+
+    .contact-info-section,
+    .contact-form-section,
+    .faq-section {
+      padding: 40px 0;
+    }
+
+    .section-title {
+      font-size: 1.8rem !important;
+    }
+
+    .contact-form-card .contact-form {
+      .ant-row .ant-col {
+        margin-bottom: 0;
+      }
+    }
+
+    .faq-card {
+      margin-bottom: 15px;
+    }
+  }
+}

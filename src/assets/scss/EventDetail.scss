@@ -1,0 +1,935 @@
+@use 'base';
+@use 'animations';
+
+.event-detail-page {
+  background-color: #f0f2f5; /* Light grey background for the page */
+  color: #333; /* Darker text for readability on light background */
+  position: relative;
+  padding-bottom: 60px;
+}
+
+.event-detail-loading {
+  height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #555; /* Adjusted for light background */
+
+  .loading-pulse {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: rgba(base.$neon-blue, 0.2);
+    box-shadow: 0 0 15px rgba(base.$neon-blue, 0.5); /* Adjusted shadow for visibility on light bg */
+    margin-bottom: 20px;
+    animation: pulse 1.5s infinite ease-in-out;
+  }
+}
+
+.event-detail-header {
+  height: 400px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  /* Keep the header overlay dark for visual contrast and style */
+  
+  .parallax-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 120%;
+    background-size: cover;
+    background-color: rgba(255, 255, 255, 0.2);
+    z-index: 1;
+    will-change: transform;
+  }
+  
+  .event-header-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(base.$darker-bg, 0.85), rgba(base.$dark-background, 0.95)); /* Keep dark for strong visual impact */
+    z-index: 2;
+  }
+  
+  .event-header-content {
+    position: relative;
+    z-index: 3;
+    padding: 40px 50px;
+    width: 100%;
+    
+    .back-button {
+      position: absolute;
+      top: -60px;
+      left: 50px;
+      color: base.$white-1; /* Keep white for contrast on dark overlay */
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      ;
+      &:hover {
+        @include base.neon-text(base.$neon-blue);
+      }
+    }
+    
+    .featured-badge {
+      display: inline-block;
+      background: linear-gradient(45deg, base.$accent-color-1, base.$accent-color-2);
+      color: base.$dark-bg; /* Keep dark text for contrast on badge */
+      padding: 5px 15px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      font-size: 0.9em;
+      margin-bottom: 15px;
+    }
+    
+    .event-title {
+      font-size: 3em;
+      font-weight: 800;
+      margin-bottom: 20px;
+      @include base.neon-text(base.$white-1); /* Keep white/neon for contrast */
+      text-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    }
+    
+    .event-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      
+      .event-info {
+        align-items: center;
+        gap: 15px;
+        
+        .event-rating {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          
+          .anticon-star {
+            color: #fadb14;
+          }
+        }
+        
+        /* The background here seems like it's for status,
+           so I'm adjusting its internal text color to dark for readability */
+        background: linear-gradient(45deg, base.$accent-color-1, base.$accent-color-2);
+        color: base.$dark-bg; /* Ensure text is dark on this badge */
+          &.available {
+            background-color: rgba(82, 196, 26, 0.15);
+            color: #73d13d;
+            border: 1px solid rgba(82, 196, 26, 0.3);
+          }
+        }
+        
+        .category-tag {
+          cursor: pointer;
+          transition: all 0.3s ease;
+          /* Adjust for light background */
+          background-color: rgba(255, 255, 255, 0.4);
+          color: #333;
+          border: 1px solid rgba(0, 0, 0, 0.1);
+          padding: 8px 15px;
+          border-radius: 25px;
+          font-weight: 500;
+          font-size: 0.95em;
+          
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(24, 144, 255, 0.2); /* Lighter shadow for light background */
+            background-color: rgba(255, 255, 255, 0.6);
+          }
+        }
+      }
+    }
+    
+    /* Add floating elements like in EventCategoryPage */
+    .hero-floating-elements {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      overflow: hidden;
+      z-index: 2;
+      
+      .floating-circle, .floating-square {
+        position: absolute;
+        filter: blur(25px);
+        opacity: 0.7;
+        animation: floatEffect 18s infinite ease-in-out alternate;
+      }
+
+      .floating-circle.circle-1 {
+        width: 90px;
+        height: 90px;
+        top: 15%;
+        left: 8%;
+        background: rgba(base.$neon-blue, 0.4);
+        animation-duration: 20s;
+        animation-delay: 1.5s;
+      }
+
+      .floating-circle.circle-2 {
+        width: 130px;
+        height: 130px;
+        bottom: 18%;
+        right: 12%;
+        background: rgba(base.$accent-color-1, 0.4);
+        animation-duration: 22s;
+        animation-delay: 2.5s;
+      }
+
+      .floating-circle.circle-3 {
+        width: 70px;
+        height: 70px;
+        top: 35%;
+        right: 25%;
+        background: rgba(base.$primary-color, 0.4);
+        animation-duration: 18s;
+        animation-delay: 1s;
+      }
+
+      .floating-square {
+        width: 110px;
+        height: 110px;
+        top: 65%;
+        left: 28%;
+        border-radius: 20px;
+        background: rgba(base.$secondary-color, 0.4);
+        animation-duration: 25s;
+        animation-delay: 3.5s;
+        transform: rotate(45deg);
+      }
+    }
+}
+
+.event-detail-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  
+  .event-breadcrumb {
+    margin-bottom: 30px;
+    color: #555; /* Darker text for readability */
+    
+    a {
+      color: #777; /* Slightly lighter for links */
+      
+      &:hover {
+        color: base.$neon-blue; /* Neon color on hover */
+      }
+    }
+    
+    .ant-breadcrumb-separator {
+      color: #999; /* Separator color */
+    }
+  }
+  
+  // Style sections like in EventCategoryPage - apply white background and frame
+  .event-section {
+    margin-bottom: 40px;
+    background-color: #fff; /* White background for sections */
+    border-radius: base.$border-radius;
+    border: 1px solid rgba(0, 0, 0, 0.1); /* Subtle border for framing */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Soft shadow for depth */
+    padding: 25px;
+    
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Subtle border */
+      padding-bottom: 15px;
+      
+      .section-title {
+        font-size: 1.8em;
+        margin: 0;
+        color: #333; /* Dark text */
+        display: flex;
+        align-items: center;
+        
+        .section-icon {
+          margin-right: 10px;
+          color: base.$neon-blue; /* Keep neon color for icons */
+        }
+      }
+      
+      .view-all-link {
+        color: base.$neon-blue; /* Keep neon color for links */
+        display: flex;
+        align-items: center;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+  
+  .event-detail-content {
+    .event-gallery {
+      margin-bottom: 30px;
+      border-radius: base.$border-radius;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Soft shadow */
+      
+      .gallery-item {
+        height: 400px;
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+    }
+    
+    .event-tabs {
+      margin-bottom: 40px;
+      
+      .ant-tabs-nav {
+        margin-bottom: 24px;
+        
+        &::before {
+          border-bottom-color: rgba(0, 0, 0, 0.1); /* Subtle tab underline */
+        }
+        
+        .ant-tabs-tab {
+          color: #777; /* Default tab text color */
+          padding: 12px 0;
+          font-size: 16px;
+          
+          &.ant-tabs-tab-active .ant-tabs-tab-btn {
+            color: base.$neon-blue; /* Active tab neon color */
+          }
+          
+          &:hover {
+            color: base.$neon-blue;
+          }
+        }
+        
+        .ant-tabs-ink-bar {
+          background: base.$neon-gradient-cyberpunk; /* Keep neon gradient for active tab indicator */
+          height: 3px;
+        }
+      }
+    }
+    
+    .event-description {
+      h4 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #333; /* Dark text */
+      }
+      
+      .ant-typography {
+        color: #555; /* Darker text for paragraphs */
+        font-size: 16px;
+        line-height: 1.7;
+      }
+      
+      .event-highlights {
+        margin: 30px 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        
+        .highlight-item {
+          background-color: #f9f9f9; /* Slightly off-white for highlight items */
+          border-radius: base.$border-radius;
+          padding: 15px;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          min-width: 200px;
+          flex: 1;
+          border: 1px solid rgba(0, 0, 0, 0.08); /* Subtle border */
+          transition: all 0.3s ease;
+          
+          &:hover {
+            border-color: base.$neon-blue;
+            box-shadow: 0 2px 8px rgba(base.$neon-blue, 0.1); /* Lighter shadow on hover */
+            transform: translateY(-3px);
+          }
+          
+          .highlight-icon {
+            font-size: 24px;
+            color: base.$neon-blue;
+          }
+          
+          .highlight-content {
+            display: flex;
+            flex-direction: column;
+            
+            .ant-typography {
+              margin: 0;
+              line-height: 1.3;
+              
+              &:first-child {
+                font-size: 16px;
+                color: #333; /* Dark text */
+              }
+              
+              &:last-child {
+                font-size: 14px;
+                color: #777; /* Lighter dark text */
+              }
+            }
+          }
+        }
+      }
+      
+      .event-schedule {
+        .ant-list-item {
+          display: flex;
+          border-color: rgba(0, 0, 0, 0.1); /* Subtle border */
+          padding: 16px;
+          
+          .schedule-time {
+            font-weight: bold;
+            color: base.$neon-blue;
+            min-width: 150px;
+            margin-right: 20px;
+          }
+        }
+      }
+    }
+    
+    .event-location {
+      h4{
+        color: #333; /* Dark text */
+      }
+      .location-map {
+        margin: 20px 0;
+        border-radius: base.$border-radius;
+        overflow: hidden;
+        height: 300px;
+        color: #333; /* Dark text */
+        border: 1px solid rgba(0, 0, 0, 0.1); /* Subtle border for map */
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* Soft shadow for map */
+        
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+    }
+    
+    .event-policy {
+      .ant-list-item {
+        border-color: rgba(0, 0, 0, 0.1); /* Subtle border */
+        color: #555; /* Dark text */
+      }
+    }
+  }
+  
+  .event-sidebar {
+    .event-actions {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+      
+      .buy-ticket-button {
+        flex: 1;
+        height: 50px;
+        background: base.$neon-gradient-cyberpunk; /* Keep neon gradient for primary action */
+        border: none;
+        font-weight: bold;
+        font-size: 1.1em;
+        position: relative;
+        overflow: hidden;
+        color: base.$white-1; /* White text on neon button */
+        
+        .button-text {
+          position: relative;
+          z-index: 2;
+        }
+        
+        .hover-slide {
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: rgba(255, 255, 255, 0.2);
+          transition: left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          z-index: 1;
+        }
+        
+        &:hover {
+          box-shadow: 0 0 15px rgba(base.$neon-blue, 0.5); /* Adjusted shadow for light background */
+          
+          .hover-slide {
+            left: 0;
+          }
+        }
+      }
+      
+      .like-button, .share-button {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #fff; /* White background */
+        border: 1px solid rgba(0, 0, 0, 0.1); /* Subtle border */
+        color: #777; /* Default icon color */
+        transition: all 0.3s ease;
+        border-radius: base.$border-radius; /* Added border-radius for consistency */
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Soft shadow */
+        
+        &:hover {
+          background-color: rgba(base.$neon-blue, 0.1);
+          border-color: base.$neon-blue;
+          color: base.$neon-blue;
+          transform: translateY(-3px);
+          box-shadow: 0 4px 12px rgba(base.$neon-blue, 0.15); /* Enhanced shadow on hover */
+        }
+        
+        &.active {
+          background-color: rgba(base.$primary-color, 0.1);
+          border-color: base.$primary-color;
+          color: base.$primary-color;
+        }
+      }
+    }
+    
+    .event-details-card, .ticket-info {
+      background-color: #fff; /* White background for cards */
+      border-radius: base.$border-radius;
+      padding: 25px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(0, 0, 0, 0.1); /* Subtle border for framing */
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Soft shadow for depth */
+      
+      h3 {
+        font-size: 1.4em;
+        margin-bottom: 20px;
+        color: #333; /* Dark text */
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Subtle border */
+        padding-bottom: 10px;
+      }
+      
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        
+        li {
+          display: flex;
+          align-items: flex-start;
+          margin-bottom: 20px;
+          
+          .icon {
+            font-size: 1.5em;
+            color: base.$neon-blue;
+            margin-right: 15px;
+            margin-top: 3px;
+          }
+          
+          div {
+            strong {
+              display: block;
+              margin-bottom: 5px;
+              color: #333; /* Dark text */
+            }
+            
+            p {
+              color: #555; /* Lighter dark text */
+              margin: 0;
+            }
+            
+            .capacity-wrapper {
+              .capacity-bar {
+                height: 8px;
+                background-color: #e0e0e0; /* Lighter background for capacity bar */
+                border-radius: 4px;
+                margin: 8px 0;
+                overflow: hidden;
+                
+                .capacity-fill {
+                  height: 100%;
+                  background: linear-gradient(to right, base.$primary-color, base.$accent-color-1);
+                  border-radius: 4px;
+                }
+              }
+              
+              span {
+                font-size: 0.9em;
+                color: #777; /* Lighter dark text */
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    .ticket-info {
+      .ticket-price {
+        display: flex;
+        align-items: baseline;
+        margin-bottom: 20px;
+        
+        .price {
+          font-size: 2.5em;
+          font-weight: bold;
+          color: base.$neon-blue; /* Keep neon color for price */
+          text-shadow: 0 0 8px rgba(base.$neon-blue, 0.3); /* Softer neon shadow */
+        }
+        
+        .per-ticket {
+          margin-left: 10px;
+          color: #777; /* Lighter dark text */
+        }
+      }
+      
+      .ticket-note {
+        font-size: 0.9em;
+        color: #999; /* Even lighter dark text for notes */
+        margin-bottom: 20px;
+      }
+      
+      .mobile-buy-button {
+        display: none;
+        background: base.$neon-gradient-cyberpunk;
+        border: none;
+        height: 50px;
+        font-weight: bold;
+        font-size: 1.1em;
+        color: base.$white-1; /* White text on neon button */
+      }
+    }
+  }
+  
+  .related-events {
+    h2 {
+      font-size: 1.8em;
+      margin-bottom: 30px;
+      color: #333; /* Dark text for section title */
+      /* Remove neon-text for a cleaner look, or apply a subtle neon effect if desired */
+      /* @include base.neon-text(base.$white-1); */ 
+    }
+    
+    .related-event-card {
+      border-radius: base.$border-radius;
+      overflow: hidden;
+      background-color: #fff; /* White background for related event cards */
+      border: 1px solid rgba(0, 0, 0, 0.1); /* Subtle border for framing */
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Soft shadow for depth */
+      transition: all 0.3s ease;
+      height: 100%;
+      
+      .related-event-image {
+        height: 200px;
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        
+        .related-event-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent 70%);
+        }
+        
+        .related-event-date {
+          position: absolute;
+          bottom: 15px;
+          left: 15px;
+          color: base.$white-1; /* Keep white for contrast on image overlay */
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          font-size: 0.9em;
+          z-index: 2;
+        }
+        
+        .related-event-category {
+          position: absolute;
+          top: 15px;
+          right: 15px;
+          z-index: 2;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          /* Sync with general category tag style for consistency */
+          background-color: rgba(255, 255, 255, 0.4);
+          color: #333;
+          border: 1px solid rgba(0, 0, 0, 0.1);
+          padding: 6px 12px;
+          border-radius: 20px;
+          font-weight: 500;
+          font-size: 0.85em;
+          
+          &:hover {
+            transform: translateY(-2px);
+            background-color: rgba(255, 255, 255, 0.6);
+          }
+        }
+      }
+      
+      .related-event-content {
+        padding: 20px;
+        
+        h3 {
+          font-size: 1.2em;
+          margin-bottom: 10px;
+          color: #333; /* Dark text */
+          transition: all 0.3s ease;
+          @include base.text-truncate(2);
+        }
+        
+        p {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          color: #777; /* Lighter dark text */
+          margin-bottom: 15px;
+          font-size: 0.9em;
+        }
+        
+        .related-event-footer {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          
+          .related-event-price {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: base.$primary-color; /* Keep primary color for price */
+          }
+        }
+      }
+      
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(base.$neon-blue, 0.15); /* Enhanced shadow on hover */
+        border-color: base.$neon-blue; /* Neon border on hover */
+        
+        h3 {
+          color: base.$neon-blue; /* Neon text on hover */
+        }
+      }
+    }
+  }
+  
+  // Sync hero-category-tag with EventCategoryPage style
+  .hero-category-tag {
+    background-color: rgba(0, 0, 0, 0.05); /* Lighter background for tags */
+    border: 1px solid rgba(0, 0, 0, 0.1); /* Subtle border */
+    color: #555; /* Darker text */
+    padding: 8px 15px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all base.$fast-transition ease;
+    font-weight: 500;
+    font-size: 0.95em;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.1); /* Slightly darker on hover */
+      border-color: rgba(0, 0, 0, 0.2);
+      transform: translateY(-3px);
+    }
+  }
+}
+
+.event-feedback-section {
+  margin-top: 32px;
+  background: #fff; /* White background for feedback section */
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 24px 0 rgba(0,0,0,0.08); /* Softer shadow */
+  border: 1px solid rgba(0, 0, 0, 0.1); /* Subtle border */
+
+  .event-feedback-title {
+    color: #333; /* Dark text */
+    font-weight: 600;
+    font-size: 30px;
+    margin-bottom: 16px;
+  }
+}
+
+.feedback-chat-item-horizontal {
+  background: #fff; /* White background for chat items */
+  border-radius: 14px;
+  margin-bottom: 18px;
+  padding: 18px 24px;
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.08); /* Softer shadow */
+  border: 1px solid rgba(0, 0, 0, 0.1); /* Subtle border */
+  display: flex;
+  align-items: flex-start;
+}
+.feedback-chat-row {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+}
+.feedback-chat-avatar {
+  margin-right: 18px;
+  flex-shrink: 0;
+}
+.feedback-chat-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.feedback-chat-name-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+.feedback-chat-name {
+  color: #333; /* Dark text */
+  font-weight: 700;
+  font-size: 1.1em;
+}
+.feedback-chat-time {
+  color: #777; /* Lighter dark text */
+  font-size: 0.95em;
+  font-weight: 400;
+}
+.feedback-chat-content {
+  color: #555; /* Darker text */
+  font-size: 1.05em;
+  margin-top: 2px;
+  word-break: break-word;
+}
+
+@keyframes floatEffect {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 0.7; }
+  50% { transform: translate(25px, 35px) scale(1.15) rotate(7deg); opacity: 0.8; }
+  100% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 0.7; }
+}
+
+@media (max-width: 992px) {
+  .event-detail-header {
+    height: 350px;
+    
+    .event-header-content {
+      padding: 30px;
+      
+      .event-title {
+        font-size: 2.5em;
+      }
+      
+      .back-button {
+        top: -40px;
+        left: 30px;
+      }
+    }
+  }
+  
+  .event-detail-container {
+    .event-detail-content {
+      .event-gallery {
+        .gallery-item {
+          height: 300px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .event-detail-header {
+    height: 300px;
+    
+    .event-header-content {
+      padding: 25px;
+      
+      .event-title {
+        font-size: 2em;
+      }
+      
+      .back-button {
+        top: -30px;
+        left: 25px;
+      }
+    }
+  }
+  
+  .event-detail-container {
+    padding: 30px 15px;
+    
+    .event-sidebar {
+      .event-actions {
+        margin-top: 20px;
+      }
+      
+      .ticket-info {
+        .mobile-buy-button {
+          display: block;
+        }
+      }
+    }
+    
+    .event-description {
+      .event-highlights {
+        .highlight-item {
+          min-width: 150px;
+          flex: 1 1 45%;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .event-detail-header {
+    height: 250px;
+    
+    .event-header-content {
+      padding: 20px;
+      
+      .event-title {
+        font-size: 1.7em;
+        margin-bottom: 15px;
+      }
+      
+      .event-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+    }
+  }
+  
+  .event-detail-container {
+    .event-detail-content {
+      .event-gallery {
+        .gallery-item {
+          height: 200px;
+        }
+      }
+      
+      .event-description {
+        .event-highlights {
+          flex-direction: column;
+          gap: 15px;
+          
+          .highlight-item {
+            width: 100%;
+          }
+        }
+        
+        .event-schedule {
+          .ant-list-item {
+            flex-direction: column;
+            align-items: flex-start;
+            
+            .schedule-time {
+              margin-bottom: 8px;
+            }
+          }
+        }
+      }
+    }
+  }
+}

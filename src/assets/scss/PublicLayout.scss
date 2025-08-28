@@ -1,0 +1,44 @@
+@use 'base';
+
+.public-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  .public-content {
+    flex: 1;
+    padding: 0;
+    
+    // Override for transparent header overlay
+    .page-with-hero {
+      .app-header {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: transparent;
+        
+        &.scrolled {
+          background: rgba(base.$dark-bg, 0.9);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+        }
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .public-layout {
+    .public-content {
+      .page-with-hero {
+        .app-header {
+          position: relative;
+          background: rgba(base.$dark-bg, 0.9);
+        }
+      }
+    }
+  }
+}

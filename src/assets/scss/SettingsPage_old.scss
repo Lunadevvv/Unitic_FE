@@ -1,0 +1,353 @@
+// SettingsPage Styles
+.settings-page {
+  padding: 20px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+
+  .settings-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .settings-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 40px 20px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+
+    h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: #262626;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+
+      .anticon {
+        color: #1890ff;
+      }
+    }
+
+    .ant-typography {
+      font-size: 1.1rem;
+      color: #666;
+      margin: 0;
+    }
+  }
+
+  .settings-card {
+    margin-bottom: 24px;
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+
+    .ant-card-head {
+      border-bottom: 2px solid #f0f0f0;
+
+      .ant-card-head-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #262626;
+      }
+    }
+
+    .setting-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+
+      .setting-info {
+        flex: 1;
+
+        .ant-typography:first-child {
+          display: block;
+          margin-bottom: 4px;
+          font-size: 15px;
+        }
+
+        .ant-typography:last-child {
+          font-size: 13px;
+          margin: 0;
+        }
+      }
+
+      .ant-select {
+        .ant-select-selector {
+          border-radius: 8px;
+          border: 2px solid #f0f0f0;
+
+          &:hover {
+            border-color: #1890ff;
+          }
+        }
+
+        &.ant-select-focused .ant-select-selector {
+          border-color: #1890ff;
+          box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.1);
+        }
+      }
+    }
+
+    .ant-list {
+      .ant-list-item {
+        padding: 16px 0;
+        border-bottom: 1px solid #f0f0f0;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .ant-list-item-meta {
+          .ant-list-item-meta-avatar {
+            .anticon {
+              font-size: 20px;
+              color: #1890ff;
+            }
+          }
+
+          .ant-list-item-meta-title {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 4px;
+          }
+
+          .ant-list-item-meta-description {
+            font-size: 13px;
+            color: #666;
+          }
+        }
+
+        .ant-switch {
+          &.ant-switch-checked {
+            background-color: #1890ff;
+          }
+        }
+      }
+    }
+
+    .data-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+
+      .data-info {
+        flex: 1;
+
+        .ant-typography:first-child {
+          display: block;
+          margin-bottom: 4px;
+          font-size: 15px;
+        }
+
+        .data-description {
+          font-size: 13px;
+          margin: 0;
+        }
+      }
+
+      .ant-btn {
+        border-radius: 8px;
+        font-weight: 500;
+
+        &:hover {
+          transform: translateY(-2px);
+        }
+
+        &.ant-btn-dangerous:hover {
+          box-shadow: 0 4px 15px rgba(255, 77, 79, 0.3);
+        }
+      }
+    }
+  }
+
+  .settings-summary {
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+
+    .ant-card-head {
+      border-bottom: 2px solid #f0f0f0;
+
+      .ant-card-head-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #262626;
+      }
+    }
+
+    .summary-item {
+      text-align: center;
+
+      .ant-typography {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 13px;
+      }
+
+      .ant-tag {
+        border-radius: 12px;
+        font-weight: 500;
+        padding: 4px 12px;
+      }
+    }
+  }
+}
+
+// Modal Styles
+.ant-modal {
+  .ant-modal-header {
+    border-radius: 12px 12px 0 0;
+
+    .ant-modal-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+  }
+
+  .ant-modal-content {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .ant-modal-footer {
+    border-top: 1px solid #f0f0f0;
+    padding: 16px 24px;
+
+    .ant-btn {
+      border-radius: 8px;
+      font-weight: 500;
+
+      &:hover {
+        transform: translateY(-1px);
+      }
+    }
+  }
+
+  .ant-alert {
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+
+  ul {
+    padding-left: 20px;
+    margin-bottom: 16px;
+
+    li {
+      margin-bottom: 8px;
+      color: #666;
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .settings-page {
+    padding: 15px;
+
+    .settings-header {
+      padding: 30px 15px;
+
+      h2 {
+        font-size: 2rem;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .ant-typography {
+        font-size: 1rem;
+      }
+    }
+
+    .settings-card {
+      .setting-item,
+      .data-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+
+        .ant-select,
+        .ant-btn {
+          width: 100%;
+        }
+      }
+
+      .ant-list-item {
+        .ant-list-item-action {
+          margin-left: 0;
+          margin-top: 8px;
+        }
+      }
+    }
+
+    .settings-summary {
+      .ant-col {
+        margin-bottom: 16px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .settings-page {
+    .settings-header {
+      h2 {
+        font-size: 1.8rem;
+      }
+    }
+
+    .settings-card {
+      .ant-card-head {
+        .ant-card-head-title {
+          font-size: 1.1rem;
+        }
+      }
+
+      .setting-info,
+      .data-info {
+        .ant-typography:first-child {
+          font-size: 14px;
+        }
+
+        .ant-typography:last-child,
+        .data-description {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+}
+
+// Animation
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.settings-card {
+  animation: fadeInUp 0.5s ease;
+}
+
+.settings-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.settings-card:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.settings-summary {
+  animation: fadeInUp 0.5s ease 0.3s;
+  animation-fill-mode: both;
+}

@@ -1,0 +1,104 @@
+@use 'base';
+
+.btc-event-management {
+  .ant-card {
+    border-radius: base.$border-radius;
+    box-shadow: 0 4px 20px rgba(base.$text-color, 0.08);
+    border: 1px solid base.$admin-border;
+
+    .ant-card-head {
+      background: base.$gradient-primary-neon;
+      border-bottom: none;
+
+      .ant-card-head-title {
+        color: base.$white-1;
+        font-weight: 600;
+        font-size: 1.2rem;
+      }
+
+      .ant-card-extra {
+        .ant-btn {
+          background: rgba(base.$white-1, 0.2);
+          border-color: base.$white-1;
+          color: base.$white-1;
+
+          &:hover {
+            background: base.$white-1;
+            color: base.$primary-color;
+          }
+        }
+      }
+    }
+  }
+
+  .ant-statistic {
+    .ant-statistic-title {
+      color: base.$text-color;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .ant-statistic-content {
+      font-weight: 700;
+    }
+  }
+
+  .ant-progress {
+    .ant-progress-bg {
+      border-radius: 4px;
+    }
+  }
+
+  .ant-tabs {
+    .ant-tabs-tab {
+      color: base.$text-color;
+      font-weight: 500;
+
+      &.ant-tabs-tab-active {
+        color: base.$primary-color;
+        font-weight: 600;
+      }
+    }
+
+    .ant-tabs-ink-bar {
+      background: base.$primary-color;
+    }
+  }
+
+  .ant-table {
+    .ant-table-thead > tr > th {
+      background: base.$admin-card-bg;
+      color: base.$text-color;
+      font-weight: 600;
+      border-bottom: 2px solid base.$admin-border;
+    }
+
+    .ant-table-tbody > tr:hover > td {
+      background: base.$admin-hover;
+    }
+  }
+
+  .ant-tag {
+    font-weight: 500;
+    border-radius: 12px;
+    padding: 2px 8px;
+  }
+
+  .statistics-cards {
+    .ant-card {
+      border: 1px solid rgba(base.$primary-color, 0.2);
+      transition: all base.$transition-speed ease;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(base.$primary-color, 0.15);
+      }
+
+      .ant-card-head-title {
+        color: base.$text-color;
+        font-size: 1rem;
+        font-weight: 600;
+      }
+    }
+  }
+}

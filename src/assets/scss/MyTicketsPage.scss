@@ -1,0 +1,347 @@
+@use 'base';
+
+// MyTicketsPage Styles
+.my-tickets-page {
+  padding: 20px;
+  min-height: 100vh;
+  background: base.$gradient-purple-blue;
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 30px;
+    color: base.$white-1;
+
+    h2 {
+      color: base.$white-1 !important;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(base.$dark-bg, 0.3);
+    }
+
+    .ant-typography {
+      color: rgba(base.$white-1, 0.9) !important;
+      font-size: 16px;
+    }
+  }
+
+  .ticket-stats {
+    margin-bottom: 30px;
+
+    .ant-card {
+      border-radius: base.$border-radius;
+      @include base.card-shadow;
+      border: none;
+    }
+
+    .stat-card {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+
+      .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: base.$border-radius;
+        @include base.flex-center;
+        font-size: 24px;
+
+        &.active {
+          background: base.$gradient-green;
+          color: base.$white-1;
+        }
+
+        &.used {
+          background: base.$gradient-yellow;
+          color: base.$white-1;
+        }
+
+        &.total {
+          background: base.$gradient-blue;
+          color: base.$white-1;
+        }
+      }
+
+      .stat-content {
+        h3 {
+          margin: 0;
+          font-size: 24px;
+          font-weight: 700;
+          color: base.$text-color;
+        }
+
+        span {
+          color: base.$text-secondary;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+
+  .filter-section {
+    margin-bottom: 30px;
+    border-radius: base.$border-radius;
+    @include base.card-shadow;
+    border: none;
+
+    .ant-card-body {
+      padding: 20px;
+    }
+  }
+
+  .tickets-list {
+    .ticket-card {
+      margin-bottom: 20px;
+      border-radius: base.$border-radius;
+      @include base.card-shadow;
+      border: none;
+      overflow: hidden;
+      transition: all base.$transition-speed ease;
+
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(base.$dark-bg, 0.15);
+      }
+
+      &.active {
+        border-left: 5px solid base.$status-active;
+      }
+
+      &.used {
+        border-left: 5px solid base.$status-used;
+        opacity: 0.9;
+      }
+
+      &.expired,
+      &.cancelled {
+        border-left: 5px solid base.$status-expired;
+        opacity: 0.7;
+      }
+
+      .ticket-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+
+        .ticket-id {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .ticket-actions {
+          display: flex;
+          gap: 5px;
+
+          .ant-btn {
+            @include base.flex-center;
+            
+            &:hover {
+              color: base.$primary-color;
+              background: base.$info-light;
+            }
+          }
+        }
+      }
+
+      .ticket-content {
+        .event-image {
+          position: relative;
+          border-radius: 8px;
+          overflow: hidden;
+
+          img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+          }
+
+          .ticket-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(base.$primary-color, 0.9);
+            color: base.$white-1;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            z-index: 1000;
+          }
+        }
+
+        .event-details {
+          .event-title {
+            margin-bottom: 10px;
+
+            h4 {
+              margin: 0;
+              font-size: 16px;
+              font-weight: 600;
+
+              a {
+                color: base.$text-color;
+                text-decoration: none;
+
+                &:hover {
+                  color: base.$primary-color;
+                }
+              }
+            }
+          }
+
+          .event-info {
+            margin-bottom: 15px;
+
+            .ant-typography {
+              font-size: 14px;
+              color: base.$text-secondary;
+              display: flex;
+              align-items: center;
+              gap: 6px;
+            }
+          }
+
+          .ticket-price {
+            margin-bottom: 10px;
+
+            .ant-typography:first-child {
+              font-size: 18px;
+              font-weight: 600;
+              color: base.$primary-color;
+              margin-right: 10px;
+            }
+          }
+
+          .checkin-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            background: base.$success-light;
+            border-radius: 6px;
+          }
+
+          .ticket-notes {
+            margin-bottom: 0;
+            font-style: italic;
+            background: base.$background-light;
+            padding: 10px;
+            border-radius: 6px;
+          }
+        }
+      }
+
+      .ticket-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+
+        .order-info,
+        .attendee-info {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+
+          .ant-typography {
+            font-size: 12px;
+            color: base.$text-muted;
+          }
+        }
+      }
+    }
+  }
+
+  .my-tickets-loading {
+    @include base.flex-center;
+    flex-direction: column;
+    min-height: 60vh;
+    color: base.$white-1;
+
+    p {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+  }
+
+  .qr-modal {
+    .qr-content {
+      text-align: center;
+
+      .qr-code-section {
+        margin-bottom: 20px;
+        padding: 20px;
+        background: base.$background-light;
+        border-radius: 8px;
+      }
+
+      .ticket-qr-info {
+        text-align: left;
+
+        h4 {
+          text-align: center;
+          margin-bottom: 15px;
+          color: base.$text-color;
+        }
+
+        .ant-space-vertical {
+          width: 100%;
+
+          .ant-typography {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .my-tickets-page {
+    padding: 15px;
+
+    .page-header h2 {
+      font-size: 2rem;
+    }
+
+    .ticket-stats {
+      .stat-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+
+        .stat-icon {
+          width: 40px;
+          height: 40px;
+          font-size: 20px;
+        }
+      }
+    }
+
+    .tickets-list .ticket-card {
+      .ticket-content {
+        .ant-row {
+          flex-direction: column;
+        }
+
+        .event-image {
+          margin-bottom: 15px;
+        }
+      }
+
+      .ticket-footer {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  }
+}
